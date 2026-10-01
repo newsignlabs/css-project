@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://newbrush.dev/schema/config.v1.json",
+  "title": "NewBrushConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["content"],
+  "properties": {
+    "prefix": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "components": { "type": "string", "pattern": "^[a-z][a-z0-9-]*-?$", "default": "nb-" },
+        "utilities": { "type": "string", "pattern": "^([a-z][a-z0-9-]*-?)?$", "default": "" }
+      }
+    },
+    "content": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "extend": { "type": "object", "description": "Partial DTCG token tree merged into defaults" },
+        "seeds": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "brand": { "type": "string" },
+            "accent": { "type": "string" },
+            "neutral": { "type": "string" }
+          }
+        }
+      }
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "colorScheme"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "colorScheme": { "enum": ["light", "dark"] },
+          "extends": { "type": "string" },
+          "overrides": { "type": "object", "additionalProperties": { "type": "string" } }
+        }
+      }
+    },
+    "darkMode": { "enum": ["media", "attribute", "both"], "default": "both" },
+    "components": {
+      "oneOf": [{ "const": "all" }, { "const": false }, { "type": "array", "items": { "type": "string" } }],
+      "default": "all"
+    },
+    "utilities": {
+      "oneOf": [{ "const": "all" }, { "const": false }, { "type": "array", "items": { "type": "string" } }],
+      "default": "all"
+    },
+    "safelist": { "type": "array", "items": { "type": "string" } },
+    "blocklist": { "type": "array", "items": { "type": "string" } },
+    "contrast": {
+      "type": "object",
+      "properties": {
+        "level": { "enum": ["AA", "AAA"], "default": "AA" },
+        "onFail": { "enum": ["error", "warn", "fix"], "default": "warn" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "minify": { "type": "boolean", "default": true },
+        "sourcemap": { "type": "boolean", "default": false },
+        "layers": { "type": "boolean", "default": true }
+      }
+    }
+  }
+}
