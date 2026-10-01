@@ -1,0 +1,145 @@
+# Tasks: newBrush Core Framework
+
+**Input**: Design documents from `/specs/001-core-framework/`
+**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/
+
+Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests precede implementation (Constitution §V).
+
+## Phase 1: Setup (M0)
+
+- [ ] T001 Initialise monorepo: root `package.json` (private, `packageManager: pnpm@9`), `pnpm-workspace.yaml` (`packages/*`, `apps/*`, `examples/*`), `turbo.json` pipelines (build, test, lint, typecheck, visual)
+- [ ] T002 [P] Add `.browserslistrc` (constitution matrix), `.editorconfig`, `.nvmrc` (20), `.gitignore`, MIT `LICENSE`
+- [ ] T003 [P] Configure Biome (`biome.json`) for TS/JSON; Husky + lint-staged pre-commit
+- [ ] T004 [P] Create `packages/stylelint-config` with rules: require layer, logical properties only, no raw color/length outside tokens, no `!important` in components
+- [ ] T005 [P] Shared `tsconfig.base.json` (strict, ESM, `moduleResolution: bundler`) and tsup preset
+- [ ] T006 [P] Initialise Changesets (`.changeset/config.json`, linked `@newbrush/*` versions)
+- [ ] T007 CI workflow `.github/workflows/ci.yml`: install (pnpm cache), lint, typecheck, unit, build, size, visual (matrix chromium/firefox/webkit), upload Playwright report
+- [ ] T008 [P] Add `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, issue/PR templates
+
+## Phase 2: Foundational (blocking)
+
+- [ ] T009 Create `packages/schema`: TS types for Token, Theme, Variant, UtilityFamily, Component, Config, Manifest (data-model.md); JSON Schema export script; tests validating fixtures
+- [ ] T010 [P] Create `packages/tokens` with DTCG primitives: color (neutral, brand, accent, success, warning, danger, info), font, space, radius, shadow, motion, z, breakpoint, opacity, blur
+- [ ] T011 [P] Semantic tokens: surface/text/border/focus/accent + on-* pairs, with `nb.themes` dark & contrast overrides
+- [ ] T012 Style Dictionary v4 build (`packages/tokens/build.ts`): formats `css/variables-layered` (`@layer nb.tokens`), `css/themes` (`[data-nb-theme]` + media), `ts/module`, `json/resolved`, `figma/variables`
+- [ ] T013 Test: token snapshot + alias resolution + no-orphan-token check (`packages/tokens/test/*.test.ts`)
+- [ ] T014 Create `packages/css/src/index.css` with layer declaration and import skeleton; `scripts/build.ts` wiring tokens → Lightning CSS → `dist/`
+- [ ] T015 Create `apps/visual-tests` Playwright harness: renders every `examples[]` from manifest in a fixture page across themes (light/dark), widths (360/768/1280) and dir (ltr/rtl); axe scan per page
+- [ ] T016 [P] `size-limit` config with constitution budgets in `packages/css/.size-limit.json`
+
+**Checkpoint**: `pnpm build` produces `tokens.css`, themes, empty manifest; CI green.
+
+## Phase 3: User Story 1 – Drop-in stylesheet (P1) 🎯 MVP (M1)
+
+### Tests first
+
+- [ ] T017 [P] [US1] Visual + axe specs for base typography/forms/tables page `apps/visual-tests/specs/base.spec.ts`
+- [ ] T018 [P] [US1] Spec: unlayered consumer override beats component without `!important` (`layers.spec.ts`)
+- [ ] T019 [P] [US1] Spec: dark mode via media and via `data-nb-theme` (`theme-switch.spec.ts`)
+
+### Implementation
+
+- [ ] T020 [US1] Modern reset `src/reset/reset.css` (box-sizing, margin reset, media defaults, `text-size-adjust`, `interpolate-size`)
+- [ ] T021 [US1] Base `src/base/*.css`: fluid type scale, prose rhythm, links, lists, tables, code/kbd, forms baseline, focus-visible ring, selection, print
+- [ ] T022 [P] [US1] Layout primitives `src/layout/`: container, stack, cluster, grid, sidebar, switcher, center, cover, frame
+- [ ] T023 [P] [US1] Component meta format `*.meta.ts` + loader that validates against schema and feeds manifest
+- [ ] T024 [P] [US1] Component: button (+group, icon) with meta & examples
+- [ ] T025 [P] [US1] Component: card
+- [ ] T026 [P] [US1] Component: badge, chip
+- [ ] T027 [P] [US1] Component: alert
+- [ ] T028 [P] [US1] Components: input, textarea, select, checkbox, radio, switch, validation states
+- [ ] T029 [P] [US1] Component: navbar
+- [ ] T030 [P] [US1] Component: modal (`<dialog>`)
+- [ ] T031 [P] [US1] Component: accordion (`<details name>`)
+- [ ] T032 [P] [US1] Component: tabs (CSS `:has()` pattern)
+- [ ] T033 [P] [US1] Component: table styling
+- [ ] T034 [US1] Bundle outputs `newbrush-core.css`, `newbrush.css`, `components/*.css`, `themes/*.css`; manifest v1
+- [ ] T035 [US1] `examples/plain-html` showcasing all M1 components
+
+**Checkpoint**: US1 independently shippable as `0.1.0-alpha`.
+
+## Phase 4: User Story 2 – Utility engine (P1) (M2)
+
+### Tests first
+
+- [ ] T036 [P] [US2] Parser tests from `contracts/class-grammar.md` table + fuzz tests (fast-check) for rejection of unsafe arbitrary values
+- [ ] T037 [P] [US2] Generator golden tests: input class list → expected CSS snapshot; determinism test (two runs byte-equal, shuffled input)
+- [ ] T038 [P] [US2] Extractor tests for html/jsx/vue/svelte/template-literal sources
+- [ ] T039 [P] [US2] Benchmark harness (`packages/engine/bench`) for SC-004
+
+### Implementation
+
+- [ ] T040 [US2] `engine/parser`: tokenizer + AST per EBNF
+- [ ] T041 [US2] `engine/variants`: registry with responsive, container, state, structural, relational (group/peer/has), theme, motion, direction, print, supports, arbitrary
+- [ ] T042 [US2] `engine/validate`: arbitrary-value grammars (length, color, image-safe, number, time, grid-template)
+- [ ] T043 [P] [US2] Families: layout (display, position, inset, z, overflow, container, columns, aspect)
+- [ ] T044 [P] [US2] Families: flex & grid (direction, wrap, grow/shrink, basis, grid-cols/rows, span, gap, place/justify/align)
+- [ ] T045 [P] [US2] Families: spacing (p*, m*, space-*, logical variants)
+- [ ] T046 [P] [US2] Families: sizing (w, h, min/max, size, inline/block)
+- [ ] T047 [P] [US2] Families: typography (font, text size/color, leading, tracking, weight, align, decoration, truncate, line-clamp, balance/pretty)
+- [ ] T048 [P] [US2] Families: color & background (bg, gradients, opacity modifier, color-mix)
+- [ ] T049 [P] [US2] Families: border, radius, outline, ring, divide
+- [ ] T050 [P] [US2] Families: effects (shadow, blur, backdrop, glass, mix-blend, filters)
+- [ ] T051 [P] [US2] Families: motion (transition, duration, ease, animate, view-transition-name), interactivity (cursor, select, scroll-snap, touch), a11y (sr-only, forced-color-adjust)
+- [ ] T052 [US2] `engine/sort` + `engine/print` (stable ordering, escaping) and `generate()` API
+- [ ] T053 [US2] `engine/scan` + incremental cache; `@nb-apply` directive
+- [ ] T054 [US2] `@newbrush/cli` commands: init, build, watch, explain, doctor (contracts/engine-api.md)
+- [ ] T055 [P] [US2] `@newbrush/postcss` plugin
+- [ ] T056 [P] [US2] `@newbrush/vite` plugin with HMR
+- [ ] T057 [US2] Curated prebuilt utility preset → `newbrush-full.css` (budget-checked)
+- [ ] T058 [US2] Emit TS class-name types + VS Code custom data (`dist/vscode.css-data.json`)
+- [ ] T059 [US2] `examples/vite-app`, `examples/next-app`, `examples/astro-app`
+
+**Checkpoint**: `0.2.0-alpha` with JIT engine.
+
+## Phase 5: User Story 3 – Theming (P2) (M3)
+
+- [ ] T060 [P] [US3] Tests: seed → 11-step OKLCH scale golden values; gamut mapping; contrast pairs
+- [ ] T061 [US3] Scale generator (culori) + SD transform for `theme.seeds`
+- [ ] T062 [US3] Contrast checker (WCAG 2 + APCA) with `error|warn|fix`; `nb contrast` command
+- [ ] T063 [US3] Runtime re-tint via relative color syntax with `@supports` fallback
+- [ ] T064 [US3] Scoped themes (`[data-nb-theme]` any scope) + high-contrast theme + `forced-colors` pass
+- [ ] T065 [US3] `nb theme create` scaffold; brand theme example
+
+## Phase 6: User Story 4 – Full component catalogue (P2) (M4)
+
+- [ ] T066 [P] [US4] Content: prose, code, kbd, blockquote, list-group, divider, avatar
+- [ ] T067 [P] [US4] Actions: split button, FAB, link styles
+- [ ] T068 [P] [US4] Forms: range, file, input-group, floating label, fieldset
+- [ ] T069 [P] [US4] Navigation: sidebar/nav rail, breadcrumb, pagination, stepper, menu/dropdown (popover + anchor), command palette shell
+- [ ] T070 [P] [US4] Feedback: toast, progress bar/ring, spinner, skeleton, empty state, tooltip
+- [ ] T071 [P] [US4] Overlay: drawer/sheet, popover
+- [ ] T072 [P] [US4] Data: stat/KPI, timeline, description list, data-table
+- [ ] T073 [P] [US4] Marketing: hero, feature grid, pricing, testimonial, CTA band, footer, logo cloud
+- [ ] T074 [US4] Container-query adaptation audit for all width-dependent components
+- [ ] T075 [US4] `@newbrush/js`: tabs (ARIA), dialog focus return, toast queue, roving tabindex, dismissables; IIFE + ESM builds; tests
+
+## Phase 7: User Story 5 – Effects & motion (P3) (M5)
+
+- [ ] T076 [P] [US5] Tests: reduced-motion removes animation; unsupported scroll-timeline keeps content visible
+- [ ] T077 [US5] Motion tokens & keyframes (fade, slide, scale, spring-ish via `linear()`)
+- [ ] T078 [US5] Effects: glass, gradient mesh, glow, noise texture, elevation layers
+- [ ] T079 [US5] View-transition helpers and `nb-reveal` scroll-driven animations with `@supports` gates
+
+## Phase 8: User Story 6 – Docs & playground (P2) (M6)
+
+- [ ] T080 [US6] Scaffold `apps/docs` (Astro + Starlight), theme with newBrush itself
+- [ ] T081 [US6] Manifest-driven page generator (components, utilities, tokens tables)
+- [ ] T082 [P] [US6] Live example renderer + copy button + theme/dir/width toggles
+- [ ] T083 [P] [US6] Browser playground (engine in web worker, sandboxed iframe, share via URL hash)
+- [ ] T084 [P] [US6] Pagefind search; guides: getting started, CDN, bundlers, theming, migrating from Bootstrap/Tailwind, MCP
+- [ ] T085 [US6] Lighthouse CI on docs (a11y & best-practices = 100)
+
+## Phase 9: Polish & cross-cutting
+
+- [ ] T086 Manifest diff tool (`scripts/manifest-diff.ts`) failing CI on unannounced breaking changes
+- [ ] T087 [P] Performance pass vs. budgets; prune selectors
+- [ ] T088 [P] RTL + print + forced-colors full visual sweep
+- [ ] T089 Security review of arbitrary-value validator (fuzz 1M cases)
+- [ ] T090 Run `/speckit.analyze`; resolve inconsistencies; tag `1.0.0-rc.1` → hand to feature 002
+
+## Dependencies & Execution Order
+
+- Phase 1 → Phase 2 → (US1 ∥ US2 engine core T036–T042) → US3 → US4 ∥ US5 → US6 → Polish.
+- US2 families T043–T051 fully parallel. US1 components T024–T033 fully parallel after T023.
+- Feature 003 (MCP) may start after T052 (`generate()` API) and T034 (manifest v1).
