@@ -44,6 +44,11 @@
       }
     },
     "darkMode": { "enum": ["media", "attribute", "both"], "default": "both" },
+    "themeVariants": {
+      "enum": ["auto", "style-query", "selector"],
+      "default": "auto",
+      "description": "How dark:/light:/contrast: variants resolve the nearest theme; auto picks from browserslist (class-grammar.md, Theme variants)"
+    },
     "components": {
       "oneOf": [{ "const": "all" }, { "const": false }, { "type": "array", "items": { "type": "string" } }],
       "default": "all"

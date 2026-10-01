@@ -177,7 +177,7 @@ live examples, theme switcher, and an in-browser playground.
 - **FR-009**: A configurable class prefix MUST be supported. Defaults: components `nb-`, utilities unprefixed; `nb doctor` MUST warn when Tailwind/Bootstrap are detected alongside unprefixed utilities.
 
 **Utilities engine**
-- **FR-010**: Engine MUST parse the class grammar `[variant:]*[-]utility[-value|/modifier|-[arbitrary]][!]`.
+- **FR-010**: Engine MUST parse the class grammar defined normatively in `contracts/class-grammar.md` (informally: `[variant:]*[-]utility[-value][/modifier][!]`, where value may be a token key, fraction, `[arbitrary]` or `(--custom-prop)`, and value and modifier may combine, e.g. `bg-brand-600/80`).
 - **FR-011**: Engine MUST support variants: responsive (`sm md lg xl 2xl`), container (`@sm`…`@2xl`), state
   (`hover focus focus-visible active disabled checked invalid user-invalid open placeholder`), structural
   (`first last odd even empty`), relational (`group-*`, `peer-*`, `has-*`), theme (`dark light contrast`),
@@ -215,7 +215,7 @@ live examples, theme switcher, and an in-browser playground.
 - **SC-001**: A first-time user goes from zero to a styled page in under 2 minutes using only the CDN link.
 - **SC-002**: 100 % of documented examples pass axe-core with zero violations and visual regression in 3 engines.
 - **SC-003**: All size budgets from the constitution are met at v1.0.
-- **SC-004**: JIT rebuild p95 < 50 ms; cold build of a 1 000-file project < 1 s.
+- **SC-004**: JIT rebuild p95 < 50 ms; cold build of a 1 000-file project < 1 s and of a 10 000-file project < 2 s.
 - **SC-005**: Changing a single brand seed re-themes 100 % of brand-tinted surfaces with no AA contrast failures.
 - **SC-006**: Lighthouse accessibility and best-practices = 100 on the docs site.
 

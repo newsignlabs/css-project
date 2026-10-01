@@ -82,7 +82,7 @@ Users on older majors can read matching docs and run codemods to upgrade.
 
 ## Requirements *(mandatory)*
 
-- **FR-001**: Publish packages `newbrush`, `@newbrush/{tokens,engine,cli,postcss,vite,js,mcp,schema,fonts,stylelint-config}` to npm.
+- **FR-001**: Publish packages `newbrush`, `@newbrush/{tokens,engine,cli,postcss,vite,js,mcp,schema,fonts,codemod,stylelint-config}` to npm.
 - **FR-002**: Each package MUST declare `exports` map, `types`, `files` allow-list, `sideEffects` (CSS true), `engines.node >=20`, `license`, `repository`, `funding`.
 - **FR-003**: `newbrush` MUST expose subpaths: `.` (CSS), `./css`, `./core.css`, `./full.css`, `./components/*`, `./themes/*`, `./config`, `./manifest.json`, `./tokens`.
 - **FR-004**: Every CSS artifact MUST ship unminified + `.min.css` + source maps.

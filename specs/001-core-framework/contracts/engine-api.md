@@ -31,6 +31,9 @@ Node-only helpers (`@newbrush/engine/node`): `scan(globs)`, `watch(globs, cb)`, 
 
 ## `@newbrush/cli`
 
+The `nb` binary is provided **only** by `@newbrush/cli` (install it, or run `npx @newbrush/cli <cmd>`).
+The `newbrush` package has no `bin` and no runtime dependencies.
+
 ```text
 nb init [--template plain|vite|next|astro] [--prefix nb-]    create newbrush.config.ts + entry css
 nb build [-i src/app.css] [-o dist/app.css] [--minify] [--watch]
@@ -72,4 +75,5 @@ import { initAll, toast, Tabs, Dialog } from "@newbrush/js";
 initAll();                     // auto-enhances [data-nb-*] elements; idempotent; SSR-safe
 toast({ title: "Saved", tone: "success" });
 ```
-Also distributed as `newbrush.min.js` (IIFE, global `newBrush`) for CDN use.
+`@newbrush/js` builds `newbrush.min.js` (IIFE, global `newBrush`) and `newbrush.esm.js`. The `newbrush` package's build copies
+these files into its own `dist/` (build-time only — not a runtime dependency) so the CDN URL `newbrush@1/dist/newbrush.min.js` works.

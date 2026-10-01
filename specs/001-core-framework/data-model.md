@@ -48,7 +48,8 @@ interface Theme {
 }
 ```
 Emitted as `:root, [data-nb-theme="light"] { … }`, `[data-nb-theme="dark"] { … }` and
-`@media (prefers-color-scheme: dark) { :root:not([data-nb-theme]) { … } }`, plus `light-dark()` where a token has exactly two values.
+`@media (prefers-color-scheme: dark) { :root:not([data-nb-theme]) { … } }`, plus `light-dark()` where a token has exactly two values. Every theme block also sets the inherited marker
+`--nb-scheme: light | dark` (and `--nb-contrast: more` for the contrast theme) used by theme variants (class-grammar.md §Theme variants).
 
 ## Variant
 
@@ -123,6 +124,7 @@ interface NewBrushConfig {
   theme?: { extend?: DeepPartial<Tokens>; seeds?: { brand?: string; accent?: string; neutral?: string } };
   themes?: Theme[];
   darkMode?: "media" | "attribute" | "both";               // default "both"
+  themeVariants?: "auto" | "style-query" | "selector";    // default "auto" (from browserslist)
   components?: "all" | string[] | false;
   utilities?: "all" | string[] | false;
   safelist?: (string | RegExp)[];

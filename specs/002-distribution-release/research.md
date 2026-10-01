@@ -34,8 +34,8 @@
     "./package.json":  "./package.json"
   },
   "files": ["dist", "src", "LICENSE", "README.md"],
-  "sideEffects": ["*.css"],
-  "bin": { "nb": "./bin/nb.js" }   // thin proxy to @newbrush/cli
+  "sideEffects": ["*.css"]
+  // no "bin": the `nb` command ships only in @newbrush/cli, keeping `newbrush` free of runtime deps
 }
 ```
 

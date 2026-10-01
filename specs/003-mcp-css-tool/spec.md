@@ -125,7 +125,8 @@ Clients supporting MCP UI resources (MCP Apps) can render a sandboxed preview of
 - **FR-009**: A hosted deployment MUST ship at v1.0 and MUST support a free anonymous tier (60 req/min/IP) plus optional API-key/OAuth auth, per-key rate limiting, request logging without storing content, and CORS for browser clients.
 - **FR-010**: Tool functions MUST be exported as a transport-free library (`@newbrush/mcp/lib`) and as an HTTP REST mirror (`POST /v1/tools/{name}`) for non-MCP integrations.
 - **FR-011**: Server MUST be listed in the official MCP Registry with `server.json`, and ship a Docker image.
-- **FR-012**: Section blueprints v1: navbar, hero (5 variants), logo-cloud, feature-grid, feature-split, stats, pricing, testimonial, faq, cta, blog-list, contact-form, footer, dashboard-shell, sidebar-layout, auth-form, table-view, empty-state, 404.
+- **FR-012**: Section blueprints v1: navbar, hero (5 variants), logo-cloud, feature-grid, feature-split, stats, pricing, testimonial, faq, cta, blog-list, contact-form, footer, dashboard-shell, sidebar-layout, auth-form, table-view, empty-state, not-found.
+- **FR-013**: When the client advertises MCP Apps (UI resource) support, `build_page` and `compose_component` SHOULD also return a `ui://newbrush/preview` resource rendering the output in a sandboxed iframe; clients without support MUST receive identical non-UI results.
 
 ### Key Entities
 

@@ -60,7 +60,7 @@
 
 ## Phase 7: User Story 7 – Preview & evals (P3)
 
-- [ ] T036 [US7] MCP Apps `ui://newbrush/preview` resource (sandboxed iframe of last build) when client supports it
+- [ ] T036 [US7] (FR-013) MCP Apps `ui://newbrush/preview` resource (sandboxed iframe of last build) when client supports it
 - [ ] T037 Eval harness `test/evals/`: 50 NL website requests → LLM client → `build_page`; measure first-call validity (SC-003), track over releases
 - [ ] T038 Latency benchmarks (SC-001) in CI
 
