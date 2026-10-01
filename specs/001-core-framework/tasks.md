@@ -24,8 +24,8 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [ ] T012 Style Dictionary v4 build (`packages/tokens/build.ts`): formats `css/variables-layered` (`@layer nb.tokens`), `css/themes` (`[data-nb-theme]` + media), `ts/module`, `json/resolved`, `figma/variables`
 - [ ] T013 Test: token snapshot + alias resolution + no-orphan-token check (`packages/tokens/test/*.test.ts`)
 - [ ] T014 Create `packages/css/src/index.css` with layer declaration and import skeleton; `scripts/build.ts` wiring tokens → Lightning CSS → `dist/`
-- [ ] T015 Create `apps/visual-tests` Playwright harness: renders every `examples[]` from manifest in a fixture page across themes (light/dark), widths (360/768/1280) and dir (ltr/rtl); axe scan per page
-- [ ] T016 [P] `size-limit` config with constitution budgets in `packages/css/.size-limit.json`
+- [ ] T015 Create `apps/visual-tests` Playwright harness: renders every `examples[]` from manifest in a fixture page across themes (light/dark), widths (360/768/1280) and dir (ltr/rtl); axe scan per page with tags `wcag2a, wcag2aa, wcag21aa, wcag22aa` (enables `target-size`, constitution §IV)
+- [ ] T016 [P] `size-limit` configs with constitution budgets in `packages/css/.size-limit.json` (CSS bundles) and `packages/js/.size-limit.json` (`@newbrush/js` ≤ 6 KB); `play.js` size is reported but not gated (dev-only, outside constitution §VI)
 
 **Checkpoint**: `pnpm build` produces `tokens.css`, themes, empty manifest; CI green.
 
@@ -33,9 +33,9 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 
 ### Tests first
 
-- [ ] T017 [P] [US1] Visual + axe specs for base typography/forms/tables page `apps/visual-tests/specs/base.spec.ts`
+- [ ] T017 [P] [US1] Visual + axe specs for base typography/forms/tables page `apps/visual-tests/specs/base.spec.ts`, plus a target-size check asserting every interactive element in manifest examples is ≥ 24×24 CSS px (`target-size.spec.ts`)
 - [ ] T018 [P] [US1] Spec: unlayered consumer override beats component without `!important` (`layers.spec.ts`)
-- [ ] T019 [P] [US1] Spec: dark mode via media and via `data-nb-theme` (`theme-switch.spec.ts`)
+- [ ] T019 [P] [US1] Spec: dark mode via media and via `data-nb-theme`, including nested islands (light-in-dark, dark-in-light-in-dark) where `dark:`/`light:` utilities follow the *nearest* theme (`theme-switch.spec.ts`, see class-grammar.md §Theme variants)
 
 ### Implementation
 
@@ -65,12 +65,14 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [ ] T036 [P] [US2] Parser tests from `contracts/class-grammar.md` table + fuzz tests (fast-check) for rejection of unsafe arbitrary values
 - [ ] T037 [P] [US2] Generator golden tests: input class list → expected CSS snapshot; determinism test (two runs byte-equal, shuffled input)
 - [ ] T038 [P] [US2] Extractor tests for html/jsx/vue/svelte/template-literal sources
-- [ ] T039 [P] [US2] Benchmark harness (`packages/engine/bench`) for SC-004
+- [ ] T092 [P] [US2] CLI tests (`packages/cli/test/`): `init|build|watch|explain|doctor|contrast|tokens|theme create` against temp fixtures, asserting outputs and exit codes 0/1/2/3 per contracts/engine-api.md — must fail before T054
+- [ ] T093 [P] [US2] Plugin tests: PostCSS fixture (`@newbrush utilities;` / `@nb-apply` replacement, determinism) and Vite fixture (build output + HMR CSS update < 50 ms p95) — must fail before T055/T056
+- [ ] T039 [P] [US2] Benchmark harness (`packages/engine/bench`) for SC-004: incremental p95, 1 000-file and 10 000-file cold builds
 
 ### Implementation
 
 - [ ] T040 [US2] `engine/parser`: tokenizer + AST per EBNF
-- [ ] T041 [US2] `engine/variants`: registry with responsive, container, state, structural, relational (group/peer/has), theme, motion, direction, print, supports, arbitrary
+- [ ] T041 [US2] `engine/variants`: registry with responsive, container, state, structural, relational (group/peer/has), theme (nearest-theme resolution per class-grammar.md §Theme variants), motion, direction, print, supports, arbitrary
 - [ ] T042 [US2] `engine/validate`: arbitrary-value grammars (length, color, image-safe, number, time, grid-template)
 - [ ] T043 [P] [US2] Families: layout (display, position, inset, z, overflow, container, columns, aspect)
 - [ ] T044 [P] [US2] Families: flex & grid (direction, wrap, grow/shrink, basis, grid-cols/rows, span, gap, place/justify/align)
@@ -83,7 +85,7 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [ ] T051 [P] [US2] Families: motion (transition, duration, ease, animate, view-transition-name), interactivity (cursor, select, scroll-snap, touch), a11y (sr-only, forced-color-adjust)
 - [ ] T052 [US2] `engine/sort` + `engine/print` (stable ordering, escaping) and `generate()` API
 - [ ] T053 [US2] `engine/scan` + incremental cache; `@nb-apply` directive
-- [ ] T054 [US2] `@newbrush/cli` commands: init, build, watch, explain, doctor (contracts/engine-api.md)
+- [ ] T054 [US2] `@newbrush/cli` commands: init, build, watch, explain, doctor (contracts/engine-api.md); `doctor` warns on unprefixed utilities next to Tailwind/Bootstrap (FR-009)
 - [ ] T055 [P] [US2] `@newbrush/postcss` plugin
 - [ ] T056 [P] [US2] `@newbrush/vite` plugin with HMR
 - [ ] T057 [US2] Curated prebuilt utility preset → `newbrush-full.css` (budget-checked)
@@ -100,6 +102,7 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [ ] T063 [US3] Runtime re-tint via relative color syntax with `@supports` fallback
 - [ ] T064 [US3] Scoped themes (`[data-nb-theme]` any scope) + high-contrast theme + `forced-colors` pass
 - [ ] T065 [US3] `nb theme create` scaffold; brand theme example
+- [ ] T091 [P] [US3] `packages/fonts` (`@newbrush/fonts`): subsetted variable WOFF2 + `@font-face` CSS per family, mapped to `font.family.*` tokens; docs page (FR-022)
 
 ## Phase 6: User Story 4 – Full component catalogue (P2) (M4)
 
@@ -112,7 +115,8 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [ ] T072 [P] [US4] Data: stat/KPI, timeline, description list, data-table
 - [ ] T073 [P] [US4] Marketing: hero, feature grid, pricing, testimonial, CTA band, footer, logo cloud
 - [ ] T074 [US4] Container-query adaptation audit for all width-dependent components
-- [ ] T075 [US4] `@newbrush/js`: tabs (ARIA), dialog focus return, toast queue, roving tabindex, dismissables; IIFE + ESM builds; tests
+- [ ] T094 [P] [US4] `@newbrush/js` tests first (`packages/js/test/`, Vitest + Playwright): ARIA tabs keyboard model, dialog focus return, toast queue ordering/live region, roving tabindex, dismissables, idempotent `initAll()`, SSR import safety — must fail before T075
+- [ ] T075 [US4] `@newbrush/js`: tabs (ARIA), dialog focus return, toast queue, roving tabindex, dismissables; IIFE + ESM builds
 
 ## Phase 7: User Story 5 – Effects & motion (P3) (M5)
 

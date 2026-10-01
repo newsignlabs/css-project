@@ -19,6 +19,15 @@ newBrush is a **hybrid** CSS framework: a token-driven design system that ships
 Its differentiator is that it is *platform-native* (modern CSS only, no runtime) and *machine-readable*
 (every token, class and component is described by a manifest an AI agent can query — see feature 003).
 
+## Clarifications
+
+### Session 2026-10-01
+
+- Q: Should utility classes carry a prefix by default? → A: Unprefixed (`p-4 md:flex`); components keep the `nb-` prefix; a utility prefix is opt-in via config (FR-009).
+- Q: What should the default font be? → A: System UI font stack by default (zero download); variable fonts ship in an opt-in `@newbrush/fonts` package (FR-022).
+- Q: npm package names? → A: `newbrush` (main CSS package) + `@newbrush/*` scope for tooling (see 002).
+- Default applied (not asked): Figma — DTCG→Figma Variables export at v1.0; full Figma UI kit deferred to v1.1.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 – Drop-in styling via a single stylesheet (Priority: P1) 🎯 MVP
@@ -165,10 +174,10 @@ live examples, theme switcher, and an in-browser playground.
 - **FR-006**: All CSS MUST be placed in ordered cascade layers: `nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities`.
 - **FR-007**: Framework MUST use logical properties exclusively for direction-sensitive styling.
 - **FR-008**: Components MUST be responsive to container size via container queries where layout depends on width.
-- **FR-009**: A configurable class prefix MUST be supported (default: components `nb-`, utilities unprefixed).
+- **FR-009**: A configurable class prefix MUST be supported. Defaults: components `nb-`, utilities unprefixed; `nb doctor` MUST warn when Tailwind/Bootstrap are detected alongside unprefixed utilities.
 
 **Utilities engine**
-- **FR-010**: Engine MUST parse the class grammar `[variant:]*[-]utility[-value|/modifier|-[arbitrary]][!]`.
+- **FR-010**: Engine MUST parse the class grammar defined normatively in `contracts/class-grammar.md` (informally: `[variant:]*[-]utility[-value][/modifier][!]`, where value may be a token key, fraction, `[arbitrary]` or `(--custom-prop)`, and value and modifier may combine, e.g. `bg-brand-600/80`).
 - **FR-011**: Engine MUST support variants: responsive (`sm md lg xl 2xl`), container (`@sm`…`@2xl`), state
   (`hover focus focus-visible active disabled checked invalid user-invalid open placeholder`), structural
   (`first last odd even empty`), relational (`group-*`, `peer-*`, `has-*`), theme (`dark light contrast`),
@@ -190,6 +199,7 @@ live examples, theme switcher, and an in-browser playground.
 
 **Docs**
 - **FR-021**: Documentation site MUST include a page per component/utility family/token group with live, copyable examples generated from the manifest.
+- **FR-022**: Default typography MUST use a system UI font stack with no font downloads; an opt-in `@newbrush/fonts` package MUST provide self-hostable variable fonts (`font-display: swap`, subsetted WOFF2) wired to the `font.family.*` tokens.
 
 ### Key Entities
 
@@ -205,7 +215,7 @@ live examples, theme switcher, and an in-browser playground.
 - **SC-001**: A first-time user goes from zero to a styled page in under 2 minutes using only the CDN link.
 - **SC-002**: 100 % of documented examples pass axe-core with zero violations and visual regression in 3 engines.
 - **SC-003**: All size budgets from the constitution are met at v1.0.
-- **SC-004**: JIT rebuild p95 < 50 ms; cold build of a 1 000-file project < 1 s.
+- **SC-004**: JIT rebuild p95 < 50 ms; cold build of a 1 000-file project < 1 s and of a 10 000-file project < 2 s.
 - **SC-005**: Changing a single brand seed re-themes 100 % of brand-tinted surfaces with no AA contrast failures.
 - **SC-006**: Lighthouse accessibility and best-practices = 100 on the docs site.
 
@@ -213,5 +223,6 @@ live examples, theme switcher, and an in-browser playground.
 
 - Target audience: frontend developers, designers, and AI agents/MCP clients generating UIs.
 - Browser support follows the constitution (Baseline widely available, Safari ≥ 17).
+- Fonts: system stack by default; `@newbrush/fonts` opt-in (clarified 2026-10-01).
 - Icons are out of scope for v1.0 (framework is icon-library agnostic; documents pairing with Lucide/Phosphor).
 - Framework-specific component wrappers (React/Vue/Svelte) are out of scope for v1.0; class-based API works everywhere.

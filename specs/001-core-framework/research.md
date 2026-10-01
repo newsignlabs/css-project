@@ -85,8 +85,10 @@ Each decision lists the choice, rationale, and alternatives considered.
 - **Decision**: pnpm workspaces + Turborepo (cached builds/tests), Changesets (versioning), tsup (TS package bundling),
   Biome or ESLint+Prettier for TS (Biome chosen: single fast tool), Husky + lint-staged pre-commit.
 
-## R-12 Open questions (resolve in `/speckit.clarify`)
+## R-12 Clarified decisions (session 2026-10-01)
 
-- Final domain name & npm scope availability (`newbrush`, `@newbrush/*`). Fallback: `newbrush-css`, `@newbrush-css/*`.
-- Default font stack: system UI stack (zero-download) vs. bundling Inter/Geist variable fonts as an opt-in package (`@newbrush/fonts`). Recommendation: system default, opt-in fonts.
-- Whether to ship a Figma UI kit at v1.0 or v1.1. Recommendation: tokens export at v1.0, full kit v1.1.
+- **npm names**: `newbrush` + `@newbrush/*`. Registry check on 2026-10-01: `newbrush`, `newbrush-css`, `@newbrush/css` all unpublished. Create the `@newbrush` npm org immediately to reserve it.
+- **Utility prefix**: unprefixed by default (Tailwind-compatible, LLM-fluent); components `nb-`.
+- **Fonts**: system UI stack default; `@newbrush/fonts` opt-in (candidates: Inter, Geist, Fraunces for serif, Geist Mono / JetBrains Mono).
+- **Figma**: Figma Variables export at v1.0; UI kit v1.1 (default applied, not asked).
+- **Still open**: docs domain (working placeholder `newbrush.dev`).

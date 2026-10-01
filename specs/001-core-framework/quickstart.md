@@ -25,8 +25,8 @@ These scenarios double as the acceptance smoke tests run in CI against built art
 ## 2. JIT utilities (US2)
 
 ```bash
-pnpm add -D newbrush @newbrush/vite
-npx nb init --template vite
+pnpm add -D newbrush @newbrush/cli @newbrush/vite
+npx nb init --template vite          # `nb` binary comes from @newbrush/cli
 ```
 ```html
 <section class="grid gap-6 p-8 md:grid-cols-3">
@@ -47,7 +47,7 @@ export default defineConfig({
 });
 ```
 ```bash
-npx nb contrast   # all pairs pass
+npx nb contrast   # all pairs pass (requires @newbrush/cli)
 ```
 
 ## 4. Scoped theme & runtime re-tint (US3)
@@ -61,6 +61,6 @@ npx nb contrast   # all pairs pass
 ## 5. Explain a class
 
 ```bash
-npx nb explain "md:hover:bg-brand-600/80" "w-[;evil]"
+npx @newbrush/cli explain "md:hover:bg-brand-600/80" "w-[;evil]"
 # → prints CSS for the first, NB_ARBITRARY_REJECTED for the second
 ```

@@ -4,7 +4,7 @@
 
 ## Phase 1: Setup (D1)
 
-- [ ] T001 Verify/secure npm names (`newbrush`, `@newbrush` org) and domain; record outcome in research.md R-08
+- [ ] T001 Reserve npm names: create `@newbrush` org, publish `newbrush@0.0.0` placeholder (2FA on); buy docs domain and update placeholder `newbrush.dev` URLs (config schema `$id`, CDN/MCP docs); record outcome in research.md R-08
 - [ ] T002 [P] Add complete `package.json` metadata + `exports` for every package (research R-04)
 - [ ] T003 [P] `scripts/verify-tarball.ts`: `npm pack --dry-run --json`, assert allow-list, no `test/`, `.env`, fixtures
 - [ ] T004 [P] Add `publint` and `@arethetypeswrong/cli` to CI for each package
@@ -26,7 +26,7 @@
 ## Phase 3: User Story 2 – CDN (P1) (D3)
 
 - [ ] T013 [P] [US2] Test: fetch artifacts from jsDelivr/unpkg after canary publish, compare SHA with tarball
-- [ ] T014 [US2] Add `unpkg`, `jsdelivr`, `style` fields; ensure `.min.css` + maps exist
+- [ ] T014 [US2] Add `unpkg`, `jsdelivr`, `style` fields; ensure `.min.css` + maps exist; copy `@newbrush/js` browser builds (`newbrush.min.js`, `newbrush.esm.js`) into `newbrush/dist/` at build time
 - [ ] T015 [US2] `play.js` browser JIT build (engine + MutationObserver, dev warning banner in console)
 - [ ] T016 [US2] `scripts/sri.ts` → `apps/docs/src/data/cdn.json` consumed by docs snippets
 - [ ] T017 [US2] `scripts/purge-cdn.ts` (jsDelivr purge API for `@1`, `@latest`)
@@ -49,7 +49,7 @@
 
 ## Phase 6: Hardening & launch
 
-- [ ] T028 [P] Renovate, CodeQL, OpenSSF Scorecard, pinned action SHAs, `permissions: read-all` defaults
+- [ ] T028 [P] Renovate, CodeQL, OpenSSF Scorecard, pinned action SHAs, `permissions: read-all` defaults, signed release tags via gitsign (FR-011)
 - [ ] T029 [P] `SECURITY.md` (disclosure policy), `SUPPORT.md`, branch protection + required checks
 - [ ] T030 Execute v1.0.0 launch checklist (plan.md)
 

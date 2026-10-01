@@ -34,8 +34,8 @@ https://cdnjs.cloudflare.com/ajax/libs/newbrush/1.0.0/newbrush.min.css
 | `newbrush-full.css` / `.min.css` | + curated utilities preset (CDN default for prototyping) |
 | `components/<name>.css` | per-component cherry-pick (requires core) |
 | `themes/<name>.css` | extra themes (`dark`, `contrast`, brand samples) |
-| `newbrush.min.js` / `newbrush.esm.js` | optional enhancements |
-| `play.js` | in-browser JIT (dev only) |
+| `newbrush.min.js` / `newbrush.esm.js` | optional enhancements (built by `@newbrush/js`, copied in at build time) |
+| `play.js` | in-browser JIT (dev only; size reported, not budget-gated) |
 | `manifest.json` | machine-readable catalogue (tokens, utilities, components) |
 | `tokens.json` / `tokens.js` / `tokens.d.ts` | resolved tokens |
 | `*.map` | source maps |

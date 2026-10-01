@@ -51,7 +51,7 @@ claude mcp add newbrush -- npx -y @newbrush/mcp # MCP
 
 ## Next steps
 
-1. `/speckit.clarify` on each spec — resolve open questions (npm name, domain, fonts, Figma timing).
+1. ~~`/speckit.clarify`~~ ✅ 2026-10-01 — `newbrush` + `@newbrush/*`, unprefixed utilities, system fonts + opt-in `@newbrush/fonts`, hosted MCP at v1.0, Figma kit v1.1. Still open: docs domain.
 2. `/speckit.analyze` — cross-check specs, plans and tasks against the constitution.
 3. `/speckit.implement` — start with `specs/001-core-framework/tasks.md` Phase 1.
 

@@ -6,7 +6,7 @@
 npx -y @newbrush/mcp                          # stdio
 npx @modelcontextprotocol/inspector npx -y @newbrush/mcp
 ```
-✅ Expect: 10 tools, 7 resource templates, 4 prompts listed.
+✅ Expect: 10 tools, 1 resource (`newbrush://manifest`) + 6 resource templates, 4 prompts listed.
 
 ## 2. Generate CSS for agent-written markup
 

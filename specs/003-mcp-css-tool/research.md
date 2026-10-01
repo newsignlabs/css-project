@@ -39,5 +39,5 @@
 ## R-09 Live preview (P3)
 - MCP Apps (`ui://` resources) returning a sandboxed HTML preview of `build_page` output when the client advertises support; otherwise omit.
 
-## R-10 Open questions
-- Hosted endpoint pricing/quotas (free tier limits). Recommendation: free anonymous tier 60 req/min/IP, keys for higher.
+## R-10 Clarified (session 2026-10-01)
+- Hosted endpoint is v1.0 scope. Free anonymous tier 60 req/min/IP; API keys for higher limits. Paid tiers out of scope for v1.0.

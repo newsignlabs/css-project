@@ -34,8 +34,8 @@
     "./package.json":  "./package.json"
   },
   "files": ["dist", "src", "LICENSE", "README.md"],
-  "sideEffects": ["*.css"],
-  "bin": { "nb": "./bin/nb.js" }   // thin proxy to @newbrush/cli
+  "sideEffects": ["*.css"]
+  // no "bin": the `nb` command ships only in @newbrush/cli, keeping `newbrush` free of runtime deps
 }
 ```
 
@@ -49,6 +49,6 @@
 ## R-07 Supply-chain hardening
 - Renovate (grouped weekly), CodeQL, OpenSSF Scorecard action, `pnpm audit --prod` gate, pinned action SHAs, `permissions:` least privilege, signed tags via gitsign.
 
-## R-08 Open questions
-- Confirm npm name availability: `newbrush`, `@newbrush` org. Fallbacks: `newbrush-css`, `@newbrushcss`.
-- Domain: `newbrush.dev` vs `newbrush.css` alternatives.
+## R-08 Clarified (session 2026-10-01)
+- npm: `newbrush` + `@newbrush/*` — unpublished as of 2026-10-01; reserve org + placeholder now. Fallback only if reservation fails: `newbrush-css` / `@newbrush-css/*`.
+- Still open: docs domain (placeholder `newbrush.dev`).
