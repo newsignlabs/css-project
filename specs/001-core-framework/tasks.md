@@ -83,7 +83,7 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [ ] T051 [P] [US2] Families: motion (transition, duration, ease, animate, view-transition-name), interactivity (cursor, select, scroll-snap, touch), a11y (sr-only, forced-color-adjust)
 - [ ] T052 [US2] `engine/sort` + `engine/print` (stable ordering, escaping) and `generate()` API
 - [ ] T053 [US2] `engine/scan` + incremental cache; `@nb-apply` directive
-- [ ] T054 [US2] `@newbrush/cli` commands: init, build, watch, explain, doctor (contracts/engine-api.md)
+- [ ] T054 [US2] `@newbrush/cli` commands: init, build, watch, explain, doctor (contracts/engine-api.md); `doctor` warns on unprefixed utilities next to Tailwind/Bootstrap (FR-009)
 - [ ] T055 [P] [US2] `@newbrush/postcss` plugin
 - [ ] T056 [P] [US2] `@newbrush/vite` plugin with HMR
 - [ ] T057 [US2] Curated prebuilt utility preset → `newbrush-full.css` (budget-checked)
@@ -100,6 +100,7 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [ ] T063 [US3] Runtime re-tint via relative color syntax with `@supports` fallback
 - [ ] T064 [US3] Scoped themes (`[data-nb-theme]` any scope) + high-contrast theme + `forced-colors` pass
 - [ ] T065 [US3] `nb theme create` scaffold; brand theme example
+- [ ] T091 [P] [US3] `packages/fonts` (`@newbrush/fonts`): subsetted variable WOFF2 + `@font-face` CSS per family, mapped to `font.family.*` tokens; docs page (FR-022)
 
 ## Phase 6: User Story 4 – Full component catalogue (P2) (M4)
 

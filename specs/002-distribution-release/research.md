@@ -49,6 +49,6 @@
 ## R-07 Supply-chain hardening
 - Renovate (grouped weekly), CodeQL, OpenSSF Scorecard action, `pnpm audit --prod` gate, pinned action SHAs, `permissions:` least privilege, signed tags via gitsign.
 
-## R-08 Open questions
-- Confirm npm name availability: `newbrush`, `@newbrush` org. Fallbacks: `newbrush-css`, `@newbrushcss`.
-- Domain: `newbrush.dev` vs `newbrush.css` alternatives.
+## R-08 Clarified (session 2026-10-01)
+- npm: `newbrush` + `@newbrush/*` — unpublished as of 2026-10-01; reserve org + placeholder now. Fallback only if reservation fails: `newbrush-css` / `@newbrush-css/*`.
+- Still open: docs domain (placeholder `newbrush.dev`).

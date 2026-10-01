@@ -5,6 +5,13 @@
 **Status**: Draft
 **Input**: User description: "The project will be downloadable, npm installable, CDN linked for testing, and shipped to the real world."
 
+## Clarifications
+
+### Session 2026-10-01
+
+- Q: Which package names should newBrush publish under? → A: `newbrush` (main) + `@newbrush/*` scope. All candidate names were unpublished on 2026-10-01; reserve the `@newbrush` org and publish a `0.0.0` placeholder of `newbrush` before public announcement.
+- Q: Hosted MCP at v1.0? → A: Yes — `mcp.newbrush.dev` is part of the v1.0 launch scope (see 003).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 – Install from npm (Priority: P1) 🎯
@@ -75,7 +82,7 @@ Users on older majors can read matching docs and run codemods to upgrade.
 
 ## Requirements *(mandatory)*
 
-- **FR-001**: Publish packages `newbrush`, `@newbrush/{tokens,engine,cli,postcss,vite,js,mcp,schema,stylelint-config}` to npm.
+- **FR-001**: Publish packages `newbrush`, `@newbrush/{tokens,engine,cli,postcss,vite,js,mcp,schema,fonts,stylelint-config}` to npm.
 - **FR-002**: Each package MUST declare `exports` map, `types`, `files` allow-list, `sideEffects` (CSS true), `engines.node >=20`, `license`, `repository`, `funding`.
 - **FR-003**: `newbrush` MUST expose subpaths: `.` (CSS), `./css`, `./core.css`, `./full.css`, `./components/*`, `./themes/*`, `./config`, `./manifest.json`, `./tokens`.
 - **FR-004**: Every CSS artifact MUST ship unminified + `.min.css` + source maps.
@@ -99,5 +106,5 @@ Users on older majors can read matching docs and run codemods to upgrade.
 ## Assumptions
 
 - GitHub is the code host; GitHub Actions is the CI provider.
-- An npm organisation `@newbrush` can be created (verify in clarify phase).
+- npm names `newbrush` + `@newbrush` org chosen (clarified 2026-10-01); reserved as the first setup task.
 - Docs hosted on Cloudflare Pages (free tier sufficient); domain to be purchased.

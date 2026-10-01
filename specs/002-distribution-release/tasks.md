@@ -4,7 +4,7 @@
 
 ## Phase 1: Setup (D1)
 
-- [ ] T001 Verify/secure npm names (`newbrush`, `@newbrush` org) and domain; record outcome in research.md R-08
+- [ ] T001 Reserve npm names: create `@newbrush` org, publish `newbrush@0.0.0` placeholder (2FA on); buy docs domain; record outcome in research.md R-08
 - [ ] T002 [P] Add complete `package.json` metadata + `exports` for every package (research R-04)
 - [ ] T003 [P] `scripts/verify-tarball.ts`: `npm pack --dry-run --json`, assert allow-list, no `test/`, `.env`, fixtures
 - [ ] T004 [P] Add `publint` and `@arethetypeswrong/cli` to CI for each package

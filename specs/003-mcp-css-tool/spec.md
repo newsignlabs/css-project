@@ -13,6 +13,13 @@ agent backends, website builders) **discover** newBrush's design system and **ge
 accessible CSS/HTML on demand. The server is deterministic: the LLM decides *what* to build, newBrush decides *how*
 it is styled. It reuses `@newbrush/engine` in-process — no browser, no LLM calls inside the server.
 
+## Clarifications
+
+### Session 2026-10-01
+
+- Q: Should a hosted MCP endpoint be part of v1.0? → A: Yes. The Streamable HTTP endpoint (`mcp.newbrush.dev`, Cloudflare Workers) is v1.0 launch scope with a free, rate-limited anonymous tier; API keys for higher limits.
+- Q: Utility prefix? → A: Unprefixed by default, so tool outputs, blueprints and `convert_markup` emit Tailwind-compatible utility names.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 – Agent generates exact CSS for its markup (Priority: P1) 🎯
@@ -115,7 +122,7 @@ Clients supporting MCP UI resources (MCP Apps) can render a sandboxed preview of
 - **FR-006**: All output MUST be deterministic for identical inputs + server version.
 - **FR-007**: All inputs MUST be schema-validated, size-limited and sanitised; HTML output MUST escape user text by default.
 - **FR-008**: Generated pages MUST pass axe-core (zero violations) and W3C HTML validation in the test suite for all section blueprints.
-- **FR-009**: The hosted deployment MUST support optional API-key/OAuth auth, per-key rate limiting, request logging without storing content, and CORS for browser clients.
+- **FR-009**: A hosted deployment MUST ship at v1.0 and MUST support a free anonymous tier (60 req/min/IP) plus optional API-key/OAuth auth, per-key rate limiting, request logging without storing content, and CORS for browser clients.
 - **FR-010**: Tool functions MUST be exported as a transport-free library (`@newbrush/mcp/lib`) and as an HTTP REST mirror (`POST /v1/tools/{name}`) for non-MCP integrations.
 - **FR-011**: Server MUST be listed in the official MCP Registry with `server.json`, and ship a Docker image.
 - **FR-012**: Section blueprints v1: navbar, hero (5 variants), logo-cloud, feature-grid, feature-split, stats, pricing, testimonial, faq, cta, blog-list, contact-form, footer, dashboard-shell, sidebar-layout, auth-form, table-view, empty-state, 404.

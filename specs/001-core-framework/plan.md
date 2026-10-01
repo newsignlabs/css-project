@@ -73,6 +73,7 @@ newbrush/
 │   ├── vite/                  # @newbrush/vite     – Vite plugin (HMR)
 │   ├── js/                    # @newbrush/js       – optional enhancements (≤ 6 KB)
 │   ├── mcp/                   # @newbrush/mcp      – see feature 003
+│   ├── fonts/                 # @newbrush/fonts    – opt-in variable fonts (FR-022)
 │   └── stylelint-config/      # @newbrush/stylelint-config – rules for authors & contributors
 ├── apps/
 │   ├── docs/                  # Astro + Starlight site, playground

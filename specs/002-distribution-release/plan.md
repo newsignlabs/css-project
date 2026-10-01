@@ -80,7 +80,7 @@ PR + changeset ─► CI green ─► merge to main
 - [ ] Domain + docs live; versioned docs `/v1/`
 - [ ] Announcement: blog post, GitHub Discussions, social, Product Hunt, Hacker News "Show HN"
 - [ ] Templates/starters published (Vite, Next, Astro); CodePen/StackBlitz collections
-- [ ] Listed on MCP registries (feature 003)
+- [ ] Listed on MCP registries; hosted endpoint `mcp.newbrush.dev` live with free tier (feature 003)
 - [ ] Support policy: last 2 majors get security fixes for 12 months
 
 ## Complexity Tracking
