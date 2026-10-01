@@ -1,0 +1,13 @@
+name: Feature request
+description: Propose a component, utility, token or tool
+labels: [enhancement]
+body:
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Real use case
+      description: Constitution §X requires a concrete use case for every new component or utility family.
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes: { label: Proposal }

@@ -1,0 +1,497 @@
+{
+  "color": {
+    "surface": {
+      "$type": "color",
+      "default": {
+        "$value": "{color.neutral.50}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.950}",
+            "contrast": "{color.white}"
+          }
+        },
+        "$description": "Page background"
+      },
+      "subtle": {
+        "$value": "{color.neutral.100}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.900}",
+            "contrast": "{color.neutral.50}"
+          }
+        },
+        "$description": "Subtle sections"
+      },
+      "raised": {
+        "$value": "{color.white}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.900}",
+            "contrast": "{color.white}"
+          }
+        },
+        "$description": "Cards and raised containers"
+      },
+      "sunken": {
+        "$value": "{color.neutral.200}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.black}",
+            "contrast": "{color.neutral.100}"
+          }
+        },
+        "$description": "Wells and inputs"
+      },
+      "overlay": {
+        "$value": "{color.white}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.800}",
+            "contrast": "{color.white}"
+          }
+        },
+        "$description": "Menus, popovers, dialogs"
+      },
+      "inverse": {
+        "$value": "{color.neutral.900}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.50}",
+            "contrast": "{color.black}"
+          }
+        },
+        "$description": "Inverse surface (tooltips, toasts)"
+      }
+    },
+    "text": {
+      "$type": "color",
+      "default": {
+        "$value": "{color.neutral.900}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.50}",
+            "contrast": "{color.black}"
+          }
+        },
+        "$description": "Body text"
+      },
+      "muted": {
+        "$value": "{color.neutral.600}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.400}",
+            "contrast": "{color.neutral.800}"
+          }
+        },
+        "$description": "Secondary text"
+      },
+      "subtle": {
+        "$value": "{color.neutral.500}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.500}",
+            "contrast": "{color.neutral.700}"
+          }
+        },
+        "$description": "Placeholder and disabled text"
+      },
+      "inverse": {
+        "$value": "{color.neutral.50}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.900}",
+            "contrast": "{color.white}"
+          }
+        },
+        "$description": "Text on inverse surface"
+      },
+      "link": {
+        "$value": "{color.brand.600}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.brand.300}",
+            "contrast": "{color.brand.800}"
+          }
+        },
+        "$description": "Links"
+      }
+    },
+    "border": {
+      "$type": "color",
+      "default": {
+        "$value": "{color.neutral.200}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.800}",
+            "contrast": "{color.neutral.600}"
+          }
+        },
+        "$description": "Default borders and dividers"
+      },
+      "subtle": {
+        "$value": "{color.neutral.100}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.900}",
+            "contrast": "{color.neutral.400}"
+          }
+        }
+      },
+      "strong": {
+        "$value": "{color.neutral.400}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.neutral.600}",
+            "contrast": "{color.black}"
+          }
+        },
+        "$description": "Input borders, emphasis"
+      }
+    },
+    "focus": {
+      "$type": "color",
+      "ring": {
+        "$value": "{color.brand.500}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.brand.400}",
+            "contrast": "{color.black}"
+          }
+        },
+        "$description": "Focus ring (constitution §IV)"
+      }
+    },
+    "accent": {
+      "$type": "color",
+      "default": {
+        "$value": "{color.brand.600}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.brand.400}",
+            "contrast": "{color.brand.800}"
+          }
+        },
+        "$description": "Primary actions"
+      },
+      "hover": {
+        "$value": "{color.brand.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.brand.300}",
+            "contrast": "{color.brand.900}"
+          }
+        }
+      },
+      "active": {
+        "$value": "{color.brand.800}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.brand.200}",
+            "contrast": "{color.brand.950}"
+          }
+        }
+      },
+      "subtle": {
+        "$value": "{color.brand.100}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.brand.950}",
+            "contrast": "{color.brand.100}"
+          }
+        },
+        "$description": "Tinted accent background"
+      },
+      "text": {
+        "$value": "{color.brand.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.brand.300}",
+            "contrast": "{color.brand.900}"
+          }
+        },
+        "$description": "Accent-colored text on surfaces"
+      }
+    },
+    "on-accent": {
+      "$type": "color",
+      "$value": "{color.white}",
+      "$extensions": {
+        "nb.themes": {
+          "dark": "{color.neutral.950}",
+          "contrast": "{color.white}"
+        }
+      },
+      "$description": "Text on accent fill"
+    },
+    "success": {
+      "$type": "color",
+      "default": {
+        "$value": "{color.success.600}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.success.400}",
+            "contrast": "{color.success.800}"
+          }
+        },
+        "$description": "success fill"
+      },
+      "hover": {
+        "$value": "{color.success.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.success.300}",
+            "contrast": "{color.success.900}"
+          }
+        }
+      },
+      "subtle": {
+        "$value": "{color.success.100}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.success.950}",
+            "contrast": "{color.success.100}"
+          }
+        },
+        "$description": "success tinted background"
+      },
+      "text": {
+        "$value": "{color.success.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.success.300}",
+            "contrast": "{color.success.900}"
+          }
+        },
+        "$description": "success text on surfaces"
+      },
+      "border": {
+        "$value": "{color.success.300}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.success.800}",
+            "contrast": "{color.success.800}"
+          }
+        }
+      }
+    },
+    "on-success": {
+      "$type": "color",
+      "$value": "{color.white}",
+      "$extensions": {
+        "nb.themes": {
+          "dark": "{color.neutral.950}",
+          "contrast": "{color.white}"
+        }
+      },
+      "$description": "Text on success fill"
+    },
+    "warning": {
+      "$type": "color",
+      "default": {
+        "$value": "{color.warning.600}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.warning.400}",
+            "contrast": "{color.warning.800}"
+          }
+        },
+        "$description": "warning fill"
+      },
+      "hover": {
+        "$value": "{color.warning.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.warning.300}",
+            "contrast": "{color.warning.900}"
+          }
+        }
+      },
+      "subtle": {
+        "$value": "{color.warning.100}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.warning.950}",
+            "contrast": "{color.warning.100}"
+          }
+        },
+        "$description": "warning tinted background"
+      },
+      "text": {
+        "$value": "{color.warning.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.warning.300}",
+            "contrast": "{color.warning.900}"
+          }
+        },
+        "$description": "warning text on surfaces"
+      },
+      "border": {
+        "$value": "{color.warning.300}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.warning.800}",
+            "contrast": "{color.warning.800}"
+          }
+        }
+      }
+    },
+    "on-warning": {
+      "$type": "color",
+      "$value": "{color.neutral.950}",
+      "$extensions": {
+        "nb.themes": {
+          "dark": "{color.neutral.950}",
+          "contrast": "{color.neutral.950}"
+        }
+      },
+      "$description": "Text on warning fill"
+    },
+    "danger": {
+      "$type": "color",
+      "default": {
+        "$value": "{color.danger.600}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.danger.400}",
+            "contrast": "{color.danger.800}"
+          }
+        },
+        "$description": "danger fill"
+      },
+      "hover": {
+        "$value": "{color.danger.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.danger.300}",
+            "contrast": "{color.danger.900}"
+          }
+        }
+      },
+      "subtle": {
+        "$value": "{color.danger.100}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.danger.950}",
+            "contrast": "{color.danger.100}"
+          }
+        },
+        "$description": "danger tinted background"
+      },
+      "text": {
+        "$value": "{color.danger.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.danger.300}",
+            "contrast": "{color.danger.900}"
+          }
+        },
+        "$description": "danger text on surfaces"
+      },
+      "border": {
+        "$value": "{color.danger.300}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.danger.800}",
+            "contrast": "{color.danger.800}"
+          }
+        }
+      }
+    },
+    "on-danger": {
+      "$type": "color",
+      "$value": "{color.white}",
+      "$extensions": {
+        "nb.themes": {
+          "dark": "{color.neutral.950}",
+          "contrast": "{color.white}"
+        }
+      },
+      "$description": "Text on danger fill"
+    },
+    "info": {
+      "$type": "color",
+      "default": {
+        "$value": "{color.info.600}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.info.400}",
+            "contrast": "{color.info.800}"
+          }
+        },
+        "$description": "info fill"
+      },
+      "hover": {
+        "$value": "{color.info.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.info.300}",
+            "contrast": "{color.info.900}"
+          }
+        }
+      },
+      "subtle": {
+        "$value": "{color.info.100}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.info.950}",
+            "contrast": "{color.info.100}"
+          }
+        },
+        "$description": "info tinted background"
+      },
+      "text": {
+        "$value": "{color.info.700}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.info.300}",
+            "contrast": "{color.info.900}"
+          }
+        },
+        "$description": "info text on surfaces"
+      },
+      "border": {
+        "$value": "{color.info.300}",
+        "$extensions": {
+          "nb.themes": {
+            "dark": "{color.info.800}",
+            "contrast": "{color.info.800}"
+          }
+        }
+      }
+    },
+    "on-info": {
+      "$type": "color",
+      "$value": "{color.white}",
+      "$extensions": {
+        "nb.themes": {
+          "dark": "{color.neutral.950}",
+          "contrast": "{color.white}"
+        }
+      },
+      "$description": "Text on info fill"
+    },
+    "selection": {
+      "$type": "color",
+      "$value": "{color.brand.200}",
+      "$extensions": {
+        "nb.themes": {
+          "dark": "{color.brand.800}",
+          "contrast": "{color.brand.300}"
+        }
+      },
+      "$description": "Text selection background"
+    },
+    "backdrop": {
+      "$type": "color",
+      "$value": "{color.neutral.950}",
+      "$extensions": {
+        "nb.themes": {
+          "dark": "{color.black}",
+          "contrast": "{color.black}"
+        }
+      },
+      "$description": "Modal backdrop base color (used with opacity)"
+    }
+  }
+}

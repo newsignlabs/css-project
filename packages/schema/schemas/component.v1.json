@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "className": {
+      "type": "string",
+      "pattern": "^nb-[a-z0-9-]+$"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "layout",
+        "content",
+        "actions",
+        "forms",
+        "navigation",
+        "feedback",
+        "overlay",
+        "data",
+        "marketing"
+      ]
+    },
+    "anatomy": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "part": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string"
+          },
+          "element": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "requiredParent": {
+            "description": "Class of the part this element must be nested in",
+            "type": "string"
+          }
+        },
+        "required": [
+          "part",
+          "className",
+          "required"
+        ]
+      }
+    },
+    "modifiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "className",
+          "description"
+        ]
+      }
+    },
+    "sizes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "states": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "html": {
+      "type": "object",
+      "properties": {
+        "element": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "element"
+      ]
+    },
+    "a11y": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "requirements": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keyboard": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "requirements"
+      ]
+    },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "examples": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "html": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "title",
+          "html"
+        ]
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "stable",
+        "beta",
+        "deprecated"
+      ]
+    },
+    "since": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+"
+    }
+  },
+  "required": [
+    "name",
+    "title",
+    "description",
+    "className",
+    "category",
+    "anatomy",
+    "modifiers",
+    "sizes",
+    "states",
+    "html",
+    "a11y",
+    "tokens",
+    "examples",
+    "status",
+    "since"
+  ],
+  "$id": "https://newbrush.dev/schema/component.v1.json"
+}

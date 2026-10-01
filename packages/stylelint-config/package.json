@@ -1,0 +1,36 @@
+{
+  "name": "@newbrush/stylelint-config",
+  "version": "0.0.0",
+  "description": "Stylelint rules enforcing the newBrush constitution: cascade layers, logical properties, token-only values.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/newsignlabs/css-project",
+    "directory": "packages/stylelint-config"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./plugins/*": "./plugins/*.js"
+  },
+  "files": [
+    "index.js",
+    "plugins"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "stylelint": "^17.0.0"
+  },
+  "dependencies": {
+    "stylelint-config-standard": "^40.0.0"
+  },
+  "devDependencies": {
+    "stylelint": "^17.16.0",
+    "vitest": "^5.0.3"
+  }
+}

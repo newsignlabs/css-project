@@ -1,0 +1,23 @@
+{
+  "elevation": {
+    "0": {
+      "$value": "{shadow.0}"
+    },
+    "1": {
+      "$value": "{shadow.1}"
+    },
+    "2": {
+      "$value": "{shadow.2}"
+    },
+    "3": {
+      "$value": "{shadow.3}"
+    },
+    "4": {
+      "$value": "{shadow.4}"
+    },
+    "5": {
+      "$value": "{shadow.5}"
+    },
+    "$type": "shadow"
+  }
+}

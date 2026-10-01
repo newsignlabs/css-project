@@ -1,0 +1,33 @@
+{
+  "name": "newbrush-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "biome check . && turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "size": "turbo run size",
+    "visual": "turbo run visual",
+    "format": "biome format --write .",
+    "changeset": "changeset",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@changesets/cli": "^3.0.3",
+    "@types/node": "^22.20.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "turbo": "^2.11.6",
+    "typescript": "^5.9.3"
+  },
+  "lint-staged": {
+    "*.{ts,js,json}": "biome check --write --no-errors-on-unmatched",
+    "packages/css/src/**/*.css": "pnpm --dir packages/css exec stylelint --fix"
+  }
+}

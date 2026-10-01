@@ -1,0 +1,29 @@
+{
+  "radius": {
+    "$type": "dimension",
+    "none": {
+      "$value": "0rem"
+    },
+    "xs": {
+      "$value": "0.125rem"
+    },
+    "sm": {
+      "$value": "0.25rem"
+    },
+    "md": {
+      "$value": "0.5rem"
+    },
+    "lg": {
+      "$value": "0.75rem"
+    },
+    "xl": {
+      "$value": "1rem"
+    },
+    "2xl": {
+      "$value": "1.5rem"
+    },
+    "full": {
+      "$value": "624.9375rem"
+    }
+  }
+}

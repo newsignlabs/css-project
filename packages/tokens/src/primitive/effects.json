@@ -1,0 +1,23 @@
+{
+  "opacity": {
+    "$type": "number",
+    "disabled": {
+      "$value": 0.5
+    },
+    "muted": {
+      "$value": 0.7
+    }
+  },
+  "blur": {
+    "$type": "dimension",
+    "sm": {
+      "$value": "0.25rem"
+    },
+    "md": {
+      "$value": "0.75rem"
+    },
+    "lg": {
+      "$value": "1.5rem"
+    }
+  }
+}

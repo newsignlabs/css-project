@@ -1,0 +1,1 @@
+{ "extends": "../../tsconfig.base.json", "include": ["harness", "specs", "playwright.config.ts"] }

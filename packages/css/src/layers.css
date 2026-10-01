@@ -1,0 +1,2 @@
+/* Layer order (FR-006). Declared first so every bundle and cherry-picked file shares one cascade. */
+@layer nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities;

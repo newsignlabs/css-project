@@ -7,25 +7,25 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 
 ## Phase 1: Setup (M0)
 
-- [ ] T001 Initialise monorepo: root `package.json` (private, `packageManager: pnpm@9`), `pnpm-workspace.yaml` (`packages/*`, `apps/*`, `examples/*`), `turbo.json` pipelines (build, test, lint, typecheck, visual)
-- [ ] T002 [P] Add `.browserslistrc` (constitution matrix), `.editorconfig`, `.nvmrc` (20), `.gitignore`, MIT `LICENSE`
-- [ ] T003 [P] Configure Biome (`biome.json`) for TS/JSON; Husky + lint-staged pre-commit
-- [ ] T004 [P] Create `packages/stylelint-config` with rules: require layer, logical properties only, no raw color/length outside tokens, no `!important` in components
-- [ ] T005 [P] Shared `tsconfig.base.json` (strict, ESM, `moduleResolution: bundler`) and tsup preset
-- [ ] T006 [P] Initialise Changesets (`.changeset/config.json`, linked `@newbrush/*` versions)
-- [ ] T007 CI workflow `.github/workflows/ci.yml`: install (pnpm cache), lint, typecheck, unit, build, size, visual (matrix chromium/firefox/webkit), upload Playwright report
-- [ ] T008 [P] Add `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, issue/PR templates
+- [x] T001 Initialise monorepo: root `package.json` (private, `packageManager: pnpm@9`), `pnpm-workspace.yaml` (`packages/*`, `apps/*`, `examples/*`), `turbo.json` pipelines (build, test, lint, typecheck, visual)
+- [x] T002 [P] Add `.browserslistrc` (constitution matrix), `.editorconfig`, `.nvmrc` (20), `.gitignore`, MIT `LICENSE`
+- [x] T003 [P] Configure Biome (`biome.json`) for TS/JSON; Husky + lint-staged pre-commit
+- [x] T004 [P] Create `packages/stylelint-config` with rules: require layer, logical properties only, no raw color/length outside tokens, no `!important` in components
+- [x] T005 [P] Shared `tsconfig.base.json` (strict, ESM, `moduleResolution: bundler`) and tsup preset
+- [x] T006 [P] Initialise Changesets (`.changeset/config.json`, linked `@newbrush/*` versions)
+- [x] T007 CI workflow `.github/workflows/ci.yml`: install (pnpm cache), lint, typecheck, unit, build, size, visual (matrix chromium/firefox/webkit), upload Playwright report
+- [x] T008 [P] Add `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, issue/PR templates
 
 ## Phase 2: Foundational (blocking)
 
-- [ ] T009 Create `packages/schema`: TS types for Token, Theme, Variant, UtilityFamily, Component, Config, Manifest (data-model.md); JSON Schema export script; tests validating fixtures
-- [ ] T010 [P] Create `packages/tokens` with DTCG primitives: color (neutral, brand, accent, success, warning, danger, info), font, space, radius, shadow, motion, z, breakpoint, opacity, blur
-- [ ] T011 [P] Semantic tokens: surface/text/border/focus/accent + on-* pairs, with `nb.themes` dark & contrast overrides
-- [ ] T012 Style Dictionary v4 build (`packages/tokens/build.ts`): formats `css/variables-layered` (`@layer nb.tokens`), `css/themes` (`[data-nb-theme]` + media), `ts/module`, `json/resolved`, `figma/variables`
-- [ ] T013 Test: token snapshot + alias resolution + no-orphan-token check (`packages/tokens/test/*.test.ts`)
-- [ ] T014 Create `packages/css/src/index.css` with layer declaration and import skeleton; `scripts/build.ts` wiring tokens → Lightning CSS → `dist/`
-- [ ] T015 Create `apps/visual-tests` Playwright harness: renders every `examples[]` from manifest in a fixture page across themes (light/dark), widths (360/768/1280) and dir (ltr/rtl); axe scan per page with tags `wcag2a, wcag2aa, wcag21aa, wcag22aa` (enables `target-size`, constitution §IV)
-- [ ] T016 [P] `size-limit` configs with constitution budgets in `packages/css/.size-limit.json` (CSS bundles) and `packages/js/.size-limit.json` (`@newbrush/js` ≤ 6 KB); `play.js` size is reported but not gated (dev-only, outside constitution §VI)
+- [x] T009 Create `packages/schema`: TS types for Token, Theme, Variant, UtilityFamily, Component, Config, Manifest (data-model.md); JSON Schema export script; tests validating fixtures
+- [x] T010 [P] Create `packages/tokens` with DTCG primitives: color (neutral, brand, accent, success, warning, danger, info), font, space, radius, shadow, motion, z, breakpoint, opacity, blur
+- [x] T011 [P] Semantic tokens: surface/text/border/focus/accent + on-* pairs, with `nb.themes` dark & contrast overrides
+- [x] T012 Style Dictionary v4 build (`packages/tokens/build.ts`): formats `css/variables-layered` (`@layer nb.tokens`), `css/themes` (`[data-nb-theme]` + media), `ts/module`, `json/resolved`, `figma/variables`
+- [x] T013 Test: token snapshot + alias resolution + no-orphan-token check (`packages/tokens/test/*.test.ts`)
+- [x] T014 Create `packages/css/src/index.css` with layer declaration and import skeleton; `scripts/build.ts` wiring tokens → Lightning CSS → `dist/`
+- [x] T015 Create `apps/visual-tests` Playwright harness: renders every `examples[]` from manifest in a fixture page across themes (light/dark), widths (360/768/1280) and dir (ltr/rtl); axe scan per page with tags `wcag2a, wcag2aa, wcag21aa, wcag22aa` (enables `target-size`, constitution §IV)
+- [x] T016 [P] `size-limit` configs with constitution budgets in `packages/css/.size-limit.json` (CSS bundles) and `packages/js/.size-limit.json` (`@newbrush/js` ≤ 6 KB); `play.js` size is reported but not gated (dev-only, outside constitution §VI) — *CSS budgets live; the `packages/js` config lands with T094/T075 when the package exists*
 
 **Checkpoint**: `pnpm build` produces `tokens.css`, themes, empty manifest; CI green.
 

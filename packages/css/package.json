@@ -1,0 +1,70 @@
+{
+  "name": "newbrush",
+  "version": "0.0.0",
+  "description": "A high-end, platform-native CSS framework: token-driven themes, accessible components and on-demand utilities.",
+  "keywords": [
+    "css",
+    "css-framework",
+    "design-system",
+    "design-tokens",
+    "components",
+    "utilities",
+    "oklch",
+    "cascade-layers"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/newsignlabs/css-project",
+    "directory": "packages/css"
+  },
+  "style": "./dist/newbrush.css",
+  "unpkg": "./dist/newbrush.min.css",
+  "jsdelivr": "./dist/newbrush.min.css",
+  "exports": {
+    ".": {
+      "style": "./dist/newbrush.css",
+      "default": "./dist/newbrush.css"
+    },
+    "./css": "./dist/newbrush.css",
+    "./core.css": "./dist/newbrush-core.css",
+    "./full.css": "./dist/newbrush-full.css",
+    "./components/*": "./dist/components/*",
+    "./themes/*": "./dist/themes/*",
+    "./manifest.json": "./dist/manifest.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsx scripts/build.ts",
+    "lint": "stylelint \"src/**/*.css\"",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json",
+    "size": "size-limit"
+  },
+  "devDependencies": {
+    "@newbrush/schema": "workspace:*",
+    "@newbrush/stylelint-config": "workspace:*",
+    "@newbrush/tokens": "workspace:*",
+    "@size-limit/file": "^14.1.0",
+    "browserslist": "^4.25.0",
+    "lightningcss": "^1.33.0",
+    "size-limit": "^14.1.0",
+    "stylelint": "^17.16.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  }
+}

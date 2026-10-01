@@ -1,0 +1,18 @@
+{
+  "name": "@newbrush/visual-tests",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "visual": "playwright test",
+    "visual:update": "playwright test --update-snapshots",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@newbrush/schema": "workspace:*",
+    "@playwright/test": "1.56.1",
+    "newbrush": "workspace:*",
+    "typescript": "^5.9.3"
+  }
+}

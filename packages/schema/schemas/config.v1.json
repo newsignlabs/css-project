@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "prefix": {
+      "type": "object",
+      "properties": {
+        "components": {
+          "default": "nb-",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*-?$"
+        },
+        "utilities": {
+          "default": "",
+          "type": "string",
+          "pattern": "^([a-z][a-z0-9-]*-?)?$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "content": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "extend": {
+          "description": "Partial DTCG token tree merged into defaults",
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "seeds": {
+          "type": "object",
+          "properties": {
+            "brand": {
+              "type": "string"
+            },
+            "accent": {
+              "type": "string"
+            },
+            "neutral": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "colorScheme": {
+            "type": "string",
+            "enum": [
+              "light",
+              "dark"
+            ]
+          },
+          "extends": {
+            "type": "string"
+          },
+          "overrides": {
+            "default": {},
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "colorScheme"
+        ]
+      }
+    },
+    "darkMode": {
+      "default": "both",
+      "type": "string",
+      "enum": [
+        "media",
+        "attribute",
+        "both"
+      ]
+    },
+    "themeVariants": {
+      "default": "auto",
+      "description": "How dark:/light:/contrast: variants resolve the nearest theme",
+      "type": "string",
+      "enum": [
+        "auto",
+        "style-query",
+        "selector"
+      ]
+    },
+    "components": {
+      "default": "all",
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "all"
+        },
+        {
+          "type": "boolean",
+          "const": false
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "utilities": {
+      "default": "all",
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "all"
+        },
+        {
+          "type": "boolean",
+          "const": false
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "safelist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blocklist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contrast": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "default": "AA",
+          "type": "string",
+          "enum": [
+            "AA",
+            "AAA"
+          ]
+        },
+        "onFail": {
+          "default": "warn",
+          "type": "string",
+          "enum": [
+            "error",
+            "warn",
+            "fix"
+          ]
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "minify": {
+          "default": true,
+          "type": "boolean"
+        },
+        "sourcemap": {
+          "default": false,
+          "type": "boolean"
+        },
+        "layers": {
+          "default": true,
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "required": [
+    "content"
+  ],
+  "additionalProperties": false,
+  "$id": "https://newbrush.dev/schema/config.v1.json"
+}

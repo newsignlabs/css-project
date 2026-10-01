@@ -1,0 +1,3 @@
+/* newbrush.css — core + all components. */
+@import "./core.css";
+@import "./components/index.css";

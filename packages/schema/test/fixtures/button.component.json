@@ -1,0 +1,24 @@
+{
+  "name": "button",
+  "title": "Button",
+  "description": "Triggers an action.",
+  "className": "nb-btn",
+  "category": "actions",
+  "anatomy": [{ "part": "root", "className": "nb-btn", "element": "button", "required": true }],
+  "modifiers": [
+    { "name": "primary", "className": "nb-btn--primary", "description": "Main call to action" }
+  ],
+  "sizes": ["sm", "md", "lg"],
+  "states": ["hover", "focus-visible", "active", "disabled"],
+  "html": { "element": "button", "attributes": { "type": "button" } },
+  "a11y": { "requirements": ["Must have an accessible name"] },
+  "tokens": ["--nb-btn-radius"],
+  "examples": [
+    {
+      "title": "Primary",
+      "html": "<button class=\"nb-btn nb-btn--primary\" type=\"button\">Save</button>"
+    }
+  ],
+  "status": "beta",
+  "since": "0.1.0"
+}

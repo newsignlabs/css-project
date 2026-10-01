@@ -1,0 +1,11 @@
+# newBrush support matrix (constitution: Technology Constraints).
+# Baseline "widely available": last 2 versions of evergreen engines, Safari >= 17.
+last 2 Chrome versions
+last 2 Edge versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 iOS versions
+last 2 Samsung versions
+Safari >= 17
+iOS >= 17
+not dead
