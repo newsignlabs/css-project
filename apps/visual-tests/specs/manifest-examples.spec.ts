@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import {
   DIRS,
   expectNoAxeViolations,
@@ -7,8 +7,10 @@ import {
   THEMES,
   WIDTHS,
 } from "../harness/fixtures.ts";
+import { expectScreenshot } from "../harness/screenshot.ts";
+import { expectTargetSize } from "../harness/target-size.ts";
 
-// Every documented example × theme × width × direction: zero axe violations + screenshot (constitution §IV, §V).
+// Every documented example × theme × width × direction: zero axe violations, 24px targets, screenshot (§IV, §V).
 for (const component of manifest.components) {
   test.describe(component.name, () => {
     component.examples.forEach((example, i) => {
@@ -19,7 +21,8 @@ for (const component of manifest.components) {
             test(`${example.title} · ${theme} · ${width}px · ${dir}`, async ({ page }) => {
               await renderFixture(page, { html: example.html, theme, width, dir });
               await expectNoAxeViolations(page);
-              await expect(page.locator("main")).toHaveScreenshot(`${id}.png`);
+              await expectTargetSize(page);
+              await expectScreenshot(page.locator("main"), `${id}.png`);
             });
           }
         }

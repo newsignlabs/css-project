@@ -79,8 +79,9 @@ const contrast = ["    --nb-contrast: more;", ...themed("contrast")];
 const indent = (s: string) => s.replace(/^/gm, "  ");
 
 const blocks = {
-  primitives: block(":root", primitives),
-  light: block(':root,\n  [data-nb-theme="light"],\n  [data-nb-theme="contrast"]', [
+  primitives: block(":root,\n  ::backdrop", primitives),
+  // ::backdrop does not inherit custom properties in every supported engine, so tokens are declared on it too.
+  light: block(':root,\n  ::backdrop,\n  [data-nb-theme="light"],\n  [data-nb-theme="contrast"]', [
     ...marker("light"),
     ...base,
   ]),

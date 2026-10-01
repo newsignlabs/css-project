@@ -49,17 +49,27 @@ async function componentNames(): Promise<string[]> {
     .sort();
 }
 
+async function importMeta(file: string): Promise<unknown[]> {
+  const mod = (await import(pathToFileURL(path(file)).href)) as { default: unknown };
+  return Array.isArray(mod.default) ? mod.default : [mod.default];
+}
+
+/** Layout primitives (src/layout/index.meta.ts) + one meta per component folder (T023). */
 async function loadComponents(names: string[]): Promise<Component[]> {
-  const components: Component[] = [];
+  const entries: [string, unknown][] = (await importMeta("src/layout/index.meta.ts")).map((m) => [
+    "layout",
+    m,
+  ]);
   for (const name of names) {
-    const mod = (await import(
-      pathToFileURL(path(`src/components/${name}/${name}.meta.ts`)).href
-    )) as { default: unknown };
-    const parsed = Component.safeParse(mod.default);
-    if (!parsed.success)
-      throw new Error(`Invalid meta for component "${name}":\n${parsed.error.message}`);
-    if (parsed.data.name !== name)
-      throw new Error(`Component folder "${name}" declares name "${parsed.data.name}"`);
+    for (const meta of await importMeta(`src/components/${name}/${name}.meta.ts`))
+      entries.push([name, meta]);
+  }
+  const components: Component[] = [];
+  for (const [source, meta] of entries) {
+    const parsed = Component.safeParse(meta);
+    if (!parsed.success) throw new Error(`Invalid meta in "${source}":\n${parsed.error.message}`);
+    if (components.some((c) => c.name === parsed.data.name))
+      throw new Error(`Duplicate component "${parsed.data.name}"`);
     components.push(parsed.data);
   }
   return components;

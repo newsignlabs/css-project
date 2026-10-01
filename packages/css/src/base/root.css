@@ -1,0 +1,46 @@
+@layer nb.base {
+  :root {
+    font-family: var(--nb-font-family-sans);
+    font-size: 100%;
+    line-height: var(--nb-font-leading-normal);
+    color: var(--nb-color-text);
+    background-color: var(--nb-color-surface);
+    accent-color: var(--nb-color-accent);
+    caret-color: var(--nb-color-accent);
+    -webkit-tap-highlight-color: transparent;
+    font-synthesis-weight: none;
+    text-rendering: optimizelegibility;
+  }
+
+  body {
+    font-size: var(--nb-font-size-base);
+  }
+
+  /* Theme islands repaint: `color` inherits as a computed value, so it must be re-resolved inside each island. */
+  [data-nb-theme] {
+    color: var(--nb-color-text);
+    background-color: var(--nb-color-surface);
+  }
+
+  ::selection {
+    background-color: var(--nb-color-selection);
+    color: var(--nb-color-text);
+  }
+
+  :focus-visible {
+    outline: var(--nb-control-focus-ring-width) solid var(--nb-color-focus-ring);
+    outline-offset: var(--nb-control-focus-ring-offset);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :root:has(:target) {
+      scroll-behavior: smooth;
+    }
+  }
+
+  @media (forced-colors: active) {
+    :focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

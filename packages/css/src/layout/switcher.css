@@ -1,0 +1,15 @@
+@layer nb.layout {
+  /* Children sit in a row above --nb-switcher-threshold and stack below it — the container decides, not the viewport. */
+  .nb-switcher {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nb-switcher-gap, var(--nb-space-fluid-md));
+  }
+
+  /* Gap owns spacing, so flow margins from base typography are neutralised. */
+  .nb-switcher > * {
+    flex-grow: 1;
+    margin-block: 0;
+    flex-basis: calc((var(--nb-switcher-threshold, 40rem) - 100%) * 999);
+  }
+}

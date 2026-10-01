@@ -16,6 +16,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
+  // Baselines are produced on CI runners (workflow_dispatch "update-snapshots") so fonts match; missing ones are written, not failed.
+  updateSnapshots: "missing",
   expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.001, animations: "disabled" } },
   snapshotPathTemplate: "{testDir}/__screenshots__/{projectName}/{testFilePath}/{arg}{ext}",
   projects: all.filter((p) => engines.includes(p.name)),

@@ -1,1 +1,16 @@
-/* components — populated by specs/001-core-framework tasks (US1). */
+/* Components (T024–T033). Each file is also bundled standalone to dist/components/<name>.css. */
+@import "./button/button.css";
+@import "./card/card.css";
+@import "./badge/badge.css";
+@import "./chip/chip.css";
+@import "./alert/alert.css";
+@import "./field/field.css";
+@import "./input/input.css";
+@import "./select/select.css";
+@import "./check/check.css";
+@import "./switch/switch.css";
+@import "./navbar/navbar.css";
+@import "./modal/modal.css";
+@import "./accordion/accordion.css";
+@import "./tabs/tabs.css";
+@import "./table/table.css";

@@ -1,0 +1,91 @@
+@layer nb.components {
+  /*
+   * CSS-only tabs: a radio group drives which panel shows (up to 8 tabs). `:nth-child(N of …)` counts only tabs and
+   * panels, so legends or other siblings do not shift the mapping. Keyboard: arrow keys move between radios natively. @newbrush/js upgrades this to the ARIA tabs pattern (T075).
+   */
+  .nb-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nb-space-4);
+  }
+
+  .nb-tabs__list {
+    display: flex;
+    gap: var(--nb-space-1);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-block-end: var(--nb-border-width-thin) solid var(--nb-color-border);
+    overflow-x: auto;
+  }
+
+  .nb-tabs__tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--nb-control-height-md);
+    padding-inline: var(--nb-space-3);
+    color: var(--nb-color-text-muted);
+    font-weight: var(--nb-font-weight-medium);
+    white-space: nowrap;
+    cursor: pointer;
+
+    & > input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--nb-color-text);
+      }
+    }
+
+    &:has(:checked) {
+      color: var(--nb-color-text);
+      box-shadow: inset 0 calc(var(--nb-border-width-medium) * -1) 0 var(--nb-color-accent);
+    }
+
+    &:has(:focus-visible) {
+      outline: var(--nb-control-focus-ring-width) solid var(--nb-color-focus-ring);
+      outline-offset: calc(var(--nb-control-focus-ring-width) * -1);
+      border-radius: var(--nb-radius-sm);
+    }
+  }
+
+  .nb-tabs__panel {
+    display: none;
+  }
+
+  .nb-tabs:has(> .nb-tabs__list > .nb-tabs__tab:nth-child(1 of .nb-tabs__tab) > :checked) > .nb-tabs__panel:nth-child(1 of .nb-tabs__panel),
+  .nb-tabs:has(> .nb-tabs__list > .nb-tabs__tab:nth-child(2 of .nb-tabs__tab) > :checked) > .nb-tabs__panel:nth-child(2 of .nb-tabs__panel),
+  .nb-tabs:has(> .nb-tabs__list > .nb-tabs__tab:nth-child(3 of .nb-tabs__tab) > :checked) > .nb-tabs__panel:nth-child(3 of .nb-tabs__panel),
+  .nb-tabs:has(> .nb-tabs__list > .nb-tabs__tab:nth-child(4 of .nb-tabs__tab) > :checked) > .nb-tabs__panel:nth-child(4 of .nb-tabs__panel),
+  .nb-tabs:has(> .nb-tabs__list > .nb-tabs__tab:nth-child(5 of .nb-tabs__tab) > :checked) > .nb-tabs__panel:nth-child(5 of .nb-tabs__panel),
+  .nb-tabs:has(> .nb-tabs__list > .nb-tabs__tab:nth-child(6 of .nb-tabs__tab) > :checked) > .nb-tabs__panel:nth-child(6 of .nb-tabs__panel),
+  .nb-tabs:has(> .nb-tabs__list > .nb-tabs__tab:nth-child(7 of .nb-tabs__tab) > :checked) > .nb-tabs__panel:nth-child(7 of .nb-tabs__panel),
+  .nb-tabs:has(> .nb-tabs__list > .nb-tabs__tab:nth-child(8 of .nb-tabs__tab) > :checked) > .nb-tabs__panel:nth-child(8 of .nb-tabs__panel) {
+    display: block;
+  }
+
+  .nb-tabs--pills .nb-tabs__list {
+    border-block-end: 0;
+  }
+
+  .nb-tabs--pills .nb-tabs__tab {
+    border-radius: var(--nb-radius-full);
+
+    &:has(:checked) {
+      background-color: var(--nb-color-accent-subtle);
+      color: var(--nb-color-accent-text);
+      box-shadow: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .nb-tabs__tab:has(:checked) {
+      outline: var(--nb-border-width-medium) solid Highlight;
+    }
+  }
+}

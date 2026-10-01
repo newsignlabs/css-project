@@ -1,1 +1,10 @@
-/* layout — populated by specs/001-core-framework tasks (US1). */
+/* Layout primitives (T022). Intrinsic, container-driven, logical-property based. */
+@import "./container.css";
+@import "./stack.css";
+@import "./cluster.css";
+@import "./grid.css";
+@import "./sidebar.css";
+@import "./switcher.css";
+@import "./center.css";
+@import "./cover.css";
+@import "./frame.css";

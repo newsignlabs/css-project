@@ -1,0 +1,19 @@
+@layer nb.layout {
+  .nb-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: var(--nb-frame-ratio, 16 / 9);
+    overflow: hidden;
+  }
+
+  .nb-frame > :is(img, video, iframe, picture) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .nb-frame--square { --nb-frame-ratio: 1; }
+  .nb-frame--photo { --nb-frame-ratio: 4 / 3; }
+  .nb-frame--portrait { --nb-frame-ratio: 3 / 4; }
+}

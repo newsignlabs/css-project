@@ -1,0 +1,88 @@
+@layer nb.components {
+  .nb-alert {
+    --_subtle: var(--nb-color-info-subtle);
+    --_text: var(--nb-color-info-text);
+    --_border: var(--nb-color-info-border);
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--nb-space-3);
+    padding: var(--nb-space-4);
+    border: var(--nb-border-width-thin) solid var(--_border);
+    border-inline-start-width: var(--nb-border-width-thick);
+    border-radius: var(--nb-radius-md);
+    background-color: var(--_subtle);
+    color: var(--nb-color-text);
+  }
+
+  .nb-alert__icon {
+    flex-shrink: 0;
+    color: var(--_text);
+    font-size: var(--nb-font-size-lg);
+    line-height: var(--nb-font-leading-none);
+  }
+
+  .nb-alert__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--nb-space-1);
+    min-inline-size: 0;
+  }
+
+  .nb-alert__content > * {
+    margin-block: 0;
+  }
+
+  .nb-alert__title {
+    margin: 0;
+    color: var(--_text);
+    font-size: var(--nb-font-size-base);
+    font-weight: var(--nb-font-weight-semibold);
+  }
+
+  .nb-alert__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nb-space-2);
+    margin-block-start: var(--nb-space-2);
+  }
+
+  .nb-alert__close {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    inline-size: var(--nb-size-target);
+    block-size: var(--nb-size-target);
+    padding: 0;
+    border: 0;
+    border-radius: var(--nb-radius-sm);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .nb-alert--success {
+    --_subtle: var(--nb-color-success-subtle);
+    --_text: var(--nb-color-success-text);
+    --_border: var(--nb-color-success-border);
+  }
+
+  .nb-alert--warning {
+    --_subtle: var(--nb-color-warning-subtle);
+    --_text: var(--nb-color-warning-text);
+    --_border: var(--nb-color-warning-border);
+  }
+
+  .nb-alert--danger {
+    --_subtle: var(--nb-color-danger-subtle);
+    --_text: var(--nb-color-danger-text);
+    --_border: var(--nb-color-danger-border);
+  }
+
+  @media (forced-colors: active) {
+    .nb-alert {
+      border-color: CanvasText;
+    }
+  }
+}

@@ -76,10 +76,10 @@
         "$description": "Body text"
       },
       "muted": {
-        "$value": "{color.neutral.600}",
+        "$value": "{color.neutral.700}",
         "$extensions": {
           "nb.themes": {
-            "dark": "{color.neutral.400}",
+            "dark": "{color.neutral.300}",
             "contrast": "{color.neutral.800}"
           }
         },
@@ -138,10 +138,10 @@
         }
       },
       "strong": {
-        "$value": "{color.neutral.400}",
+        "$value": "{color.neutral.500}",
         "$extensions": {
           "nb.themes": {
-            "dark": "{color.neutral.600}",
+            "dark": "{color.neutral.400}",
             "contrast": "{color.black}"
           }
         },
@@ -288,21 +288,21 @@
     "warning": {
       "$type": "color",
       "default": {
-        "$value": "{color.warning.600}",
+        "$value": "{color.warning.400}",
         "$extensions": {
           "nb.themes": {
             "dark": "{color.warning.400}",
-            "contrast": "{color.warning.800}"
+            "contrast": "{color.warning.300}"
           }
         },
         "$description": "warning fill"
       },
       "hover": {
-        "$value": "{color.warning.700}",
+        "$value": "{color.warning.500}",
         "$extensions": {
           "nb.themes": {
             "dark": "{color.warning.300}",
-            "contrast": "{color.warning.900}"
+            "contrast": "{color.warning.400}"
           }
         }
       },

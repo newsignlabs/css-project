@@ -1,0 +1,18 @@
+@layer nb.layout {
+  /* Gap owns spacing: neutralise flow margins from base typography on direct children. */
+  .nb-stack > * {
+    margin-block: 0;
+  }
+
+  .nb-stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--nb-stack-gap, var(--nb-space-fluid-sm));
+  }
+
+  .nb-stack--xs { --nb-stack-gap: var(--nb-space-fluid-2xs); }
+  .nb-stack--sm { --nb-stack-gap: var(--nb-space-fluid-xs); }
+  .nb-stack--lg { --nb-stack-gap: var(--nb-space-fluid-lg); }
+  .nb-stack--xl { --nb-stack-gap: var(--nb-space-fluid-xl); }
+}

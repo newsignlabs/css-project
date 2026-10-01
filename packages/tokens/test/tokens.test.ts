@@ -96,7 +96,7 @@ describe("tokens.css", () => {
 
   it("re-declares semantic tokens on light and contrast islands", () => {
     expect(css).toMatch(
-      /:root,\n\s+\[data-nb-theme="light"\],\n\s+\[data-nb-theme="contrast"\] \{/,
+      /:root,\n\s+::backdrop,\n\s+\[data-nb-theme="light"\],\n\s+\[data-nb-theme="contrast"\] \{/,
     );
   });
 

@@ -33,28 +33,28 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 
 ### Tests first
 
-- [ ] T017 [P] [US1] Visual + axe specs for base typography/forms/tables page `apps/visual-tests/specs/base.spec.ts`, plus a target-size check asserting every interactive element in manifest examples is ≥ 24×24 CSS px (`target-size.spec.ts`)
-- [ ] T018 [P] [US1] Spec: unlayered consumer override beats component without `!important` (`layers.spec.ts`)
-- [ ] T019 [P] [US1] Spec: dark mode via media and via `data-nb-theme`, including nested islands (light-in-dark, dark-in-light-in-dark) where `dark:`/`light:` utilities follow the *nearest* theme (`theme-switch.spec.ts`, see class-grammar.md §Theme variants)
+- [x] T017 [P] [US1] Visual + axe specs for base typography/forms/tables page `apps/visual-tests/specs/base.spec.ts`, plus a target-size check asserting every interactive element in manifest examples is ≥ 24×24 CSS px (`target-size.spec.ts`)
+- [x] T018 [P] [US1] Spec: unlayered consumer override beats component without `!important` (`layers.spec.ts`)
+- [x] T019 [P] [US1] Spec: dark mode via media and via `data-nb-theme`, including nested islands (light-in-dark, dark-in-light-in-dark) where `dark:`/`light:` utilities follow the *nearest* theme (`theme-switch.spec.ts`, see class-grammar.md §Theme variants)
 
 ### Implementation
 
-- [ ] T020 [US1] Modern reset `src/reset/reset.css` (box-sizing, margin reset, media defaults, `text-size-adjust`, `interpolate-size`)
-- [ ] T021 [US1] Base `src/base/*.css`: fluid type scale, prose rhythm, links, lists, tables, code/kbd, forms baseline, focus-visible ring, selection, print
-- [ ] T022 [P] [US1] Layout primitives `src/layout/`: container, stack, cluster, grid, sidebar, switcher, center, cover, frame
-- [ ] T023 [P] [US1] Component meta format `*.meta.ts` + loader that validates against schema and feeds manifest
-- [ ] T024 [P] [US1] Component: button (+group, icon) with meta & examples
-- [ ] T025 [P] [US1] Component: card
-- [ ] T026 [P] [US1] Component: badge, chip
-- [ ] T027 [P] [US1] Component: alert
-- [ ] T028 [P] [US1] Components: input, textarea, select, checkbox, radio, switch, validation states
-- [ ] T029 [P] [US1] Component: navbar
-- [ ] T030 [P] [US1] Component: modal (`<dialog>`)
-- [ ] T031 [P] [US1] Component: accordion (`<details name>`)
-- [ ] T032 [P] [US1] Component: tabs (CSS `:has()` pattern)
-- [ ] T033 [P] [US1] Component: table styling
-- [ ] T034 [US1] Bundle outputs `newbrush-core.css`, `newbrush.css`, `components/*.css`, `themes/*.css`; manifest v1
-- [ ] T035 [US1] `examples/plain-html` showcasing all M1 components
+- [x] T020 [US1] Modern reset `src/reset/reset.css` (box-sizing, margin reset, media defaults, `text-size-adjust`, `interpolate-size`)
+- [x] T021 [US1] Base `src/base/*.css`: fluid type scale, prose rhythm, links, lists, tables, code/kbd, forms baseline, focus-visible ring, selection, print
+- [x] T022 [P] [US1] Layout primitives `src/layout/`: container, stack, cluster, grid, sidebar, switcher, center, cover, frame
+- [x] T023 [P] [US1] Component meta format `*.meta.ts` + loader that validates against schema and feeds manifest
+- [x] T024 [P] [US1] Component: button (+group, icon) with meta & examples
+- [x] T025 [P] [US1] Component: card
+- [x] T026 [P] [US1] Component: badge, chip
+- [x] T027 [P] [US1] Component: alert
+- [x] T028 [P] [US1] Components: input, textarea, select, checkbox, radio, switch, validation states
+- [x] T029 [P] [US1] Component: navbar
+- [x] T030 [P] [US1] Component: modal (`<dialog>`)
+- [x] T031 [P] [US1] Component: accordion (`<details name>`)
+- [x] T032 [P] [US1] Component: tabs (CSS `:has()` pattern)
+- [x] T033 [P] [US1] Component: table styling
+- [x] T034 [US1] Bundle outputs `newbrush-core.css`, `newbrush.css`, `components/*.css`, `themes/*.css`; manifest v1
+- [x] T035 [US1] `examples/plain-html` showcasing all M1 components
 
 **Checkpoint**: US1 independently shippable as `0.1.0-alpha`.
 

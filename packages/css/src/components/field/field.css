@@ -1,0 +1,35 @@
+@layer nb.components {
+  .nb-field {
+    display: grid;
+    gap: var(--nb-space-1-5);
+    min-inline-size: 0;
+  }
+
+  .nb-field__label {
+    font-size: var(--nb-font-size-sm);
+    font-weight: var(--nb-font-weight-medium);
+    color: var(--nb-color-text);
+  }
+
+  .nb-field__required {
+    color: var(--nb-color-danger-text);
+  }
+
+  .nb-field__hint {
+    margin: 0;
+    font-size: var(--nb-font-size-sm);
+    color: var(--nb-color-text-muted);
+  }
+
+  .nb-field__error {
+    margin: 0;
+    font-size: var(--nb-font-size-sm);
+    font-weight: var(--nb-font-weight-medium);
+    color: var(--nb-color-danger-text);
+  }
+
+  /* Errors are shown once the control is invalid after interaction, or explicitly via aria-invalid. */
+  .nb-field:not(:has(:user-invalid, [aria-invalid="true"])) .nb-field__error--auto {
+    display: none;
+  }
+}
