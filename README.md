@@ -18,11 +18,24 @@ specs/
 ├── 002-distribution-release/       # npm, CDN (jsDelivr/unpkg/cdnjs), downloads, CI/CD
 │   ├── spec.md  plan.md  research.md  tasks.md
 │   └── contracts/cdn-urls.md
-└── 003-mcp-css-tool/               # @newbrush/mcp — CSS/HTML generation tools for AI agents
-    ├── spec.md  plan.md  research.md  quickstart.md  tasks.md
-    └── contracts/mcp-tools.md
+├── 003-mcp-css-tool/               # @newbrush/mcp — CSS/HTML generation tools for AI agents
+│   ├── spec.md  plan.md  research.md  quickstart.md  tasks.md
+│   └── contracts/mcp-tools.md
+└── 004-design-styles/              # One class re-skins everything: minimal, glassy, neon, cyber, pixel
+    ├── spec.md  plan.md  research.md  data-model.md  quickstart.md  tasks.md
+    └── contracts/style-api.md
 docs/ROADMAP.md                     # Cross-feature sequencing to v1.0
 ```
+
+## Signature feature: design styles (planned — specs/004)
+
+```html
+<body class="glassy">   <!-- whole project is glassmorphism -->
+<body class="neon">     <!-- same markup, now neon -->
+```
+
+Built-in styles: `minimal`, `glassy`, `neon`, `cyber`, `pixel` (plus the default). Styles compose with light/dark themes and
+brand colors, work as islands on any element, and the docs are organised around them.
 
 ## Technology at a glance
 

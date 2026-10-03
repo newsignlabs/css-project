@@ -106,6 +106,8 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 
 ## Phase 6: User Story 4 – Full component catalogue (P2) (M4)
 
+> Once feature 004 S1 lands, every new component must ship recipes for each built-in design style (004 FR-009).
+
 - [ ] T066 [P] [US4] Content: prose, code, kbd, blockquote, list-group, divider, avatar
 - [ ] T067 [P] [US4] Actions: split button, FAB, link styles
 - [ ] T068 [P] [US4] Forms: range, file, input-group, floating label, fieldset
@@ -126,6 +128,8 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [ ] T079 [US5] View-transition helpers and `nb-reveal` scroll-driven animations with `@supports` gates
 
 ## Phase 8: User Story 6 – Docs & playground (P2) (M6)
+
+> Docs information architecture is grouped by design style — see specs/004-design-styles tasks T033–T036.
 
 - [ ] T080 [US6] Scaffold `apps/docs` (Astro + Starlight), theme with newBrush itself
 - [ ] T081 [US6] Manifest-driven page generator (components, utilities, tokens tables)

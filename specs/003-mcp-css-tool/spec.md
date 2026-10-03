@@ -115,7 +115,7 @@ Clients supporting MCP UI resources (MCP Apps) can render a sandboxed preview of
 ## Requirements *(mandatory)*
 
 - **FR-001**: Server MUST implement MCP via the official TypeScript SDK with **stdio** and **Streamable HTTP** transports.
-- **FR-002**: Server MUST expose tools: `generate_css`, `search`, `get_component`, `get_tokens`, `compose_component`, `build_page`, `create_theme`, `validate_markup`, `explain_class`, `convert_markup`.
+- **FR-002**: Server MUST expose tools: `generate_css`, `search`, `get_component`, `get_tokens`, `compose_component`, `build_page`, `create_theme`, `validate_markup`, `explain_class`, `convert_markup`. Feature 004 adds `list_styles`, a `style` argument on `build_page`/`compose_component`/`generate_css`, resource `newbrush://styles/{name}` and a `restyle` prompt.
 - **FR-003**: Every tool MUST have a JSON Schema input *and* `outputSchema` with `structuredContent` results, plus tool annotations (`readOnlyHint: true`, `idempotentHint: true`, `openWorldHint: false`).
 - **FR-004**: Server MUST expose resources: `newbrush://manifest`, `newbrush://components/{name}`, `newbrush://utilities/{family}`, `newbrush://tokens/{group}`, `newbrush://themes/{name}`, `newbrush://docs/{slug}`, `newbrush://sections/{name}` (page-section blueprints).
 - **FR-005**: Server MUST expose prompts: `design_landing_page`, `restyle_with_brand`, `convert_from_tailwind`, `build_dashboard`.
