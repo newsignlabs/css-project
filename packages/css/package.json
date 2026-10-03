@@ -55,6 +55,7 @@
     "size": "size-limit"
   },
   "devDependencies": {
+    "@newbrush/engine": "workspace:*",
     "@newbrush/schema": "workspace:*",
     "@newbrush/stylelint-config": "workspace:*",
     "@newbrush/tokens": "workspace:*",

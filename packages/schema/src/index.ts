@@ -75,6 +75,7 @@ export const UtilityFamily = z.object({
         "time",
         "image-safe",
         "grid-template",
+        "ident",
       ]),
     })
     .optional(),

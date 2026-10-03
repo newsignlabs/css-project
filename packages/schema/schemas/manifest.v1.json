@@ -251,7 +251,8 @@
                   "number",
                   "time",
                   "image-safe",
-                  "grid-template"
+                  "grid-template",
+                  "ident"
                 ]
               }
             },

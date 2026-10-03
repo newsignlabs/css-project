@@ -5,6 +5,7 @@
  */
 import { copyFile, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { createEngine } from "@newbrush/engine";
 import { Component, LAYERS, Manifest } from "@newbrush/schema";
 import browserslist from "browserslist";
 import { browserslistToTargets, bundleAsync } from "lightningcss";
@@ -94,6 +95,7 @@ for (const theme of ["light", "dark", "contrast"]) {
   );
 }
 
+const utilityEngine = createEngine({ content: ["**/*"] });
 const tokens = JSON.parse(
   await readFile(fileURLToPath(import.meta.resolve("@newbrush/tokens/tokens.json")), "utf8"),
 );
@@ -104,8 +106,8 @@ const manifest = Manifest.parse({
   layers: [...LAYERS],
   tokens: tokens.tokens,
   themes: tokens.themes,
-  variants: [],
-  utilities: [],
+  variants: utilityEngine.variants(),
+  utilities: utilityEngine.utilityFamilies(),
   components: await loadComponents(names),
 });
 await writeFile(path("dist/manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);

@@ -72,5 +72,9 @@ describe("manifest.json", () => {
     expect(manifest.layers).toEqual(LAYERS);
     expect(manifest.tokens.length).toBeGreaterThan(200);
     expect(manifest.themes.map((t) => t.name)).toEqual(["light", "dark", "contrast"]);
+    expect(manifest.utilities.length).toBeGreaterThanOrEqual(100);
+    expect(manifest.variants.map((v) => v.name)).toEqual(
+      expect.arrayContaining(["md", "@md", "hover", "dark"]),
+    );
   });
 });

@@ -62,29 +62,29 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 
 ### Tests first
 
-- [ ] T036 [P] [US2] Parser tests from `contracts/class-grammar.md` table + fuzz tests (fast-check) for rejection of unsafe arbitrary values
-- [ ] T037 [P] [US2] Generator golden tests: input class list → expected CSS snapshot; determinism test (two runs byte-equal, shuffled input)
-- [ ] T038 [P] [US2] Extractor tests for html/jsx/vue/svelte/template-literal sources
+- [x] T036 [P] [US2] Parser tests from `contracts/class-grammar.md` table + fuzz tests (fast-check) for rejection of unsafe arbitrary values
+- [x] T037 [P] [US2] Generator golden tests: input class list → expected CSS snapshot; determinism test (two runs byte-equal, shuffled input)
+- [x] T038 [P] [US2] Extractor tests for html/jsx/vue/svelte/template-literal sources
 - [ ] T092 [P] [US2] CLI tests (`packages/cli/test/`): `init|build|watch|explain|doctor|contrast|tokens|theme create` against temp fixtures, asserting outputs and exit codes 0/1/2/3 per contracts/engine-api.md — must fail before T054
 - [ ] T093 [P] [US2] Plugin tests: PostCSS fixture (`@newbrush utilities;` / `@nb-apply` replacement, determinism) and Vite fixture (build output + HMR CSS update < 50 ms p95) — must fail before T055/T056
-- [ ] T039 [P] [US2] Benchmark harness (`packages/engine/bench`) for SC-004: incremental p95, 1 000-file and 10 000-file cold builds
+- [x] T039 [P] [US2] Benchmark harness (`packages/engine/bench`) for SC-004: incremental p95, 1 000-file and 10 000-file cold builds
 
 ### Implementation
 
-- [ ] T040 [US2] `engine/parser`: tokenizer + AST per EBNF
-- [ ] T041 [US2] `engine/variants`: registry with responsive, container, state, structural, relational (group/peer/has), theme (nearest-theme resolution per class-grammar.md §Theme variants), motion, direction, print, supports, arbitrary
-- [ ] T042 [US2] `engine/validate`: arbitrary-value grammars (length, color, image-safe, number, time, grid-template)
-- [ ] T043 [P] [US2] Families: layout (display, position, inset, z, overflow, container, columns, aspect)
-- [ ] T044 [P] [US2] Families: flex & grid (direction, wrap, grow/shrink, basis, grid-cols/rows, span, gap, place/justify/align)
-- [ ] T045 [P] [US2] Families: spacing (p*, m*, space-*, logical variants)
-- [ ] T046 [P] [US2] Families: sizing (w, h, min/max, size, inline/block)
-- [ ] T047 [P] [US2] Families: typography (font, text size/color, leading, tracking, weight, align, decoration, truncate, line-clamp, balance/pretty)
-- [ ] T048 [P] [US2] Families: color & background (bg, gradients, opacity modifier, color-mix)
-- [ ] T049 [P] [US2] Families: border, radius, outline, ring, divide
-- [ ] T050 [P] [US2] Families: effects (shadow, blur, backdrop, glass, mix-blend, filters)
-- [ ] T051 [P] [US2] Families: motion (transition, duration, ease, animate, view-transition-name), interactivity (cursor, select, scroll-snap, touch), a11y (sr-only, forced-color-adjust)
-- [ ] T052 [US2] `engine/sort` + `engine/print` (stable ordering, escaping) and `generate()` API
-- [ ] T053 [US2] `engine/scan` + incremental cache; `@nb-apply` directive
+- [x] T040 [US2] `engine/parser`: tokenizer + AST per EBNF
+- [x] T041 [US2] `engine/variants`: registry with responsive, container, state, structural, relational (group/peer/has), theme (nearest-theme resolution per class-grammar.md §Theme variants), motion, direction, print, supports, arbitrary
+- [x] T042 [US2] `engine/validate`: arbitrary-value grammars (length, color, image-safe, number, time, grid-template)
+- [x] T043 [P] [US2] Families: layout (display, position, inset, z, overflow, container, columns, aspect)
+- [x] T044 [P] [US2] Families: flex & grid (direction, wrap, grow/shrink, basis, grid-cols/rows, span, gap, place/justify/align)
+- [x] T045 [P] [US2] Families: spacing (p*, m*, space-*, logical variants)
+- [x] T046 [P] [US2] Families: sizing (w, h, min/max, size, inline/block)
+- [x] T047 [P] [US2] Families: typography (font, text size/color, leading, tracking, weight, align, decoration, truncate, line-clamp, balance/pretty)
+- [x] T048 [P] [US2] Families: color & background (bg, gradients, opacity modifier, color-mix)
+- [x] T049 [P] [US2] Families: border, radius, outline, ring, divide
+- [x] T050 [P] [US2] Families: effects (shadow, blur, backdrop, glass, mix-blend, filters)
+- [x] T051 [P] [US2] Families: motion (transition, duration, ease, animate, view-transition-name), interactivity (cursor, select, scroll-snap, touch), a11y (sr-only, forced-color-adjust)
+- [x] T052 [US2] `engine/sort` + `engine/print` (stable ordering, escaping) and `generate()` API
+- [x] T053 [US2] `engine/scan` + incremental cache; `@nb-apply` directive
 - [ ] T054 [US2] `@newbrush/cli` commands: init, build, watch, explain, doctor (contracts/engine-api.md); `doctor` warns on unprefixed utilities next to Tailwind/Bootstrap (FR-009)
 - [ ] T055 [P] [US2] `@newbrush/postcss` plugin
 - [ ] T056 [P] [US2] `@newbrush/vite` plugin with HMR
