@@ -30,6 +30,15 @@
     "./css": "./dist/newbrush.css",
     "./core.css": "./dist/newbrush-core.css",
     "./full.css": "./dist/newbrush-full.css",
+    "./config": {
+      "types": "./config/index.d.ts",
+      "default": "./config/index.js"
+    },
+    "./classes": {
+      "types": "./dist/classes.d.ts"
+    },
+    "./vscode.css-data.json": "./dist/vscode.css-data.json",
+    "./vscode.html-data.json": "./dist/vscode.html-data.json",
     "./components/*": "./dist/components/*",
     "./themes/*": "./dist/themes/*",
     "./manifest.json": "./dist/manifest.json",
@@ -38,6 +47,7 @@
   "files": [
     "dist",
     "src",
+    "config",
     "LICENSE",
     "README.md"
   ],

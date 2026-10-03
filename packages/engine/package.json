@@ -40,10 +40,12 @@
     "chokidar": "^4.0.3",
     "fast-glob": "^3.3.3",
     "jiti": "^2.7.0",
-    "lightningcss": "^1.33.0"
+    "lightningcss": "^1.33.0",
+    "picomatch": "^4.0.7"
   },
   "devDependencies": {
     "@newbrush/tokens": "workspace:*",
+    "@types/picomatch": "^4.0.3",
     "fast-check": "^4.10.2",
     "tsup": "^8.5.1",
     "tsx": "^4.23.15",

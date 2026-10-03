@@ -2,3 +2,6 @@ packages:
   - packages/*
   - apps/*
   - examples/*
+  # Templates that install published packages from npm (not part of the workspace):
+  - '!examples/next-app'
+  - '!examples/astro-app'

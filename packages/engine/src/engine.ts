@@ -1,5 +1,6 @@
 import {
   Config,
+  LAYERS,
   type ParsedClass,
   type ResolvedConfig,
   type UtilityFamily,
@@ -419,8 +420,11 @@ export class Engine {
   }
 }
 
+/** Full layer order first, so utilities stay last however a bundler concatenates files (constitution §I). */
+const LAYER_ORDER = `@layer ${LAYERS.join(", ")};`;
+
 function printLayer(rules: Rule[], keyframes: Map<string, string>): string {
-  const lines: string[] = ["@layer nb.utilities {"];
+  const lines: string[] = [LAYER_ORDER, "@layer nb.utilities {"];
   for (const [name, body] of [...keyframes].sort(([a], [b]) => (a < b ? -1 : 1))) {
     lines.push(`  @keyframes ${name} {`, `    ${body}`, "  }");
   }

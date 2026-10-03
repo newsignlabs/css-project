@@ -49,7 +49,9 @@ describe("validateArbitrary()", () => {
         (value) => {
           for (const root of ["w", "bg", "text", "grid-cols", "p"]) {
             const css = engine.generate([`${root}-[${value}]`]).css;
-            const body = css.replace(/^@layer nb\.utilities \{\n?/, "").replace(/\}\s*$/, "");
+            const body = css
+              .replace(/^@layer [^;]+;\n@layer nb\.utilities \{\n?/, "")
+              .replace(/\}\s*$/, "");
             // Exactly one rule at most, and no characters that could open a new block or statement.
             expect((body.match(/\{/g) ?? []).length).toBeLessThanOrEqual(1);
             expect(body).not.toMatch(/;\s*[a-z-]+\s*:[^}]*;[^}]*;|@import|url\(|<\//i);

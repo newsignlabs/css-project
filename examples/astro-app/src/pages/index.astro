@@ -1,0 +1,20 @@
+---
+import "../styles/app.css";
+
+const items = ["Tokens", "Utilities", "Components"];
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>newBrush + Astro</title>
+  </head>
+  <body>
+    <main class="nb-container py-16 nb-stack">
+      <h1 class="text-5xl font-bold tracking-tight">newBrush + Astro</h1>
+      <div class="grid gap-6 md:grid-cols-3">
+        {items.map((title) => <article class="nb-card p-6"><h2 class="nb-card__title">{title}</h2></article>)}
+      </div>
+    </main>
+  </body>
+</html>

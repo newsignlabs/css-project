@@ -65,8 +65,8 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [x] T036 [P] [US2] Parser tests from `contracts/class-grammar.md` table + fuzz tests (fast-check) for rejection of unsafe arbitrary values
 - [x] T037 [P] [US2] Generator golden tests: input class list → expected CSS snapshot; determinism test (two runs byte-equal, shuffled input)
 - [x] T038 [P] [US2] Extractor tests for html/jsx/vue/svelte/template-literal sources
-- [ ] T092 [P] [US2] CLI tests (`packages/cli/test/`): `init|build|watch|explain|doctor|contrast|tokens|theme create` against temp fixtures, asserting outputs and exit codes 0/1/2/3 per contracts/engine-api.md — must fail before T054
-- [ ] T093 [P] [US2] Plugin tests: PostCSS fixture (`@newbrush utilities;` / `@nb-apply` replacement, determinism) and Vite fixture (build output + HMR CSS update < 50 ms p95) — must fail before T055/T056
+- [x] T092 [P] [US2] CLI tests (`packages/cli/test/`): `init|build|watch|explain|doctor|contrast|tokens|theme create` — *`contrast` and `theme create` tests land with T062/T065 (US3)* against temp fixtures, asserting outputs and exit codes 0/1/2/3 per contracts/engine-api.md — must fail before T054
+- [x] T093 [P] [US2] Plugin tests: PostCSS fixture (`@newbrush utilities;` / `@nb-apply` replacement, determinism) and Vite fixture (build output + HMR CSS update < 50 ms p95) — must fail before T055/T056
 - [x] T039 [P] [US2] Benchmark harness (`packages/engine/bench`) for SC-004: incremental p95, 1 000-file and 10 000-file cold builds
 
 ### Implementation
@@ -85,12 +85,12 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 - [x] T051 [P] [US2] Families: motion (transition, duration, ease, animate, view-transition-name), interactivity (cursor, select, scroll-snap, touch), a11y (sr-only, forced-color-adjust)
 - [x] T052 [US2] `engine/sort` + `engine/print` (stable ordering, escaping) and `generate()` API
 - [x] T053 [US2] `engine/scan` + incremental cache; `@nb-apply` directive
-- [ ] T054 [US2] `@newbrush/cli` commands: init, build, watch, explain, doctor (contracts/engine-api.md); `doctor` warns on unprefixed utilities next to Tailwind/Bootstrap (FR-009)
-- [ ] T055 [P] [US2] `@newbrush/postcss` plugin
-- [ ] T056 [P] [US2] `@newbrush/vite` plugin with HMR
-- [ ] T057 [US2] Curated prebuilt utility preset → `newbrush-full.css` (budget-checked)
-- [ ] T058 [US2] Emit TS class-name types + VS Code custom data (`dist/vscode.css-data.json`)
-- [ ] T059 [US2] `examples/vite-app`, `examples/next-app`, `examples/astro-app`
+- [x] T054 [US2] `@newbrush/cli` commands: init, build, watch, explain, doctor (contracts/engine-api.md); `doctor` warns on unprefixed utilities next to Tailwind/Bootstrap (FR-009)
+- [x] T055 [P] [US2] `@newbrush/postcss` plugin
+- [x] T056 [P] [US2] `@newbrush/vite` plugin with HMR
+- [x] T057 [US2] Curated prebuilt utility preset → `newbrush-full.css` (budget-checked)
+- [x] T058 [US2] Emit TS class-name types + VS Code custom data (`dist/vscode.css-data.json`)
+- [x] T059 [US2] `examples/vite-app`, `examples/next-app`, `examples/astro-app` — *vite-app builds in the workspace; next/astro are templates that install from npm once 0.1.0 is published*
 
 **Checkpoint**: `0.2.0-alpha` with JIT engine.
 

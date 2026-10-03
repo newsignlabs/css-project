@@ -8,5 +8,5 @@ export default defineConfig({
   dts: true,
   clean: true,
   target: "es2022",
-  external: ["lightningcss", "browserslist", "chokidar", "fast-glob", "jiti"],
+  external: ["lightningcss", "browserslist", "chokidar", "fast-glob", "jiti", "picomatch"],
 });

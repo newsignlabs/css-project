@@ -89,3 +89,23 @@ describe("optimize()", () => {
     expect(code).toBe(".a .b{color:red}");
   });
 });
+
+describe("watch()", () => {
+  it("reports changes to files matching the globs only", async () => {
+    const { watch, globBase } = await import("../src/node/index.ts");
+    expect(globBase("src/**/*.html")).toBe("src");
+    expect(globBase("./index.html")).toBe("index.html");
+    expect(globBase("**/*.ts")).toBe(".");
+    const { mkdir } = await import("node:fs/promises");
+    await mkdir(join(dir, "src"));
+    await writeFile(join(dir, "src/a.html"), "a");
+    const seen: string[] = [];
+    const close = watch(["src/**/*.html"], dir, (p) => seen.push(p));
+    await new Promise((r) => setTimeout(r, 300));
+    await writeFile(join(dir, "src/a.html"), "b");
+    await writeFile(join(dir, "src/b.txt"), "ignored");
+    for (let i = 0; i < 50 && seen.length === 0; i++) await new Promise((r) => setTimeout(r, 50));
+    await close();
+    expect(seen).toEqual([join(dir, "src/a.html")]);
+  });
+});

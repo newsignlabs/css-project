@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>newBrush + Vite</title>
+  </head>
+  <body>
+    <header class="nb-navbar">
+      <a class="nb-navbar__brand" href="/">newBrush</a>
+      <nav class="nb-navbar__nav" aria-label="Main">
+        <ul class="nb-navbar__links">
+          <li><a class="nb-navbar__link" href="#features" aria-current="page">Features</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="nb-container py-16">
+      <section class="grid gap-6 md:grid-cols-[1.2fr_1fr] items-center">
+        <div class="nb-stack">
+          <h1 class="text-5xl font-bold tracking-tight">Build with newBrush</h1>
+          <p class="text-lg text-muted max-w-prose">Components, utilities and themes from one token source.</p>
+          <div class="nb-cluster">
+            <a class="nb-btn nb-btn--primary nb-btn--lg" href="#features">Get started</a>
+            <a class="nb-btn nb-btn--ghost nb-btn--lg" href="https://github.com/newsignlabs/css-project">GitHub</a>
+          </div>
+        </div>
+        <div class="glass rounded-2xl p-8 shadow-xl bg-linear-to-b from-brand-100 to-accent-100 dark:from-brand-900 dark:to-accent-900">
+          <p class="text-sm uppercase tracking-wide text-accent">Live</p>
+          <p class="text-3xl font-semibold mt-2">On-demand CSS</p>
+        </div>
+      </section>
+      <section id="features" class="grid gap-6 mt-16 md:grid-cols-3"></section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

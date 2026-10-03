@@ -1,0 +1,52 @@
+{
+  "name": "@newbrush/cli",
+  "version": "0.0.0",
+  "description": "The nb command: init, build, watch, explain, doctor and tokens for newBrush projects.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/newsignlabs/css-project",
+    "directory": "packages/cli"
+  },
+  "bin": {
+    "nb": "./dist/bin.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/run.d.ts",
+      "import": "./dist/run.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup src/run.ts src/bin.ts --format esm --dts --clean --target node20",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@newbrush/engine": "workspace:*",
+    "@newbrush/tokens": "workspace:*",
+    "lightningcss": "^1.33.0"
+  },
+  "peerDependencies": {
+    "newbrush": "*"
+  },
+  "peerDependenciesMeta": {
+    "newbrush": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "newbrush": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  }
+}

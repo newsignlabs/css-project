@@ -140,3 +140,16 @@ describe("generate()", () => {
     );
   });
 });
+
+describe("processDirectives()", () => {
+  it("hoists the full layer order above @import so utilities stay last", async () => {
+    const { processDirectives } = await import("../src/index.ts");
+    const { css } = processDirectives('@import "newbrush";\n@newbrush utilities;\n', engine, [
+      "p-4",
+    ]);
+    expect(
+      css.indexOf("@layer nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities;"),
+    ).toBe(0);
+    expect(css.indexOf('@import "newbrush"')).toBeGreaterThan(0);
+  });
+});

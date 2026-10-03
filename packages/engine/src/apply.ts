@@ -1,3 +1,4 @@
+import { LAYERS } from "@newbrush/schema";
 import { type Engine, printRule } from "./engine.ts";
 
 export class DirectiveError extends Error {
@@ -10,6 +11,7 @@ export class DirectiveError extends Error {
   }
 }
 
+const LAYER_ORDER = `@layer ${LAYERS.join(", ")};`;
 const APPLY = /@nb-apply\s+([^;{}]+);/g;
 const UTILITIES = /@newbrush\s+utilities\s*;/g;
 
@@ -54,6 +56,9 @@ export function processDirectives(
     hasUtilities = true;
     return engine.generate(candidates, { reportUnknown: false }).css;
   });
+  // Hoist the full layer order above any @import (allowed by CSS Cascade 5), so bundlers that inline or reorder
+  // imports can never demote nb.utilities below the framework layers.
+  if (hasUtilities) out = `${LAYER_ORDER}\n${out}`;
   return { css: out, hasUtilities };
 }
 

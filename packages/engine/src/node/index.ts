@@ -1,12 +1,13 @@
 /** Node-only helpers for @newbrush/engine: config loading, content scanning, watching and minification. */
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { join, relative, resolve, sep } from "node:path";
 import { Config, type ResolvedConfig } from "@newbrush/schema";
 import browserslist from "browserslist";
 import chokidar from "chokidar";
 import fg from "fast-glob";
 import { browserslistToTargets, transform } from "lightningcss";
+import picomatch from "picomatch";
 import { Engine } from "../engine.ts";
 import { extractCandidates } from "../extract.ts";
 
@@ -147,19 +148,39 @@ export async function scan(globs: string[], cwd = process.cwd()): Promise<Set<st
   return new Scanner(globs, cwd).scanAll();
 }
 
-/** Watches content globs; calls `onChange` with the changed file path. Returns a close function. */
+/** Static directory prefix of a glob, e.g. "src" for a glob that starts with src/ followed by wildcards. */
+export function globBase(glob: string): string {
+  const parts = glob.replace(/^\.\//, "").split("/");
+  const base: string[] = [];
+  for (const part of parts) {
+    if (/[*?[\]{}()!]/.test(part)) break;
+    base.push(part);
+  }
+  return base.join("/") || ".";
+}
+
+/**
+ * Watches content globs (chokidar v4 has no glob support, so each glob's static base is watched and events are
+ * filtered with picomatch). Calls `onChange` with the absolute path. Returns a close function.
+ */
 export function watch(
   globs: string[],
   cwd: string,
   onChange: (path: string, event: "add" | "change" | "unlink") => void,
 ): () => Promise<void> {
-  const watcher = chokidar.watch(globs, {
-    cwd,
+  const patterns = globs.map((g) => g.replace(/^\.\//, ""));
+  const isMatch = picomatch(patterns, { dot: false });
+  const bases = [...new Set(patterns.map(globBase))].map((b) => resolve(cwd, b));
+  const watcher = chokidar.watch(bases, {
     ignored: (p) => /node_modules|\.git[\\/]|[\\/]dist[\\/]/.test(p),
     ignoreInitial: true,
   });
-  for (const event of ["add", "change", "unlink"] as const)
-    watcher.on(event, (p) => onChange(resolve(cwd, p), event));
+  for (const event of ["add", "change", "unlink"] as const) {
+    watcher.on(event, (p) => {
+      const abs = resolve(cwd, p);
+      if (isMatch(relative(cwd, abs).split(sep).join("/"))) onChange(abs, event);
+    });
+  }
   return () => watcher.close();
 }
 

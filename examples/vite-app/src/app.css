@@ -1,0 +1,6 @@
+@import "newbrush";
+@newbrush utilities;
+
+.feature {
+  @nb-apply rounded-xl p-6 transition hover:shadow-lg;
+}
