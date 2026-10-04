@@ -3,17 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Generates catalyst/client/index.html — a self-contained 'how newBrush is made' overview page.",
+  "description": "Generates catalyst/client/ \u2014 a 'how newBrush is made' overview page with a legacy-compatible stylesheet.",
   "scripts": {
     "overview": "tsx build.ts",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@newbrush/engine": "workspace:*",
     "@newbrush/schema": "workspace:*",
     "@newbrush/tokens": "workspace:*",
+    "browserslist": "^4.25.0",
+    "lightningcss": "^1.33.0",
     "newbrush": "workspace:*",
     "tsx": "^4.23.15",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
   }
 }

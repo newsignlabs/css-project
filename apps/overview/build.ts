@@ -1,8 +1,11 @@
 /**
- * Builds catalyst/client/index.html: a single, self-contained page explaining how newBrush is made today.
+ * Builds catalyst/client/: index.html explaining how newBrush is made today, plus overview.css and overview.js.
  * Everything is generated from real build outputs (manifest, tokens, dist sizes, engine) — nothing is hand-copied.
+ * The stylesheet is a legacy-compatible build (see compat.ts) and both assets are external files, so the page
+ * also renders in older browsers and on hosts whose Content-Security-Policy blocks inline <style>/<script>.
  * Usage: pnpm --filter @newbrush/overview build   (after `pnpm build`)
  */
+import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -10,6 +13,7 @@ import { brotliCompressSync } from "node:zlib";
 import { createEngine, extractCandidates } from "@newbrush/engine";
 import { optimize } from "@newbrush/engine/node";
 import type { Component, Manifest } from "@newbrush/schema";
+import { compat } from "./compat.ts";
 
 const require = createRequire(import.meta.url);
 const root = new URL("../../", import.meta.url);
@@ -390,7 +394,7 @@ const pageCss = `
 `;
 const candidates = extractCandidates(body);
 const utilities = engine.generate(candidates, { reportUnknown: false });
-// Inlined CSS has no sibling .map file, so drop source map references (they 404 in devtools).
+// The page ships no .map files, so drop source map references (they 404 in devtools).
 const stripSourceMap = (css: string) => css.replace(/\/\*# sourceMappingURL=[^*]*\*\/\s*/g, "");
 const framework = stripSourceMap(await read(join(dist, "newbrush.min.css")));
 const utilityCss = stripSourceMap(
@@ -409,6 +413,28 @@ buttons.forEach((b) => b.addEventListener("click", () => apply(b.dataset.theme))
 try { const saved = localStorage.getItem("nb-overview-theme"); if (saved) apply(saved); } catch {}
 `;
 
+// Inline style="" attributes become generated rules (with !important to keep inline precedence), so the page
+// works even where a Content-Security-Policy forbids inline styles.
+const inlineStyles = new Map<string, number>();
+const page = body.replace(/ style="([^"]*)"/g, (_, decl: string) => {
+  if (!inlineStyles.has(decl)) inlineStyles.set(decl, inlineStyles.size);
+  return ` data-nb-s="${inlineStyles.get(decl)}"`;
+});
+const inlineCss = [...inlineStyles]
+  .map(([decl, id]) => {
+    const declarations = decl
+      .split(";")
+      .map((d) => d.trim())
+      .filter(Boolean)
+      .map((d) => `${d} !important`);
+    return `[data-nb-s="${id}"]{${declarations.join(";")}}`;
+  })
+  .join("\n");
+// Unlayered page styles come last, exactly as they would after the framework's layers.
+const css = compat(`${framework}\n${utilityCss}\n${pageCss}\n${inlineCss}`);
+// Content hash in the asset URLs, so a redeploy never pairs new HTML with a cached stylesheet.
+const version = createHash("sha256").update(css).update(script).digest("hex").slice(0, 10);
+
 const html = `<!doctype html>
 <html lang="en">
 <head>
@@ -416,13 +442,11 @@ const html = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>How newBrush is made</title>
 <meta name="description" content="Live overview of the newBrush CSS framework: architecture, tokens, components, utility engine and status.">
-<style>${framework}</style>
-<style>${utilityCss}</style>
-<style>${pageCss}</style>
+<link rel="stylesheet" href="overview.css?v=${version}">
 </head>
 <body>
-${body}
-<script>${script}</script>
+${page}
+<script src="overview.js?v=${version}" defer></script>
 <!-- utilities generated for this page: ${utilities.classes.used.length} classes, ${kb(utilityCss.length)} -->
 </body>
 </html>
@@ -430,6 +454,8 @@ ${body}
 
 const outDir = new URL("catalyst/client/", root);
 await writeFile(new URL("index.html", outDir), html);
+await writeFile(new URL("overview.css", outDir), css);
+await writeFile(new URL("overview.js", outDir), `${script.trim()}\n`);
 console.log(
-  `overview: catalyst/client/index.html (${kb(html.length)}, ${manifest.components.length} components, ${utilities.classes.used.length} generated utilities)`,
+  `overview: catalyst/client/index.html (${kb(html.length)}, overview.css ${kb(css.length)}, ${manifest.components.length} components, ${utilities.classes.used.length} generated utilities)`,
 );
