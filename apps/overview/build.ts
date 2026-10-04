@@ -258,8 +258,10 @@ const explainRows = examples
     return `<tr><td><code>${esc(cls)}</code></td><td class="text-sm text-muted">${"family" in x ? esc(x.family) : ""}</td><td><pre class="text-xs"><code>${esc(css)}</code></pre></td></tr>`;
   })
   .join("");
-const byCategory = Object.entries(Object.groupBy(families, (f) => f.category))
-  .map(([cat, list]) => `<span class="nb-chip">${cat} · ${list?.length ?? 0}</span>`)
+const familyCounts = new Map<string, number>();
+for (const f of families) familyCounts.set(f.category, (familyCounts.get(f.category) ?? 0) + 1);
+const byCategory = [...familyCounts]
+  .map(([cat, count]) => `<span class="nb-chip">${cat} · ${count}</span>`)
   .join("");
 const variantChips = manifest.variants
   .map((v) => `<code class="text-xs">${esc(v.name)}</code>`)

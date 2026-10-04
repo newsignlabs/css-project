@@ -6,7 +6,17 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/dist", "!**/schemas", "!**/.turbo", "!**/*.css", "!specs", "!.specify"]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/schemas",
+      "!**/.turbo",
+      "!**/*.css",
+      "!specs",
+      "!.specify",
+      "!catalyst/client/index.html",
+      "!**/*.astro"
+    ]
   },
   "formatter": {
     "enabled": true,
