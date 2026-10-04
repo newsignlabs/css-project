@@ -10,8 +10,8 @@
 
 ## R-02 Activation selector
 
-- **Decision**: `.glassy, [data-nb-style=glassy]` set the inherited marker `--nb-style: glassy` plus that style's token
-  overrides. Recipes are scoped `:where(.glassy, [data-nb-style=glassy]) .nb-card { … }` (zero specificity) inside
+- **Decision**: `.g-morph, [data-nb-style=g-morph]` set the inherited marker `--nb-style: g-morph` plus that style's token
+  overrides. Recipes are scoped `:where(.g-morph, [data-nb-style=g-morph]) .nb-card { … }` (zero specificity) inside
   `@layer nb.styles`.
 - **Nearest style wins**: token overrides cascade naturally by inheritance (an inner `.neon` redeclares the tokens). Recipes
   use the same nearest-ancestor strategy as theme variants (001 class-grammar §Theme variants): style queries on
@@ -29,7 +29,7 @@
 ## R-04 Styles × themes
 
 - **Decision**: Style token overrides are written *relative to theme semantics* wherever possible
-  (`glassy` surface = `color-mix(in oklch, var(--nb-color-surface-raised) 60%, transparent)`), so most styles need no
+  (`g-morph` surface = `color-mix(in oklch, var(--nb-color-surface-raised) 60%, transparent)`), so most styles need no
   per-scheme values. Styles with their own palette (neon, cyber) define `light` and `dark` maps emitted with the same
   scheme selectors tokens already use (`[data-nb-theme=dark]`, `prefers-color-scheme`).
 - **preferredScheme**: dark-first styles (neon, cyber) set `color-scheme` and dark tokens when no `data-nb-theme` is present.
@@ -41,10 +41,11 @@
 | Style | Techniques | Fallbacks / guards |
 | ----- | ---------- | ------------------ |
 | minimal | `--nb-elevation-*: none`, hairline borders, radius xs–sm, reduced chroma (`oklch(from … l calc(c*.4) h)`), airy density | — |
-| glassy | `backdrop-filter: blur() saturate()`, translucent surfaces via `color-mix`, 1px light inner border (`inset` shadow), body ambient mesh (radial gradients from brand/accent) | `@supports not (backdrop-filter: blur(1px))` and `prefers-reduced-transparency` → opaque surfaces; min surface opacity guaranteeing text contrast |
+| g-morph | `backdrop-filter: blur() saturate()`, translucent surfaces via `color-mix`, 1px light inner border (`inset` shadow), body ambient mesh (radial gradients from brand/accent) | `@supports not (backdrop-filter: blur(1px))` and `prefers-reduced-transparency` → opaque surfaces; min surface opacity guaranteeing text contrast |
 | neon | layered `box-shadow`/`text-shadow` glows from accent via relative color, outlined buttons, glow focus ring, near-black surfaces | glows removed under forced-colors/contrast; pulse animation motion-safe only; never color-only state |
 | cyber | `clip-path: polygon()` notched corners (token `--nb-cut`), mono/condensed font stack, uppercase labels, scanline overlay (`repeating-linear-gradient` on `body::after`, `pointer-events:none`), glitch hover (`@keyframes` + `steps()`) | clip-path clips focus outlines → focus ring drawn with `drop-shadow` filter or inner outline; glitch motion-safe only; scanlines off in print/reduced-motion |
-| pixel | radius 0, stepped borders via multi-step `box-shadow`, 4 px grid density, `image-rendering: pixelated` on `img`, `steps()` easing tokens, pixel font opt-in | font fallback `ui-monospace`; `font-size-adjust` to limit shift |
+| n-morph | surface = background color; dual soft shadows (`--nb-soft-light`/`--nb-soft-shadow` derived from surface via relative color), inset shadows for pressed/inputs, large radius | low edge contrast → borders added under contrast theme/forced-colors; focus ring strengthened; pressed state also changes text weight/icon, not shadow only |
+| pixelate | radius 0, stepped borders via multi-step `box-shadow`, 4 px grid density, `image-rendering: pixelated` on `img`, `steps()` easing tokens, pixel font opt-in | font fallback `ui-monospace`; `font-size-adjust` to limit shift |
 
 ## R-06 Packaging & budgets
 
@@ -63,7 +64,7 @@
   site-wide (persisted). IA:
   ```
   Getting started → 1 Install · 2 Choose your style · 3 Theme & brand · 4 Build
-  Styles          → Overview (comparison grid) · Default · Minimal · Glassy · Neon · Cyber · Pixel · Custom styles
+  Styles          → Overview (comparison grid) · Default · Minimal · G-morph · Neon · Cyber · Pixel · Custom styles
   Components      → each page: example + style tabs (all styles side by side) + tokens + a11y
   Utilities · Tokens · Themes · Tooling (CLI, Vite, PostCSS) · MCP
   ```

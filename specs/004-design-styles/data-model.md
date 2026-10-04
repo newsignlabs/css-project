@@ -10,11 +10,11 @@ packages/styles/src/<name>/
 ```
 
 ```jsonc
-// packages/styles/src/glassy/style.json
+// packages/styles/src/g-morph/style.json
 {
-  "name": "glassy",
-  "aliases": ["glass"],
-  "title": "Glassy",
+  "name": "g-morph",
+  "aliases": ["glass", "nb-g-morph"],
+  "title": "G-morph",
   "description": "Glassmorphism: translucent surfaces, backdrop blur and soft light edges.",
   "keywords": ["glassmorphism", "frosted", "translucent", "modern", "depth"],
   "preferredScheme": "auto",                 // "light" | "dark" | "auto"
@@ -77,16 +77,16 @@ interface NewBrushConfig {
 
 ```css
 @layer nb.tokens {
-  .glassy, [data-nb-style="glassy"] {
-    --nb-style: glassy;
+  .g-morph, [data-nb-style="g-morph"] {
+    --nb-style: g-morph;
     --nb-radius-md: var(--nb-radius-lg);
     --nb-color-surface-raised: color-mix(in oklch, var(--nb-color-surface-raised-base) 60%, transparent);
   }
-  [data-nb-theme="dark"] :is(.glassy, [data-nb-style="glassy"]) { /* dark-only overrides */ }
+  [data-nb-theme="dark"] :is(.g-morph, [data-nb-style="g-morph"]) { /* dark-only overrides */ }
 }
 @layer nb.styles {
-  :where(.glassy, [data-nb-style="glassy"]) .nb-card { backdrop-filter: blur(var(--nb-blur-md)) saturate(1.5); }
-  @supports not (backdrop-filter: blur(1px)) { :where(.glassy, [data-nb-style="glassy"]) .nb-card { background-color: var(--nb-color-surface-raised-base); } }
+  :where(.g-morph, [data-nb-style="g-morph"]) .nb-card { backdrop-filter: blur(var(--nb-blur-md)) saturate(1.5); }
+  @supports not (backdrop-filter: blur(1px)) { :where(.g-morph, [data-nb-style="g-morph"]) .nb-card { background-color: var(--nb-color-surface-raised-base); } }
   @media (forced-colors: active), (prefers-reduced-transparency: reduce) { /* opaque, no blur */ }
 }
 ```

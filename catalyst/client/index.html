@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How newBrush is made</title>
+<meta name="description" content="Live overview of the newBrush CSS framework: architecture, tokens, components, utility engine and status.">
+<style>/*! newBrush v0.0.0 | MIT License | https://github.com/newsignlabs/css-project */
+@layer nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities;@layer nb.reset{*,:before,:after{box-sizing:border-box}*{margin:0}html{-webkit-text-size-adjust:none;-moz-text-size-adjust:none;text-size-adjust:none;interpolate-size:allow-keywords;hanging-punctuation:first last}body{min-block-size:100dvb}:where(img,picture,video,canvas,svg){max-inline-size:100%;display:block}:where(img,video){block-size:auto}:where(input,button,textarea,select){font:inherit;letter-spacing:inherit;color:inherit}:where(p,h1,h2,h3,h4,h5,h6,li,figcaption,blockquote){overflow-wrap:break-word}:where(h1,h2,h3,h4,h5,h6){text-wrap:balance}:where(p,li,figcaption,blockquote){text-wrap:pretty}:where(ul,ol)[role=list]{padding:0;list-style:none}:target{scroll-margin-block:5ex}[hidden]:not([hidden=until-found]){display:none!important}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}}@layer nb.tokens{:root,::backdrop{--nb-border-width-thin:1px;--nb-border-width-medium:2px;--nb-border-width-thick:4px;--nb-breakpoint-sm:40rem;--nb-breakpoint-md:48rem;--nb-breakpoint-lg:64rem;--nb-breakpoint-xl:80rem;--nb-breakpoint-2xl:96rem;--nb-color-neutral-50:oklch(97.8% .002 260);--nb-color-neutral-100:oklch(95.4% .003 260);--nb-color-neutral-200:oklch(90.6% .006 260);--nb-color-neutral-300:oklch(83.4% .01 260);--nb-color-neutral-400:oklch(72.6% .013 260);--nb-color-neutral-500:oklch(62.4% .016 260);--nb-color-neutral-600:oklch(54% .016 260);--nb-color-neutral-700:oklch(46% .014 260);--nb-color-neutral-800:oklch(38.4% .012 260);--nb-color-neutral-900:oklch(31% .009 260);--nb-color-neutral-950:oklch(22.8% .007 260);--nb-color-brand-50:oklch(97.8% .019 255);--nb-color-brand-100:oklch(95.4% .038 255);--nb-color-brand-200:oklch(90.6% .072 255);--nb-color-brand-300:oklch(83.4% .114 255);--nb-color-brand-400:oklch(72.6% .16 255);--nb-color-brand-500:oklch(62.4% .19 255);--nb-color-brand-600:oklch(54% .186 255);--nb-color-brand-700:oklch(46% .167 255);--nb-color-brand-800:oklch(38.4% .137 255);--nb-color-brand-900:oklch(31% .106 255);--nb-color-brand-950:oklch(22.8% .08 255);--nb-color-accent-50:oklch(97.8% .02 320);--nb-color-accent-100:oklch(95.4% .04 320);--nb-color-accent-200:oklch(90.6% .076 320);--nb-color-accent-300:oklch(83.4% .12 320);--nb-color-accent-400:oklch(72.6% .168 320);--nb-color-accent-500:oklch(62.4% .2 320);--nb-color-accent-600:oklch(54% .196 320);--nb-color-accent-700:oklch(46% .176 320);--nb-color-accent-800:oklch(38.4% .144 320);--nb-color-accent-900:oklch(31% .112 320);--nb-color-accent-950:oklch(22.8% .084 320);--nb-color-success-50:oklch(97.8% .015 150);--nb-color-success-100:oklch(95.4% .03 150);--nb-color-success-200:oklch(90.6% .057 150);--nb-color-success-300:oklch(83.4% .09 150);--nb-color-success-400:oklch(72.6% .126 150);--nb-color-success-500:oklch(62.4% .15 150);--nb-color-success-600:oklch(54% .147 150);--nb-color-success-700:oklch(46% .132 150);--nb-color-success-800:oklch(38.4% .108 150);--nb-color-success-900:oklch(31% .084 150);--nb-color-success-950:oklch(22.8% .063 150);--nb-color-warning-50:oklch(97.8% .016 75);--nb-color-warning-100:oklch(95.4% .032 75);--nb-color-warning-200:oklch(90.6% .061 75);--nb-color-warning-300:oklch(83.4% .096 75);--nb-color-warning-400:oklch(72.6% .134 75);--nb-color-warning-500:oklch(62.4% .16 75);--nb-color-warning-600:oklch(54% .157 75);--nb-color-warning-700:oklch(46% .141 75);--nb-color-warning-800:oklch(38.4% .115 75);--nb-color-warning-900:oklch(31% .09 75);--nb-color-warning-950:oklch(22.8% .067 75);--nb-color-danger-50:oklch(97.8% .02 25);--nb-color-danger-100:oklch(95.4% .04 25);--nb-color-danger-200:oklch(90.6% .076 25);--nb-color-danger-300:oklch(83.4% .12 25);--nb-color-danger-400:oklch(72.6% .168 25);--nb-color-danger-500:oklch(62.4% .2 25);--nb-color-danger-600:oklch(54% .196 25);--nb-color-danger-700:oklch(46% .176 25);--nb-color-danger-800:oklch(38.4% .144 25);--nb-color-danger-900:oklch(31% .112 25);--nb-color-danger-950:oklch(22.8% .084 25);--nb-color-info-50:oklch(97.8% .013 230);--nb-color-info-100:oklch(95.4% .026 230);--nb-color-info-200:oklch(90.6% .049 230);--nb-color-info-300:oklch(83.4% .078 230);--nb-color-info-400:oklch(72.6% .109 230);--nb-color-info-500:oklch(62.4% .13 230);--nb-color-info-600:oklch(54% .127 230);--nb-color-info-700:oklch(46% .114 230);--nb-color-info-800:oklch(38.4% .094 230);--nb-color-info-900:oklch(31% .073 230);--nb-color-info-950:oklch(22.8% .055 230);--nb-color-white:oklch(100% 0 0);--nb-color-black:oklch(0% 0 0);--nb-opacity-disabled:.5;--nb-opacity-muted:.7;--nb-blur-sm:.25rem;--nb-blur-md:.75rem;--nb-blur-lg:1.5rem;--nb-font-family-sans:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";--nb-font-family-serif:ui-serif, Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;--nb-font-family-mono:ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;--nb-font-weight-regular:400;--nb-font-weight-medium:500;--nb-font-weight-semibold:600;--nb-font-weight-bold:700;--nb-font-size-xs:clamp(.6944rem, .6844rem + .0444vi, .72rem);--nb-font-size-sm:clamp(.8333rem, .8072rem + .1159vi, .9rem);--nb-font-size-base:clamp(1rem, .9511rem + .2174vi, 1.125rem);--nb-font-size-lg:clamp(1.2rem, 1.1193rem + .3587vi, 1.4063rem);--nb-font-size-xl:clamp(1.44rem, 1.3156rem + .5527vi, 1.7578rem);--nb-font-size-2xl:clamp(1.728rem, 1.5444rem + .8161vi, 2.1973rem);--nb-font-size-3xl:clamp(2.0736rem, 1.8103rem + 1.1704vi, 2.7466rem);--nb-font-size-4xl:clamp(2.4883rem, 2.1186rem + 1.6433vi, 3.4332rem);--nb-font-size-5xl:clamp(2.986rem, 2.4751rem + 2.2705vi, 4.2915rem);--nb-font-size-6xl:clamp(3.5832rem, 2.8862rem + 3.0978vi, 5.3644rem);--nb-font-leading-none:1;--nb-font-leading-tight:1.15;--nb-font-leading-snug:1.3;--nb-font-leading-normal:1.55;--nb-font-leading-relaxed:1.75;--nb-font-tracking-tight:-.02em;--nb-font-tracking-normal:0em;--nb-font-tracking-wide:.04em;--nb-motion-duration-instant:0s;--nb-motion-duration-fast:.12s;--nb-motion-duration-base:.2s;--nb-motion-duration-slow:.32s;--nb-motion-duration-slower:.5s;--nb-motion-easing-standard:cubic-bezier(.2, 0, 0, 1);--nb-motion-easing-emphasized:cubic-bezier(.3, 0, 0, 1);--nb-motion-easing-decelerate:cubic-bezier(0, 0, 0, 1);--nb-motion-easing-accelerate:cubic-bezier(.3, 0, 1, 1);--nb-radius-none:0rem;--nb-radius-xs:.125rem;--nb-radius-sm:.25rem;--nb-radius-md:.5rem;--nb-radius-lg:.75rem;--nb-radius-xl:1rem;--nb-radius-2xl:1.5rem;--nb-radius-full:624.938rem;--nb-shadow-0:0rem 0rem 0rem 0rem oklch(0% 0 0/0);--nb-shadow-1:0rem .0625rem .125rem 0rem oklch(22% .02 260/.06), 0rem .0625rem .1875rem 0rem oklch(22% .02 260/.1);--nb-shadow-2:0rem .125rem .25rem -.0625rem oklch(22% .02 260/.06), 0rem .25rem .375rem -.0625rem oklch(22% .02 260/.1);--nb-shadow-3:0rem .25rem .375rem -.125rem oklch(22% .02 260/.05), 0rem .625rem .9375rem -.1875rem oklch(22% .02 260/.1);--nb-shadow-4:0rem .625rem .625rem -.3125rem oklch(22% .02 260/.04), 0rem 1.25rem 1.5625rem -.3125rem oklch(22% .02 260/.1);--nb-shadow-5:0rem 1.5625rem 3.125rem -.75rem oklch(22% .02 260/.25);--nb-size-container-sm:40rem;--nb-size-container-md:48rem;--nb-size-container-lg:64rem;--nb-size-container-xl:80rem;--nb-size-container-2xl:96rem;--nb-size-prose:65ch;--nb-size-target:1.5rem;--nb-space-0:0rem;--nb-space-1:.25rem;--nb-space-2:.5rem;--nb-space-3:.75rem;--nb-space-4:1rem;--nb-space-5:1.25rem;--nb-space-6:1.5rem;--nb-space-8:2rem;--nb-space-10:2.5rem;--nb-space-12:3rem;--nb-space-16:4rem;--nb-space-20:5rem;--nb-space-24:6rem;--nb-space-32:8rem;--nb-space-40:10rem;--nb-space-48:12rem;--nb-space-64:16rem;--nb-space-80:20rem;--nb-space-96:24rem;--nb-space-0-5:.125rem;--nb-space-1-5:.375rem;--nb-space-2-5:.625rem;--nb-space-fluid-3xs:clamp(.25rem, .2378rem + .0543vi, .2813rem);--nb-space-fluid-2xs:clamp(.5rem, .4755rem + .1087vi, .5625rem);--nb-space-fluid-xs:clamp(.75rem, .7133rem + .163vi, .8438rem);--nb-space-fluid-sm:clamp(1rem, .9511rem + .2174vi, 1.125rem);--nb-space-fluid-md:clamp(1.5rem, 1.4266rem + .3261vi, 1.6875rem);--nb-space-fluid-lg:clamp(2rem, 1.9022rem + .4348vi, 2.25rem);--nb-space-fluid-xl:clamp(3rem, 2.8533rem + .6522vi, 3.375rem);--nb-space-fluid-2xl:clamp(4rem, 3.8043rem + .8696vi, 4.5rem);--nb-space-fluid-3xl:clamp(6rem, 5.7065rem + 1.3043vi, 6.75rem);--nb-z-base:0;--nb-z-dropdown:1000;--nb-z-sticky:1100;--nb-z-overlay:1200;--nb-z-modal:1300;--nb-z-toast:1400;--nb-z-tooltip:1500}:root,::backdrop,[data-nb-theme=light],[data-nb-theme=contrast]{--lightningcss-light:initial;--lightningcss-dark: ;color-scheme:light;--nb-scheme:light;--nb-control-height-sm:2rem;--nb-control-height-md:2.5rem;--nb-control-height-lg:3rem;--nb-control-padding-inline-sm:var(--nb-space-3);--nb-control-padding-inline-md:var(--nb-space-4);--nb-control-padding-inline-lg:var(--nb-space-5);--nb-control-radius:var(--nb-radius-md);--nb-control-border-width:var(--nb-border-width-thin);--nb-control-font-size-sm:var(--nb-font-size-sm);--nb-control-font-size-md:var(--nb-font-size-base);--nb-control-font-size-lg:var(--nb-font-size-lg);--nb-control-focus-ring-width:var(--nb-border-width-medium);--nb-control-focus-ring-offset:var(--nb-border-width-medium);--nb-color-accent:var(--nb-color-brand-600);--nb-color-accent-hover:var(--nb-color-brand-700);--nb-color-accent-active:var(--nb-color-brand-800);--nb-color-accent-subtle:var(--nb-color-brand-100);--nb-color-accent-text:var(--nb-color-brand-700);--nb-color-success:var(--nb-color-success-600);--nb-color-success-hover:var(--nb-color-success-700);--nb-color-success-subtle:var(--nb-color-success-100);--nb-color-success-text:var(--nb-color-success-700);--nb-color-success-border:var(--nb-color-success-300);--nb-color-warning:var(--nb-color-warning-400);--nb-color-warning-hover:var(--nb-color-warning-500);--nb-color-warning-subtle:var(--nb-color-warning-100);--nb-color-warning-text:var(--nb-color-warning-700);--nb-color-warning-border:var(--nb-color-warning-300);--nb-color-danger:var(--nb-color-danger-600);--nb-color-danger-hover:var(--nb-color-danger-700);--nb-color-danger-subtle:var(--nb-color-danger-100);--nb-color-danger-text:var(--nb-color-danger-700);--nb-color-danger-border:var(--nb-color-danger-300);--nb-color-info:var(--nb-color-info-600);--nb-color-info-hover:var(--nb-color-info-700);--nb-color-info-subtle:var(--nb-color-info-100);--nb-color-info-text:var(--nb-color-info-700);--nb-color-info-border:var(--nb-color-info-300);--nb-color-surface:var(--nb-color-neutral-50);--nb-color-surface-subtle:var(--nb-color-neutral-100);--nb-color-surface-raised:var(--nb-color-white);--nb-color-surface-sunken:var(--nb-color-neutral-200);--nb-color-surface-overlay:var(--nb-color-white);--nb-color-surface-inverse:var(--nb-color-neutral-900);--nb-color-text:var(--nb-color-neutral-900);--nb-color-text-muted:var(--nb-color-neutral-700);--nb-color-text-subtle:var(--nb-color-neutral-500);--nb-color-text-inverse:var(--nb-color-neutral-50);--nb-color-text-link:var(--nb-color-brand-600);--nb-color-border:var(--nb-color-neutral-200);--nb-color-border-subtle:var(--nb-color-neutral-100);--nb-color-border-strong:var(--nb-color-neutral-500);--nb-color-focus-ring:var(--nb-color-brand-500);--nb-color-on-accent:var(--nb-color-white);--nb-color-on-success:var(--nb-color-white);--nb-color-on-warning:var(--nb-color-neutral-950);--nb-color-on-danger:var(--nb-color-white);--nb-color-on-info:var(--nb-color-white);--nb-color-selection:var(--nb-color-brand-200);--nb-color-backdrop:var(--nb-color-neutral-950);--nb-elevation-0:var(--nb-shadow-0);--nb-elevation-1:var(--nb-shadow-1);--nb-elevation-2:var(--nb-shadow-2);--nb-elevation-3:var(--nb-shadow-3);--nb-elevation-4:var(--nb-shadow-4);--nb-elevation-5:var(--nb-shadow-5)}[data-nb-theme=dark]{--lightningcss-light: ;--lightningcss-dark:initial;color-scheme:dark;--nb-scheme:dark;--nb-color-accent:var(--nb-color-brand-400);--nb-color-accent-hover:var(--nb-color-brand-300);--nb-color-accent-active:var(--nb-color-brand-200);--nb-color-accent-subtle:var(--nb-color-brand-950);--nb-color-accent-text:var(--nb-color-brand-300);--nb-color-success:var(--nb-color-success-400);--nb-color-success-hover:var(--nb-color-success-300);--nb-color-success-subtle:var(--nb-color-success-950);--nb-color-success-text:var(--nb-color-success-300);--nb-color-success-border:var(--nb-color-success-800);--nb-color-warning:var(--nb-color-warning-400);--nb-color-warning-hover:var(--nb-color-warning-300);--nb-color-warning-subtle:var(--nb-color-warning-950);--nb-color-warning-text:var(--nb-color-warning-300);--nb-color-warning-border:var(--nb-color-warning-800);--nb-color-danger:var(--nb-color-danger-400);--nb-color-danger-hover:var(--nb-color-danger-300);--nb-color-danger-subtle:var(--nb-color-danger-950);--nb-color-danger-text:var(--nb-color-danger-300);--nb-color-danger-border:var(--nb-color-danger-800);--nb-color-info:var(--nb-color-info-400);--nb-color-info-hover:var(--nb-color-info-300);--nb-color-info-subtle:var(--nb-color-info-950);--nb-color-info-text:var(--nb-color-info-300);--nb-color-info-border:var(--nb-color-info-800);--nb-color-surface:var(--nb-color-neutral-950);--nb-color-surface-subtle:var(--nb-color-neutral-900);--nb-color-surface-raised:var(--nb-color-neutral-900);--nb-color-surface-sunken:var(--nb-color-black);--nb-color-surface-overlay:var(--nb-color-neutral-800);--nb-color-surface-inverse:var(--nb-color-neutral-50);--nb-color-text:var(--nb-color-neutral-50);--nb-color-text-muted:var(--nb-color-neutral-300);--nb-color-text-subtle:var(--nb-color-neutral-500);--nb-color-text-inverse:var(--nb-color-neutral-900);--nb-color-text-link:var(--nb-color-brand-300);--nb-color-border:var(--nb-color-neutral-800);--nb-color-border-subtle:var(--nb-color-neutral-900);--nb-color-border-strong:var(--nb-color-neutral-400);--nb-color-focus-ring:var(--nb-color-brand-400);--nb-color-on-accent:var(--nb-color-neutral-950);--nb-color-on-success:var(--nb-color-neutral-950);--nb-color-on-warning:var(--nb-color-neutral-950);--nb-color-on-danger:var(--nb-color-neutral-950);--nb-color-on-info:var(--nb-color-neutral-950);--nb-color-selection:var(--nb-color-brand-800);--nb-color-backdrop:var(--nb-color-black)}@media (prefers-color-scheme:dark){:root:not([data-nb-theme]){--lightningcss-light: ;--lightningcss-dark:initial;color-scheme:dark;--nb-scheme:dark;--nb-color-accent:var(--nb-color-brand-400);--nb-color-accent-hover:var(--nb-color-brand-300);--nb-color-accent-active:var(--nb-color-brand-200);--nb-color-accent-subtle:var(--nb-color-brand-950);--nb-color-accent-text:var(--nb-color-brand-300);--nb-color-success:var(--nb-color-success-400);--nb-color-success-hover:var(--nb-color-success-300);--nb-color-success-subtle:var(--nb-color-success-950);--nb-color-success-text:var(--nb-color-success-300);--nb-color-success-border:var(--nb-color-success-800);--nb-color-warning:var(--nb-color-warning-400);--nb-color-warning-hover:var(--nb-color-warning-300);--nb-color-warning-subtle:var(--nb-color-warning-950);--nb-color-warning-text:var(--nb-color-warning-300);--nb-color-warning-border:var(--nb-color-warning-800);--nb-color-danger:var(--nb-color-danger-400);--nb-color-danger-hover:var(--nb-color-danger-300);--nb-color-danger-subtle:var(--nb-color-danger-950);--nb-color-danger-text:var(--nb-color-danger-300);--nb-color-danger-border:var(--nb-color-danger-800);--nb-color-info:var(--nb-color-info-400);--nb-color-info-hover:var(--nb-color-info-300);--nb-color-info-subtle:var(--nb-color-info-950);--nb-color-info-text:var(--nb-color-info-300);--nb-color-info-border:var(--nb-color-info-800);--nb-color-surface:var(--nb-color-neutral-950);--nb-color-surface-subtle:var(--nb-color-neutral-900);--nb-color-surface-raised:var(--nb-color-neutral-900);--nb-color-surface-sunken:var(--nb-color-black);--nb-color-surface-overlay:var(--nb-color-neutral-800);--nb-color-surface-inverse:var(--nb-color-neutral-50);--nb-color-text:var(--nb-color-neutral-50);--nb-color-text-muted:var(--nb-color-neutral-300);--nb-color-text-subtle:var(--nb-color-neutral-500);--nb-color-text-inverse:var(--nb-color-neutral-900);--nb-color-text-link:var(--nb-color-brand-300);--nb-color-border:var(--nb-color-neutral-800);--nb-color-border-subtle:var(--nb-color-neutral-900);--nb-color-border-strong:var(--nb-color-neutral-400);--nb-color-focus-ring:var(--nb-color-brand-400);--nb-color-on-accent:var(--nb-color-neutral-950);--nb-color-on-success:var(--nb-color-neutral-950);--nb-color-on-warning:var(--nb-color-neutral-950);--nb-color-on-danger:var(--nb-color-neutral-950);--nb-color-on-info:var(--nb-color-neutral-950);--nb-color-selection:var(--nb-color-brand-800);--nb-color-backdrop:var(--nb-color-black)}}[data-nb-theme=contrast]{--nb-contrast:more;--nb-color-accent:var(--nb-color-brand-800);--nb-color-accent-hover:var(--nb-color-brand-900);--nb-color-accent-active:var(--nb-color-brand-950);--nb-color-accent-subtle:var(--nb-color-brand-100);--nb-color-accent-text:var(--nb-color-brand-900);--nb-color-success:var(--nb-color-success-800);--nb-color-success-hover:var(--nb-color-success-900);--nb-color-success-subtle:var(--nb-color-success-100);--nb-color-success-text:var(--nb-color-success-900);--nb-color-success-border:var(--nb-color-success-800);--nb-color-warning:var(--nb-color-warning-300);--nb-color-warning-hover:var(--nb-color-warning-400);--nb-color-warning-subtle:var(--nb-color-warning-100);--nb-color-warning-text:var(--nb-color-warning-900);--nb-color-warning-border:var(--nb-color-warning-800);--nb-color-danger:var(--nb-color-danger-800);--nb-color-danger-hover:var(--nb-color-danger-900);--nb-color-danger-subtle:var(--nb-color-danger-100);--nb-color-danger-text:var(--nb-color-danger-900);--nb-color-danger-border:var(--nb-color-danger-800);--nb-color-info:var(--nb-color-info-800);--nb-color-info-hover:var(--nb-color-info-900);--nb-color-info-subtle:var(--nb-color-info-100);--nb-color-info-text:var(--nb-color-info-900);--nb-color-info-border:var(--nb-color-info-800);--nb-color-surface:var(--nb-color-white);--nb-color-surface-subtle:var(--nb-color-neutral-50);--nb-color-surface-raised:var(--nb-color-white);--nb-color-surface-sunken:var(--nb-color-neutral-100);--nb-color-surface-overlay:var(--nb-color-white);--nb-color-surface-inverse:var(--nb-color-black);--nb-color-text:var(--nb-color-black);--nb-color-text-muted:var(--nb-color-neutral-800);--nb-color-text-subtle:var(--nb-color-neutral-700);--nb-color-text-inverse:var(--nb-color-white);--nb-color-text-link:var(--nb-color-brand-800);--nb-color-border:var(--nb-color-neutral-600);--nb-color-border-subtle:var(--nb-color-neutral-400);--nb-color-border-strong:var(--nb-color-black);--nb-color-focus-ring:var(--nb-color-black);--nb-color-on-accent:var(--nb-color-white);--nb-color-on-success:var(--nb-color-white);--nb-color-on-warning:var(--nb-color-neutral-950);--nb-color-on-danger:var(--nb-color-white);--nb-color-on-info:var(--nb-color-white);--nb-color-selection:var(--nb-color-brand-300);--nb-color-backdrop:var(--nb-color-black)}@media (prefers-contrast:more) and (prefers-color-scheme:light){:root:not([data-nb-theme]){--nb-contrast:more;--nb-color-accent:var(--nb-color-brand-800);--nb-color-accent-hover:var(--nb-color-brand-900);--nb-color-accent-active:var(--nb-color-brand-950);--nb-color-accent-subtle:var(--nb-color-brand-100);--nb-color-accent-text:var(--nb-color-brand-900);--nb-color-success:var(--nb-color-success-800);--nb-color-success-hover:var(--nb-color-success-900);--nb-color-success-subtle:var(--nb-color-success-100);--nb-color-success-text:var(--nb-color-success-900);--nb-color-success-border:var(--nb-color-success-800);--nb-color-warning:var(--nb-color-warning-300);--nb-color-warning-hover:var(--nb-color-warning-400);--nb-color-warning-subtle:var(--nb-color-warning-100);--nb-color-warning-text:var(--nb-color-warning-900);--nb-color-warning-border:var(--nb-color-warning-800);--nb-color-danger:var(--nb-color-danger-800);--nb-color-danger-hover:var(--nb-color-danger-900);--nb-color-danger-subtle:var(--nb-color-danger-100);--nb-color-danger-text:var(--nb-color-danger-900);--nb-color-danger-border:var(--nb-color-danger-800);--nb-color-info:var(--nb-color-info-800);--nb-color-info-hover:var(--nb-color-info-900);--nb-color-info-subtle:var(--nb-color-info-100);--nb-color-info-text:var(--nb-color-info-900);--nb-color-info-border:var(--nb-color-info-800);--nb-color-surface:var(--nb-color-white);--nb-color-surface-subtle:var(--nb-color-neutral-50);--nb-color-surface-raised:var(--nb-color-white);--nb-color-surface-sunken:var(--nb-color-neutral-100);--nb-color-surface-overlay:var(--nb-color-white);--nb-color-surface-inverse:var(--nb-color-black);--nb-color-text:var(--nb-color-black);--nb-color-text-muted:var(--nb-color-neutral-800);--nb-color-text-subtle:var(--nb-color-neutral-700);--nb-color-text-inverse:var(--nb-color-white);--nb-color-text-link:var(--nb-color-brand-800);--nb-color-border:var(--nb-color-neutral-600);--nb-color-border-subtle:var(--nb-color-neutral-400);--nb-color-border-strong:var(--nb-color-black);--nb-color-focus-ring:var(--nb-color-black);--nb-color-on-accent:var(--nb-color-white);--nb-color-on-success:var(--nb-color-white);--nb-color-on-warning:var(--nb-color-neutral-950);--nb-color-on-danger:var(--nb-color-white);--nb-color-on-info:var(--nb-color-white);--nb-color-selection:var(--nb-color-brand-300);--nb-color-backdrop:var(--nb-color-black)}}}@layer nb.base{:root{font-family:var(--nb-font-family-sans);font-size:100%;line-height:var(--nb-font-leading-normal);color:var(--nb-color-text);background-color:var(--nb-color-surface);accent-color:var(--nb-color-accent);caret-color:var(--nb-color-accent);-webkit-tap-highlight-color:transparent;font-synthesis-weight:none;text-rendering:optimizelegibility}body{font-size:var(--nb-font-size-base)}[data-nb-theme]{color:var(--nb-color-text);background-color:var(--nb-color-surface)}::selection{background-color:var(--nb-color-selection);color:var(--nb-color-text)}:focus-visible{outline:var(--nb-control-focus-ring-width) solid var(--nb-color-focus-ring);outline-offset:var(--nb-control-focus-ring-offset)}@media (prefers-reduced-motion:no-preference){:root:has(:target){scroll-behavior:smooth}}@media (forced-colors:active){:focus-visible{outline-color:highlight}}:where(h1,h2,h3,h4,h5,h6){font-weight:var(--nb-font-weight-bold);line-height:var(--nb-font-leading-tight);color:var(--nb-color-text)}:where(h1){font-size:var(--nb-font-size-4xl);letter-spacing:var(--nb-font-tracking-tight)}:where(h2){font-size:var(--nb-font-size-3xl);letter-spacing:var(--nb-font-tracking-tight)}:where(h3){font-size:var(--nb-font-size-2xl)}:where(h4){font-size:var(--nb-font-size-xl);font-weight:var(--nb-font-weight-semibold)}:where(h5){font-size:var(--nb-font-size-lg);font-weight:var(--nb-font-weight-semibold)}:where(h6){font-size:var(--nb-font-size-base);font-weight:var(--nb-font-weight-semibold)}:where(h1,h2,h3,h4,h5,h6,p,ul,ol,dl,blockquote,pre,table,figure,hr,fieldset,details,address){margin-block-end:var(--nb-space-fluid-sm)}:where(h1,h2,h3,h4,h5,h6):not(:first-child){margin-block-start:var(--nb-space-fluid-lg)}:where(h1,h2,h3,h4,h5,h6,p,ul,ol,dl,blockquote,pre,table,figure,hr,fieldset,details,address):last-child{margin-block-end:0}:where(ul,ol):not([role=list]){padding-inline-start:1.5em}:where(li+li){margin-block-start:var(--nb-space-1)}:where(dt){font-weight:var(--nb-font-weight-semibold)}:where(dd){margin-inline-start:1.5em}:where(a){color:var(--nb-color-text-link);text-underline-offset:.2em;text-decoration-line:underline;text-decoration-thickness:max(1px,.0625em)}@media (hover:hover){:where(a):hover{text-decoration-thickness:max(2px,.125em)}}:where(strong,b){font-weight:var(--nb-font-weight-bold)}:where(small){font-size:var(--nb-font-size-sm)}:where(mark){background-color:var(--nb-color-warning-subtle);color:var(--nb-color-text);border-radius:var(--nb-radius-xs);padding-inline:.125em}:where(sub,sup){line-height:0}:where(abbr[title]){cursor:help;text-decoration-line:underline;text-decoration-style:dotted}:where(code,kbd,samp,pre){font-family:var(--nb-font-family-mono);font-size:.875em}:where(:not(pre)>code){border-radius:var(--nb-radius-sm);background-color:var(--nb-color-surface-sunken);padding-block:.125em;padding-inline:.375em}:where(kbd){border:var(--nb-border-width-thin) solid var(--nb-color-border-strong);border-block-end-width:var(--nb-border-width-medium);border-radius:var(--nb-radius-sm);background-color:var(--nb-color-surface-raised);white-space:nowrap;padding-block:.125em;padding-inline:.375em}:where(pre){padding:var(--nb-space-4);border-radius:var(--nb-radius-md);background-color:var(--nb-color-surface-sunken);tab-size:2;line-height:var(--nb-font-leading-snug);overflow-x:auto}:where(blockquote){border-inline-start:var(--nb-border-width-thick) solid var(--nb-color-border);color:var(--nb-color-text-muted);padding-inline-start:var(--nb-space-4);font-style:italic}:where(hr){border:0;border-block-start:var(--nb-border-width-thin) solid var(--nb-color-border);block-size:0}:where(figcaption){font-size:var(--nb-font-size-sm);color:var(--nb-color-text-muted);margin-block-start:var(--nb-space-2)}:where(table){border-collapse:collapse;font-variant-numeric:tabular-nums;inline-size:100%}:where(caption){caption-side:bottom;font-size:var(--nb-font-size-sm);color:var(--nb-color-text-muted);text-align:start;padding-block-start:var(--nb-space-2)}:where(th,td){padding-block:var(--nb-space-2);padding-inline:var(--nb-space-3);border-block-end:var(--nb-border-width-thin) solid var(--nb-color-border);text-align:start;vertical-align:top}:where(th){font-weight:var(--nb-font-weight-semibold)}:where(thead th){border-block-end-color:var(--nb-color-border-strong)}:where(summary){cursor:pointer}:where(label){font-weight:var(--nb-font-weight-medium);display:inline-block}:where(input:not([type=checkbox],[type=radio],[type=range],[type=color],[type=file]),select,textarea){inline-size:100%;min-block-size:var(--nb-control-height-md);margin-block:var(--nb-space-1) var(--nb-space-4);padding-block:var(--nb-space-2);padding-inline:var(--nb-space-3);border:var(--nb-control-border-width) solid var(--nb-color-border-strong);border-radius:var(--nb-control-radius);background-color:var(--nb-color-surface-raised);display:block}:where(textarea){min-block-size:calc(var(--nb-control-height-md) * 2.5);resize:block}:where(input:not([type=checkbox],[type=radio]),textarea,select):focus-visible{border-color:var(--nb-color-focus-ring)}::placeholder{color:var(--nb-color-text-subtle);opacity:1}:where(button,[type=button],[type=submit],[type=reset]){min-block-size:var(--nb-control-height-md);padding-inline:var(--nb-control-padding-inline-md);border:var(--nb-control-border-width) solid var(--nb-color-border-strong);border-radius:var(--nb-control-radius);background-color:var(--nb-color-surface-raised);font-weight:var(--nb-font-weight-medium);cursor:pointer}:where(input[type=checkbox],input[type=radio]){vertical-align:-.2em;block-size:1.25em;inline-size:1.25em}:where(fieldset){padding:var(--nb-space-4);border:var(--nb-border-width-thin) solid var(--nb-color-border);border-radius:var(--nb-radius-md)}:where(legend){padding-inline:var(--nb-space-1);font-weight:var(--nb-font-weight-semibold)}:where(:disabled,[aria-disabled=true]){cursor:not-allowed}@media print{:root,[data-nb-theme]{color:canvastext;background:canvas}:where(article,main) :where(p,li) a[href^=http]:after{content:" (" attr(href) ")";overflow-wrap:anywhere;font-size:.875em}:where(pre,blockquote,img,tr,figure){break-inside:avoid}:where(h1,h2,h3,h4){break-after:avoid}}}@layer nb.layout{.nb-container{inline-size:100%;max-inline-size:var(--nb-container-max,var(--nb-size-container-xl));padding-inline:var(--nb-space-fluid-md);margin-inline:auto}.nb-container--narrow{--nb-container-max:var(--nb-size-container-md)}.nb-container--wide{--nb-container-max:var(--nb-size-container-2xl)}.nb-container--full{--nb-container-max:none}.nb-stack>*{margin-block:0}.nb-stack{justify-content:flex-start;gap:var(--nb-stack-gap,var(--nb-space-fluid-sm));flex-direction:column;display:flex}.nb-stack--xs{--nb-stack-gap:var(--nb-space-fluid-2xs)}.nb-stack--sm{--nb-stack-gap:var(--nb-space-fluid-xs)}.nb-stack--lg{--nb-stack-gap:var(--nb-space-fluid-lg)}.nb-stack--xl{--nb-stack-gap:var(--nb-space-fluid-xl)}.nb-cluster>*{margin-block:0}.nb-cluster{align-items:var(--nb-cluster-align,center);justify-content:var(--nb-cluster-justify,flex-start);gap:var(--nb-cluster-gap,var(--nb-space-fluid-xs));flex-wrap:wrap;display:flex}.nb-cluster--between{--nb-cluster-justify:space-between}.nb-cluster--end{--nb-cluster-justify:flex-end}.nb-cluster--center{--nb-cluster-justify:center}.nb-grid>*{margin-block:0}.nb-grid{grid-template-columns:repeat(auto-fit, minmax(min(var(--nb-grid-min,16rem), 100%), 1fr));gap:var(--nb-grid-gap,var(--nb-space-fluid-md));display:grid}.nb-grid--sm{--nb-grid-min:10rem}.nb-grid--lg{--nb-grid-min:22rem}.nb-sidebar>*{margin-block:0}.nb-sidebar{gap:var(--nb-sidebar-gap,var(--nb-space-fluid-md));flex-wrap:wrap;display:flex}.nb-sidebar>:first-child{flex-basis:var(--nb-sidebar-width,20rem);flex-grow:1}.nb-sidebar>:last-child,.nb-sidebar--end>:first-child{min-inline-size:var(--nb-sidebar-content-min,50%);flex-grow:999;flex-basis:0}.nb-sidebar--end>:last-child{flex-basis:var(--nb-sidebar-width,20rem);flex-grow:1;min-inline-size:auto}.nb-switcher{gap:var(--nb-switcher-gap,var(--nb-space-fluid-md));flex-wrap:wrap;display:flex}.nb-switcher>*{flex-grow:1;flex-basis:calc((var(--nb-switcher-threshold,40rem) - 100%) * 999);margin-block:0}.nb-center{box-sizing:content-box;max-inline-size:var(--nb-center-max,var(--nb-size-prose));padding-inline:var(--nb-center-gutter,var(--nb-space-fluid-sm));margin-inline:auto}.nb-center--text{text-align:center}.nb-center--intrinsic{flex-direction:column;align-items:center;display:flex}.nb-cover{gap:var(--nb-space-fluid-md);min-block-size:var(--nb-cover-min,100dvb);padding:var(--nb-space-fluid-md);flex-direction:column;display:flex}.nb-cover__principal{margin-block:auto}.nb-frame{aspect-ratio:var(--nb-frame-ratio,16 / 9);justify-content:center;align-items:center;display:flex;overflow:hidden}.nb-frame>:is(img,video,iframe,picture){object-fit:cover;block-size:100%;inline-size:100%}.nb-frame--square{--nb-frame-ratio:1}.nb-frame--photo{--nb-frame-ratio:4 / 3}.nb-frame--portrait{--nb-frame-ratio:3 / 4}}@layer nb.components{.nb-btn{--_bg:var(--nb-color-surface-raised);--_bg-hover:var(--nb-color-surface-subtle);--_bg-active:var(--nb-color-surface-sunken);--_fg:var(--nb-color-text);--_border:var(--nb-color-border-strong);--_height:var(--nb-control-height-md);--_pad:var(--nb-control-padding-inline-md);--_font:var(--nb-control-font-size-md);justify-content:center;align-items:center;gap:var(--nb-space-2);min-block-size:var(--_height);min-inline-size:var(--nb-size-target);padding-block:0;padding-inline:var(--_pad);border:var(--nb-control-border-width) solid var(--_border);border-radius:var(--nb-control-radius);background-color:var(--_bg);color:var(--_fg);font:inherit;font-size:var(--_font);font-weight:var(--nb-font-weight-medium);line-height:var(--nb-font-leading-snug);text-align:center;white-space:nowrap;cursor:pointer;-webkit-user-select:none;user-select:none;transition:background-color var(--nb-motion-duration-fast) var(--nb-motion-easing-standard), border-color var(--nb-motion-duration-fast) var(--nb-motion-easing-standard), color var(--nb-motion-duration-fast) var(--nb-motion-easing-standard), box-shadow var(--nb-motion-duration-fast) var(--nb-motion-easing-standard);text-decoration:none;display:inline-flex}@media (hover:hover){.nb-btn:hover{background-color:var(--_bg-hover)}}.nb-btn:active{background-color:var(--_bg-active)}.nb-btn:disabled,.nb-btn[aria-disabled=true]{opacity:var(--nb-opacity-disabled);cursor:not-allowed}.nb-btn[aria-disabled=true]{pointer-events:none}.nb-btn[aria-pressed=true]{--_bg:var(--nb-color-accent-subtle);--_bg-hover:var(--nb-color-accent-subtle);--_fg:var(--nb-color-accent-text);--_border:var(--nb-color-accent)}.nb-btn[aria-busy=true]{cursor:progress}.nb-btn[aria-busy=true]:before{content:"";border:var(--nb-border-width-medium) solid currentcolor;border-radius:var(--nb-radius-full);block-size:1em;inline-size:1em;animation:nb-spin var(--nb-motion-duration-slower) linear infinite;border-inline-end-color:#0000}.nb-btn>svg{flex-shrink:0;block-size:1.25em;inline-size:1.25em}.nb-btn--primary{--_bg:var(--nb-color-accent);--_bg-hover:var(--nb-color-accent-hover);--_bg-active:var(--nb-color-accent-active);--_fg:var(--nb-color-on-accent);--_border:transparent}.nb-btn--danger{--_bg:var(--nb-color-danger);--_bg-hover:var(--nb-color-danger-hover);--_bg-active:var(--nb-color-danger-hover);--_fg:var(--nb-color-on-danger);--_border:transparent}.nb-btn--ghost{--_bg:transparent;--_bg-hover:var(--nb-color-surface-subtle);--_bg-active:var(--nb-color-surface-sunken);--_fg:var(--nb-color-accent-text);--_border:transparent}.nb-btn--link{--_bg:transparent;--_bg-hover:transparent;--_bg-active:transparent;--_fg:var(--nb-color-text-link);--_border:transparent;--_pad:0;text-underline-offset:.2em;text-decoration-line:underline}.nb-btn--sm{--_height:var(--nb-control-height-sm);--_pad:var(--nb-control-padding-inline-sm);--_font:var(--nb-control-font-size-sm)}.nb-btn--lg{--_height:var(--nb-control-height-lg);--_pad:var(--nb-control-padding-inline-lg);--_font:var(--nb-control-font-size-lg)}.nb-btn--block{inline-size:100%;display:flex}.nb-btn--icon{--_pad:0;inline-size:var(--_height)}.nb-btn-group{isolation:isolate;display:inline-flex}.nb-btn-group>.nb-btn:not(:first-child){border-start-start-radius:0;border-end-start-radius:0;margin-inline-start:calc(var(--nb-control-border-width) * -1)}.nb-btn-group>.nb-btn:not(:last-child){border-start-end-radius:0;border-end-end-radius:0}.nb-btn-group>.nb-btn:focus-visible{z-index:1}@media (forced-colors:active){.nb-btn{border-color:buttontext}}.nb-card{--_pad:var(--nb-space-5);border:var(--nb-border-width-thin) solid var(--nb-color-border);border-radius:var(--nb-radius-lg);background-color:var(--nb-color-surface-raised);min-inline-size:0;color:var(--nb-color-text);box-shadow:var(--nb-elevation-1);flex-direction:column;display:flex;position:relative}.nb-card__media{aspect-ratio:16/9;object-fit:cover;border-start-start-radius:inherit;border-start-end-radius:inherit;inline-size:100%;display:block}.nb-card__header,.nb-card__body,.nb-card__footer{padding-inline:var(--_pad)}.nb-card__header{padding-block-start:var(--_pad)}.nb-card__body{padding-block:var(--_pad);flex-grow:1}.nb-card__header+.nb-card__body{padding-block-start:var(--nb-space-2)}.nb-card__footer{align-items:center;gap:var(--nb-space-2);padding-block:var(--nb-space-3);border-block-start:var(--nb-border-width-thin) solid var(--nb-color-border);flex-wrap:wrap;display:flex}.nb-card__body>:last-child{margin-block-end:0}.nb-card__title{font-size:var(--nb-font-size-lg);font-weight:var(--nb-font-weight-semibold);line-height:var(--nb-font-leading-snug);margin:0}.nb-card__subtitle{font-size:var(--nb-font-size-sm);color:var(--nb-color-text-muted);margin:0}.nb-card__link{color:inherit;text-decoration:none}.nb-card__link:after{content:"";border-radius:inherit;position:absolute;inset:0}.nb-card__link:focus-visible{outline:none}.nb-card__link:focus-visible:after{outline:var(--nb-control-focus-ring-width) solid var(--nb-color-focus-ring);outline-offset:var(--nb-control-focus-ring-offset)}.nb-card--elevated{box-shadow:var(--nb-elevation-3);border-color:#0000}.nb-card--flat{box-shadow:none}.nb-card--interactive{transition:box-shadow var(--nb-motion-duration-base) var(--nb-motion-easing-standard), translate var(--nb-motion-duration-base) var(--nb-motion-easing-standard)}@media (hover:hover){.nb-card--interactive:hover{box-shadow:var(--nb-elevation-3);translate:0 calc(var(--nb-space-0-5) * -1)}}.nb-card--horizontal{flex-flow:wrap}.nb-card--horizontal>.nb-card__media{flex:1 1 var(--nb-space-64);aspect-ratio:auto;border-start-end-radius:0;border-end-start-radius:inherit;min-block-size:100%}.nb-card--horizontal>.nb-card__content{flex-direction:column;flex:999 1 0;min-inline-size:55%;display:flex}@media (forced-colors:active){.nb-card{border-color:canvastext}}.nb-badge{--_subtle:var(--nb-color-surface-subtle);--_text:var(--nb-color-text);--_border:var(--nb-color-border);--_fill:var(--nb-color-text);--_on:var(--nb-color-surface);align-items:center;gap:var(--nb-space-1);padding-block:var(--nb-space-0-5);padding-inline:var(--nb-space-2);border:var(--nb-border-width-thin) solid var(--_border);border-radius:var(--nb-radius-full);background-color:var(--_subtle);color:var(--_text);font-size:var(--nb-font-size-xs);font-weight:var(--nb-font-weight-semibold);line-height:var(--nb-font-leading-snug);white-space:nowrap;vertical-align:middle;display:inline-flex}.nb-badge--accent{--_subtle:var(--nb-color-accent-subtle);--_text:var(--nb-color-accent-text);--_border:var(--nb-color-accent-subtle);--_fill:var(--nb-color-accent);--_on:var(--nb-color-on-accent)}.nb-badge--success{--_subtle:var(--nb-color-success-subtle);--_text:var(--nb-color-success-text);--_border:var(--nb-color-success-border);--_fill:var(--nb-color-success);--_on:var(--nb-color-on-success)}.nb-badge--warning{--_subtle:var(--nb-color-warning-subtle);--_text:var(--nb-color-warning-text);--_border:var(--nb-color-warning-border);--_fill:var(--nb-color-warning);--_on:var(--nb-color-on-warning)}.nb-badge--danger{--_subtle:var(--nb-color-danger-subtle);--_text:var(--nb-color-danger-text);--_border:var(--nb-color-danger-border);--_fill:var(--nb-color-danger);--_on:var(--nb-color-on-danger)}.nb-badge--info{--_subtle:var(--nb-color-info-subtle);--_text:var(--nb-color-info-text);--_border:var(--nb-color-info-border);--_fill:var(--nb-color-info);--_on:var(--nb-color-on-info)}.nb-badge--solid{background-color:var(--_fill);color:var(--_on);border-color:#0000}.nb-badge--dot:before{content:"";border-radius:var(--nb-radius-full);background-color:currentColor;block-size:.5em;inline-size:.5em}.nb-chip{align-items:center;gap:var(--nb-space-1-5);min-block-size:var(--nb-control-height-sm);padding-inline:var(--nb-space-3);border:var(--nb-border-width-thin) solid var(--nb-color-border-strong);border-radius:var(--nb-radius-full);background-color:var(--nb-color-surface-raised);color:var(--nb-color-text);font:inherit;font-size:var(--nb-font-size-sm);line-height:var(--nb-font-leading-snug);white-space:nowrap;display:inline-flex}.nb-chip:is(button,label){cursor:pointer}@media (hover:hover){.nb-chip:is(button,label):hover{background-color:var(--nb-color-surface-subtle)}}.nb-chip[aria-pressed=true],.nb-chip:has(:checked){border-color:var(--nb-color-accent);background-color:var(--nb-color-accent-subtle);color:var(--nb-color-accent-text)}.nb-chip:has(:focus-visible){outline:var(--nb-control-focus-ring-width) solid var(--nb-color-focus-ring);outline-offset:var(--nb-control-focus-ring-offset)}.nb-chip>input{opacity:0;pointer-events:none;position:absolute}.nb-chip__remove{inline-size:var(--nb-size-target);block-size:var(--nb-size-target);border-radius:var(--nb-radius-full);color:inherit;cursor:pointer;background:0 0;border:0;place-items:center;margin-inline-end:calc(var(--nb-space-2) * -1);padding:0;display:inline-grid}@media (hover:hover){.nb-chip__remove:hover{background-color:var(--nb-color-surface-sunken)}}.nb-alert{--_subtle:var(--nb-color-info-subtle);--_text:var(--nb-color-info-text);--_border:var(--nb-color-info-border);align-items:flex-start;gap:var(--nb-space-3);padding:var(--nb-space-4);border:var(--nb-border-width-thin) solid var(--_border);border-inline-start-width:var(--nb-border-width-thick);border-radius:var(--nb-radius-md);background-color:var(--_subtle);color:var(--nb-color-text);display:flex}.nb-alert__icon{color:var(--_text);font-size:var(--nb-font-size-lg);line-height:var(--nb-font-leading-none);flex-shrink:0}.nb-alert__content{gap:var(--nb-space-1);flex-direction:column;flex:1;min-inline-size:0;display:flex}.nb-alert__content>*{margin-block:0}.nb-alert__title{color:var(--_text);font-size:var(--nb-font-size-base);font-weight:var(--nb-font-weight-semibold);margin:0}.nb-alert__actions{gap:var(--nb-space-2);flex-wrap:wrap;margin-block-start:var(--nb-space-2);display:flex}.nb-alert__close{inline-size:var(--nb-size-target);block-size:var(--nb-size-target);border-radius:var(--nb-radius-sm);color:inherit;cursor:pointer;background:0 0;border:0;flex-shrink:0;place-items:center;padding:0;display:inline-grid}.nb-alert--success{--_subtle:var(--nb-color-success-subtle);--_text:var(--nb-color-success-text);--_border:var(--nb-color-success-border)}.nb-alert--warning{--_subtle:var(--nb-color-warning-subtle);--_text:var(--nb-color-warning-text);--_border:var(--nb-color-warning-border)}.nb-alert--danger{--_subtle:var(--nb-color-danger-subtle);--_text:var(--nb-color-danger-text);--_border:var(--nb-color-danger-border)}@media (forced-colors:active){.nb-alert{border-color:canvastext}}.nb-field{gap:var(--nb-space-1-5);min-inline-size:0;display:grid}.nb-field__label{font-size:var(--nb-font-size-sm);font-weight:var(--nb-font-weight-medium);color:var(--nb-color-text)}.nb-field__required{color:var(--nb-color-danger-text)}.nb-field__hint{font-size:var(--nb-font-size-sm);color:var(--nb-color-text-muted);margin:0}.nb-field__error{font-size:var(--nb-font-size-sm);font-weight:var(--nb-font-weight-medium);color:var(--nb-color-danger-text);margin:0}.nb-field:not(:has(:user-invalid,[aria-invalid=true])) .nb-field__error--auto{display:none}.nb-input{--_height:var(--nb-control-height-md);--_font:var(--nb-control-font-size-md);inline-size:100%;min-block-size:var(--_height);padding-block:var(--nb-space-2);padding-inline:var(--nb-space-3);border:var(--nb-control-border-width) solid var(--nb-color-border-strong);border-radius:var(--nb-control-radius);background-color:var(--nb-color-surface-raised);color:var(--nb-color-text);font:inherit;font-size:var(--_font);line-height:var(--nb-font-leading-snug);transition:border-color var(--nb-motion-duration-fast) var(--nb-motion-easing-standard), box-shadow var(--nb-motion-duration-fast) var(--nb-motion-easing-standard);margin:0;display:block}@media (hover:hover){.nb-input:hover:not(:disabled,:focus){border-color:var(--nb-color-text-muted)}}.nb-input:focus-visible{border-color:var(--nb-color-focus-ring)}:is(.nb-input:user-invalid,.nb-input[aria-invalid=true]){border-color:var(--nb-color-danger);outline-color:var(--nb-color-danger)}.nb-input:disabled{background-color:var(--nb-color-surface-subtle);color:var(--nb-color-text-subtle);cursor:not-allowed}.nb-input:read-only:not(:disabled){background-color:var(--nb-color-surface-subtle)}.nb-input::placeholder{color:var(--nb-color-text-subtle);opacity:1}textarea.nb-input{min-block-size:calc(var(--_height) * 2.5);resize:block;field-sizing:content}.nb-input--sm{--_height:var(--nb-control-height-sm);--_font:var(--nb-control-font-size-sm)}.nb-input--lg{--_height:var(--nb-control-height-lg);--_font:var(--nb-control-font-size-lg)}.nb-select{display:block;position:relative}.nb-select>select{inline-size:100%;min-block-size:var(--nb-control-height-md);padding-block:var(--nb-space-2);padding-inline:var(--nb-space-3) var(--nb-space-10);border:var(--nb-control-border-width) solid var(--nb-color-border-strong);border-radius:var(--nb-control-radius);background-color:var(--nb-color-surface-raised);color:var(--nb-color-text);font:inherit;line-height:var(--nb-font-leading-snug);appearance:none;cursor:pointer;margin:0;display:block}.nb-select>select:focus-visible{border-color:var(--nb-color-focus-ring)}.nb-select>select:disabled{background-color:var(--nb-color-surface-subtle);color:var(--nb-color-text-subtle);cursor:not-allowed}:is(.nb-select>select:user-invalid,.nb-select>select[aria-invalid=true]){border-color:var(--nb-color-danger)}.nb-select:after{content:"";inline-size:var(--nb-space-4);background-color:var(--nb-color-text-muted);pointer-events:none;position:absolute;inset-block:0;inset-inline-end:var(--nb-space-3);mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 50%/contain no-repeat}.nb-select:has(select[multiple],select[size]):after{display:none}@media (forced-colors:active){.nb-select:after{background-color:canvastext}}.nb-check{align-items:flex-start;gap:var(--nb-space-2);min-block-size:var(--nb-size-target);padding-block:var(--nb-space-0-5);font-weight:var(--nb-font-weight-regular);line-height:var(--nb-font-leading-snug);cursor:pointer;display:inline-flex}.nb-check>input{block-size:1.25em;inline-size:1.25em;accent-color:var(--nb-color-accent);cursor:inherit;flex-shrink:0;margin:0;margin-block-start:.0625em}.nb-check:has(:disabled){color:var(--nb-color-text-subtle);cursor:not-allowed}.nb-check__description{font-size:var(--nb-font-size-sm);color:var(--nb-color-text-muted);display:block}.nb-switch{--_track-w:calc(var(--nb-size-target) * 1.75);--_thumb:calc(var(--nb-size-target) - var(--nb-space-1));--_travel:calc(var(--_track-w) - var(--_thumb) - var(--nb-space-1));--_dir:1;inline-size:var(--_track-w);block-size:var(--nb-size-target);padding:var(--nb-space-0-5);border-radius:var(--nb-radius-full);background-color:var(--nb-color-border-strong);appearance:none;cursor:pointer;transition:background-color var(--nb-motion-duration-base) var(--nb-motion-easing-standard);border:0;flex-shrink:0;align-items:center;margin:0;display:inline-grid}.nb-switch:dir(rtl){--_dir:-1}.nb-switch:before{content:"";inline-size:var(--_thumb);block-size:var(--_thumb);border-radius:var(--nb-radius-full);background-color:var(--nb-color-surface-raised);box-shadow:var(--nb-elevation-1);transition:translate var(--nb-motion-duration-base) var(--nb-motion-easing-emphasized)}.nb-switch:checked{background-color:var(--nb-color-accent)}.nb-switch:checked:before{translate:calc(var(--_travel) * var(--_dir)) 0}.nb-switch:disabled{opacity:var(--nb-opacity-disabled);cursor:not-allowed}.nb-switch-label{align-items:center;gap:var(--nb-space-3);min-block-size:var(--nb-size-target);cursor:pointer;display:inline-flex}@media (forced-colors:active){.nb-switch{border:var(--nb-border-width-thin) solid CanvasText}.nb-switch:before{background-color:canvastext}.nb-switch:checked:before{background-color:highlight}}.nb-navbar{align-items:center;gap:var(--nb-space-2) var(--nb-space-4);padding-block:var(--nb-space-2);padding-inline:var(--nb-space-fluid-md);border-block-end:var(--nb-border-width-thin) solid var(--nb-color-border);background-color:var(--nb-color-surface);color:var(--nb-color-text);flex-wrap:wrap;display:flex;container:nb-navbar/inline-size}.nb-navbar__brand{align-items:center;gap:var(--nb-space-2);min-block-size:var(--nb-control-height-md);color:inherit;font-size:var(--nb-font-size-lg);font-weight:var(--nb-font-weight-bold);text-decoration:none;display:inline-flex}.nb-navbar__nav{flex:auto;min-inline-size:0}.nb-navbar__links{gap:var(--nb-space-1);scrollbar-width:thin;margin:0;padding:0;list-style:none;display:flex;overflow-x:auto}.nb-navbar__links>li{margin:0}.nb-navbar__link{min-block-size:var(--nb-control-height-md);padding-inline:var(--nb-space-3);border-radius:var(--nb-radius-md);color:var(--nb-color-text-muted);font-weight:var(--nb-font-weight-medium);white-space:nowrap;align-items:center;text-decoration:none;display:inline-flex;position:relative}@media (hover:hover){.nb-navbar__link:hover{background-color:var(--nb-color-surface-subtle);color:var(--nb-color-text)}}.nb-navbar__link[aria-current=page]{color:var(--nb-color-text)}.nb-navbar__link[aria-current=page]:after{content:"";inset-inline:var(--nb-space-3);block-size:var(--nb-border-width-medium);border-radius:var(--nb-radius-full);background-color:var(--nb-color-accent);position:absolute;inset-block-end:0}.nb-navbar__actions{align-items:center;gap:var(--nb-space-2);margin-inline-start:auto;display:flex}@container nb-navbar (width<40rem){.nb-navbar__nav{flex-basis:100%;order:3}}.nb-navbar--sticky{z-index:var(--nb-z-sticky);background-color:color-mix(in oklch, var(--nb-color-surface) 85%, transparent);-webkit-backdrop-filter:saturate(1.5) blur(var(--nb-blur-md));backdrop-filter:saturate(1.5) blur(var(--nb-blur-md));position:sticky;inset-block-start:0}.nb-modal{inline-size:min(var(--nb-modal-width,var(--nb-size-container-sm)), calc(100% - var(--nb-space-8)));max-block-size:calc(100dvb - var(--nb-space-8));border:var(--nb-border-width-thin) solid var(--nb-color-border);border-radius:var(--nb-radius-xl);background-color:var(--nb-color-surface-overlay);color:var(--nb-color-text);box-shadow:var(--nb-elevation-5);overscroll-behavior:contain;padding:0;overflow:auto}.nb-modal::backdrop{background-color:color-mix(in oklch, var(--nb-color-backdrop) 55%, transparent);-webkit-backdrop-filter:blur(var(--nb-blur-sm));backdrop-filter:blur(var(--nb-blur-sm))}.nb-modal[open]{flex-direction:column;display:flex}@media (prefers-reduced-motion:no-preference){.nb-modal,.nb-modal::backdrop{transition:opacity var(--nb-motion-duration-base) var(--nb-motion-easing-decelerate), scale var(--nb-motion-duration-base) var(--nb-motion-easing-decelerate), overlay var(--nb-motion-duration-base) allow-discrete, display var(--nb-motion-duration-base) allow-discrete}.nb-modal:not([open]),.nb-modal:not([open])::backdrop{opacity:0}.nb-modal:not([open]){scale:.96}@starting-style{.nb-modal[open],.nb-modal[open]::backdrop{opacity:0}.nb-modal[open]{scale:.96}}}.nb-modal__header{justify-content:space-between;align-items:flex-start;gap:var(--nb-space-4);padding:var(--nb-space-5) var(--nb-space-5) 0;display:flex}.nb-modal__title{font-size:var(--nb-font-size-xl);font-weight:var(--nb-font-weight-semibold);line-height:var(--nb-font-leading-snug);margin:0}.nb-modal__close{margin:0}.nb-modal__body{padding:var(--nb-space-5);flex:1;overflow:auto}.nb-modal__footer{justify-content:flex-end;gap:var(--nb-space-2);padding:var(--nb-space-4) var(--nb-space-5);border-block-start:var(--nb-border-width-thin) solid var(--nb-color-border);flex-wrap:wrap;display:flex}.nb-modal--sm{--nb-modal-width:var(--nb-space-96)}.nb-modal--lg{--nb-modal-width:var(--nb-size-container-md)}.nb-accordion{border-block-start:var(--nb-border-width-thin) solid var(--nb-color-border)}.nb-accordion__item{border-block-end:var(--nb-border-width-thin) solid var(--nb-color-border);margin:0}.nb-accordion__item::details-content{content-visibility:hidden;block-size:0;overflow:clip}.nb-accordion__item[open]::details-content{content-visibility:visible;block-size:auto}@media (prefers-reduced-motion:no-preference){.nb-accordion__item::details-content{transition:block-size var(--nb-motion-duration-base) var(--nb-motion-easing-standard), content-visibility var(--nb-motion-duration-base) allow-discrete}}.nb-accordion__trigger{justify-content:space-between;align-items:center;gap:var(--nb-space-4);min-block-size:var(--nb-control-height-lg);padding-block:var(--nb-space-3);font-weight:var(--nb-font-weight-medium);cursor:pointer;list-style:none;display:flex}.nb-accordion__trigger::-webkit-details-marker{display:none}.nb-accordion__trigger:after{content:"";inline-size:var(--nb-space-4);block-size:var(--nb-space-4);background-color:var(--nb-color-text-muted);transition:rotate var(--nb-motion-duration-base) var(--nb-motion-easing-standard);flex-shrink:0;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 50%/contain no-repeat}@media (hover:hover){.nb-accordion__trigger:hover{color:var(--nb-color-accent-text)}}.nb-accordion__item[open]>.nb-accordion__trigger:after{rotate:180deg}.nb-accordion__panel{color:var(--nb-color-text-muted);padding-block-end:var(--nb-space-4)}@media (forced-colors:active){.nb-accordion__trigger:after{background-color:canvastext}}.nb-tabs{gap:var(--nb-space-4);flex-direction:column;display:flex}.nb-tabs__list{gap:var(--nb-space-1);border:0;border-block-end:var(--nb-border-width-thin) solid var(--nb-color-border);margin:0;padding:0;display:flex;overflow-x:auto}.nb-tabs__tab{min-block-size:var(--nb-control-height-md);padding-inline:var(--nb-space-3);color:var(--nb-color-text-muted);font-weight:var(--nb-font-weight-medium);white-space:nowrap;cursor:pointer;align-items:center;display:inline-flex;position:relative}.nb-tabs__tab>input{opacity:0;pointer-events:none;position:absolute}@media (hover:hover){.nb-tabs__tab:hover{color:var(--nb-color-text)}}.nb-tabs__tab:has(:checked){color:var(--nb-color-text);box-shadow:inset 0 calc(var(--nb-border-width-medium) * -1) 0 var(--nb-color-accent)}.nb-tabs__tab:has(:focus-visible){outline:var(--nb-control-focus-ring-width) solid var(--nb-color-focus-ring);outline-offset:calc(var(--nb-control-focus-ring-width) * -1);border-radius:var(--nb-radius-sm)}.nb-tabs__panel{display:none}.nb-tabs:has(>.nb-tabs__list>.nb-tabs__tab:nth-child(1 of .nb-tabs__tab)>:checked)>.nb-tabs__panel:nth-child(1 of .nb-tabs__panel),.nb-tabs:has(>.nb-tabs__list>.nb-tabs__tab:nth-child(2 of .nb-tabs__tab)>:checked)>.nb-tabs__panel:nth-child(2 of .nb-tabs__panel),.nb-tabs:has(>.nb-tabs__list>.nb-tabs__tab:nth-child(3 of .nb-tabs__tab)>:checked)>.nb-tabs__panel:nth-child(3 of .nb-tabs__panel),.nb-tabs:has(>.nb-tabs__list>.nb-tabs__tab:nth-child(4 of .nb-tabs__tab)>:checked)>.nb-tabs__panel:nth-child(4 of .nb-tabs__panel),.nb-tabs:has(>.nb-tabs__list>.nb-tabs__tab:nth-child(5 of .nb-tabs__tab)>:checked)>.nb-tabs__panel:nth-child(5 of .nb-tabs__panel),.nb-tabs:has(>.nb-tabs__list>.nb-tabs__tab:nth-child(6 of .nb-tabs__tab)>:checked)>.nb-tabs__panel:nth-child(6 of .nb-tabs__panel),.nb-tabs:has(>.nb-tabs__list>.nb-tabs__tab:nth-child(7 of .nb-tabs__tab)>:checked)>.nb-tabs__panel:nth-child(7 of .nb-tabs__panel),.nb-tabs:has(>.nb-tabs__list>.nb-tabs__tab:nth-child(8 of .nb-tabs__tab)>:checked)>.nb-tabs__panel:nth-child(8 of .nb-tabs__panel){display:block}.nb-tabs--pills .nb-tabs__list{border-block-end:0}.nb-tabs--pills .nb-tabs__tab{border-radius:var(--nb-radius-full)}.nb-tabs--pills .nb-tabs__tab:has(:checked){background-color:var(--nb-color-accent-subtle);color:var(--nb-color-accent-text);box-shadow:none}@media (forced-colors:active){.nb-tabs__tab:has(:checked){outline:var(--nb-border-width-medium) solid Highlight}}.nb-table-wrap{border:var(--nb-border-width-thin) solid var(--nb-color-border);border-radius:var(--nb-radius-lg);max-inline-size:100%;overflow-x:auto}.nb-table{--_pad-block:var(--nb-space-3);--_pad-inline:var(--nb-space-4);border-collapse:collapse;font-variant-numeric:tabular-nums;inline-size:100%;margin:0}.nb-table :is(th,td){padding-block:var(--_pad-block);padding-inline:var(--_pad-inline);border-block-end:var(--nb-border-width-thin) solid var(--nb-color-border);text-align:start;vertical-align:middle}.nb-table thead th{background-color:var(--nb-color-surface-subtle);color:var(--nb-color-text-muted);font-size:var(--nb-font-size-sm);font-weight:var(--nb-font-weight-semibold);white-space:nowrap}.nb-table tbody tr:last-child>:is(th,td){border-block-end:0}.nb-table .nb-table__num{text-align:end}.nb-table--striped tbody tr:nth-child(2n){background-color:var(--nb-color-surface-subtle)}@media (hover:hover){.nb-table--hover tbody tr:hover{background-color:var(--nb-color-accent-subtle)}}.nb-table--compact{--_pad-block:var(--nb-space-1-5);--_pad-inline:var(--nb-space-3)}}@layer nb.utilities;@keyframes nb-spin{to{rotate:1turn}}
+/*# sourceMappingURL=newbrush.min.css.map */
+</style>
+<style>@layer nb.reset,nb.tokens,nb.base,nb.layout,nb.components;@layer nb.utilities{.grid{display:grid}.hidden{display:none}.inline{display:inline}.table{display:table}.static{position:static}.\@container{container-type:inline-size}.aspect-square{aspect-ratio:1}.flex-row{flex-direction:row}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.gap-1{gap:var(--nb-space-1)}.gap-4{gap:var(--nb-space-4)}.gap-6{gap:var(--nb-space-6)}.self-start{align-self:flex-start}.p-4{padding:var(--nb-space-4)}.p-5{padding:var(--nb-space-5)}.p-6{padding:var(--nb-space-6)}.px-4{padding-inline:var(--nb-space-4)}.py-12{padding-block:var(--nb-space-12)}.py-2{padding-block:var(--nb-space-2)}.pt-6{padding-block-start:var(--nb-space-6)}.-mt-2{margin-block-start:calc(var(--nb-space-2) * -1)}.mt-1{margin-block-start:var(--nb-space-1)}.mt-2{margin-block-start:var(--nb-space-2)}.mt-3{margin-block-start:var(--nb-space-3)}.mt-4{margin-block-start:var(--nb-space-4)}.w-\[37ch\]{inline-size:37ch}.max-w-prose{max-inline-size:var(--nb-size-prose)}.font-bold{font-weight:var(--nb-font-weight-bold)}.font-semibold{font-weight:var(--nb-font-weight-semibold)}.text-2xl{font-size:var(--nb-font-size-2xl)}.text-3xl{font-size:var(--nb-font-size-3xl)}.text-5xl{font-size:var(--nb-font-size-5xl)}.text-lg{font-size:var(--nb-font-size-lg)}.text-sm{font-size:var(--nb-font-size-sm)}.text-xl{font-size:var(--nb-font-size-xl)}.text-xs{font-size:var(--nb-font-size-xs)}.text-muted{color:var(--nb-color-text-muted)}.text-neutral-50{color:var(--nb-color-neutral-50)}.text-center{text-align:center}.leading-tight{line-height:var(--nb-font-leading-tight)}.tracking-tight{letter-spacing:var(--nb-font-tracking-tight)}.tracking-wide{letter-spacing:var(--nb-font-tracking-wide)}.uppercase{text-transform:uppercase}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.bg-brand-600{background-color:var(--nb-color-brand-600)}.bg-surface-raised{background-color:var(--nb-color-surface-raised)}.opacity-100{opacity:1}.border{border-style:solid;border-width:var(--nb-border-width-thin);border-color:var(--nb-color-border)}.border-t{border-block-start-style:solid;border-block-start-width:var(--nb-border-width-thin);border-block-start-color:var(--nb-color-border)}.border-dashed{border-style:dashed}.rounded-md{border-radius:var(--nb-radius-md)}.rounded-sm{border-radius:var(--nb-radius-sm)}.rounded-xl{border-radius:var(--nb-radius-xl)}@media (hover:hover){.hover\:bg-brand-600\/80:hover{background-color:oklch(from var(--nb-color-brand-600) l c h / .8)}:where(.group):hover .group-hover\:opacity-100{opacity:1}}:where([data-nb-theme=dark]) .dark\:text-neutral-50:not(:where([data-nb-theme=dark] [data-nb-theme=light]) *),:where([data-nb-theme=light] [data-nb-theme=dark]) .dark\:text-neutral-50,[data-nb-theme=dark].dark\:text-neutral-50{color:var(--nb-color-neutral-50)}@media (prefers-color-scheme:dark){:root:not([data-nb-theme]) .dark\:text-neutral-50:not(:where([data-nb-theme]) *){color:var(--nb-color-neutral-50)}}@media (width>=48rem){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}@media (width>=64rem){.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}@container (width>=64rem){.\@lg\:flex-row{flex-direction:row}}}</style>
+<style>
+.demo { padding: var(--nb-space-4); border: 1px dashed var(--nb-color-border); border-radius: var(--nb-radius-lg); }
+.demo__stage { min-inline-size: 0; overflow-x: auto; }
+.demo__code summary { display: flex; align-items: center; min-block-size: var(--nb-size-target); }
+.demo__code pre { margin-block-start: var(--nb-space-2); max-block-size: 16rem; overflow: auto; }
+.progress { block-size: var(--nb-space-2); border-radius: var(--nb-radius-full); background: var(--nb-color-surface-sunken); overflow: hidden; }
+.progress > span { display: block; block-size: 100%; background: var(--nb-color-accent); border-radius: inherit; }
+</style>
+</head>
+<body>
+
+<header class="nb-navbar nb-navbar--sticky">
+  <a class="nb-navbar__brand" href="#top">newBrush</a>
+  <nav class="nb-navbar__nav" aria-label="Sections">
+    <ul class="nb-navbar__links">
+      <li><a class="nb-navbar__link" href="#architecture">Architecture</a></li><li><a class="nb-navbar__link" href="#tokens">Tokens</a></li><li><a class="nb-navbar__link" href="#components">Components</a></li><li><a class="nb-navbar__link" href="#engine">Engine</a></li><li><a class="nb-navbar__link" href="#themes">Themes</a></li><li><a class="nb-navbar__link" href="#styles">Styles</a></li><li><a class="nb-navbar__link" href="#status">Status</a></li>
+    </ul>
+  </nav>
+  <div class="nb-navbar__actions">
+    <div class="nb-btn-group" role="group" aria-label="Theme">
+      <button class="nb-btn nb-btn--sm" type="button" data-theme="auto" aria-pressed="true">Auto</button>
+      <button class="nb-btn nb-btn--sm" type="button" data-theme="light" aria-pressed="false">Light</button>
+      <button class="nb-btn nb-btn--sm" type="button" data-theme="dark" aria-pressed="false">Dark</button>
+      <button class="nb-btn nb-btn--sm" type="button" data-theme="contrast" aria-pressed="false">Contrast</button>
+    </div>
+  </div>
+</header>
+<main class="nb-container nb-stack nb-stack--xl py-12" id="top">
+
+<section class="nb-stack" aria-labelledby="top-title">
+  <p class="nb-badge nb-badge--accent nb-badge--dot self-start">Status · v0.0.0 · 2026-10-04</p>
+  <h1 id="top-title" class="text-5xl font-bold tracking-tight">How newBrush is made</h1>
+  <p class="text-lg text-muted max-w-prose">A live look at the framework as it exists today. This page is styled entirely by newBrush:
+  every component below is the real component, and the utility CSS for this page was generated on demand by the newBrush engine.</p>
+  <div class="grid gap-4 grid-cols-2 md:grid-cols-4">
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">251</p><p class="text-sm text-muted mt-1">design tokens (W3C DTCG)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">16</p><p class="text-sm text-muted mt-1">components + 9 layout primitives</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">137</p><p class="text-sm text-muted mt-1">utility families · 3,823 utilities</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">77</p><p class="text-sm text-muted mt-1">variants (md:, hover:, dark:, @md: …)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">4.5 kB</p><p class="text-sm text-muted mt-1">core CSS, brotli (budget 8 kB)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">7.8 kB</p><p class="text-sm text-muted mt-1">framework CSS, brotli (budget 35 kB)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">43.6 kB</p><p class="text-sm text-muted mt-1">with utility preset, brotli (budget 70 kB)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">0</p><p class="text-sm text-muted mt-1">JavaScript required</p></div>
+  </div>
+</section>
+
+<section class="nb-stack" id="architecture" aria-labelledby="arch-title">
+  <h2 id="arch-title">Architecture</h2>
+  <p class="text-muted max-w-prose">One source of truth — design tokens — flows through the build into the stylesheet,
+  the utility engine and a machine-readable manifest that powers docs, editor types and the MCP server.</p>
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="nb-stack nb-stack--sm" aria-label="Build pipeline">
+      <div class="nb-card p-4"><p class="font-semibold">1 · Design tokens</p><p class="text-sm text-muted mt-1">251 tokens in W3C DTCG JSON: OKLCH palette, fluid type & space, radius, elevation, motion. Tiered primitive → semantic → component.</p></div>
+      <p class="text-2xl text-muted text-center" aria-hidden="true">↓</p>
+      <div class="nb-card p-4"><p class="font-semibold">2 · Style Dictionary</p><p class="text-sm text-muted mt-1">Compiles tokens to layered CSS custom properties with light, dark and high-contrast themes, plus JS/TS, JSON and Figma variables.</p></div>
+      <p class="text-2xl text-muted text-center" aria-hidden="true">↓</p>
+      <div class="nb-card p-4"><p class="font-semibold">3 · Components + Lightning CSS</p><p class="text-sm text-muted mt-1">Hand-written native CSS (nesting, :has(), container queries, logical properties) for 16 components, bundled, lowered and minified.</p></div>
+      <p class="text-2xl text-muted text-center" aria-hidden="true">↓</p>
+      <div class="nb-card p-4"><p class="font-semibold">4 · Utility engine</p><p class="text-sm text-muted mt-1">137 families generate only the classes you use (JIT) from the same tokens; arbitrary values are validated.</p></div>
+      <p class="text-2xl text-muted text-center" aria-hidden="true">↓</p>
+      <div class="nb-card p-4"><p class="font-semibold">5 · manifest.json</p><p class="text-sm text-muted mt-1">Every token, component, utility and variant described as JSON — read by docs, editor types and AI agents.</p></div>
+    </div>
+    <div class="nb-stack nb-stack--sm">
+      <h3 class="text-xl">Cascade layers</h3>
+      <p class="text-sm text-muted">Every rule lives in an ordered layer, so your own CSS always wins without <code>!important</code>.</p>
+      <ol class="nb-stack nb-stack--xs" role="list">
+        <li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
+            <code>nb.reset</code><span class="text-sm text-muted">lowest priority</span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
+            <code>nb.tokens</code><span class="text-sm text-muted"></span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
+            <code>nb.base</code><span class="text-sm text-muted"></span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
+            <code>nb.layout</code><span class="text-sm text-muted"></span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
+            <code>nb.components</code><span class="text-sm text-muted"></span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border border-dashed">
+            <code>nb.styles</code><span class="text-sm text-muted">planned · design styles</span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
+            <code>nb.utilities</code><span class="text-sm text-muted">highest priority</span></li>
+      </ol>
+      <h3 class="text-xl mt-4">Packages</h3>
+      <ul class="text-sm">
+        <li><code>newbrush</code> — the stylesheet (zero runtime dependencies)</li>
+        <li><code>@newbrush/tokens</code> — design tokens and themes</li>
+        <li><code>@newbrush/engine</code> — utility engine (browser-safe)</li>
+        <li><code>@newbrush/cli</code> — <code>nb init · build · watch · explain · doctor · tokens</code></li>
+        <li><code>@newbrush/vite</code>, <code>@newbrush/postcss</code> — bundler plugins</li>
+        <li><code>@newbrush/schema</code>, <code>@newbrush/stylelint-config</code> — types and lint rules</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="nb-stack" id="tokens" aria-labelledby="tokens-title">
+  <h2 id="tokens-title">Design tokens</h2>
+  <p class="text-muted max-w-prose">Colors are OKLCH scales with perceptually even steps; every text/background pair is tested for
+  WCAG AA contrast in light, dark and high-contrast themes. Switch the theme at the top to see semantic tokens change.</p>
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="nb-stack nb-stack--sm"><div class="nb-stack nb-stack--xs"><p class="text-sm font-semibold">neutral</p>
+    <div class="grid gap-1" style="grid-template-columns: repeat(11, minmax(0, 1fr))">
+      <div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-50)" title="--nb-color-neutral-50"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-100)" title="--nb-color-neutral-100"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-200)" title="--nb-color-neutral-200"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-300)" title="--nb-color-neutral-300"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-400)" title="--nb-color-neutral-400"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-500)" title="--nb-color-neutral-500"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-600)" title="--nb-color-neutral-600"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-700)" title="--nb-color-neutral-700"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-800)" title="--nb-color-neutral-800"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-900)" title="--nb-color-neutral-900"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-neutral-950)" title="--nb-color-neutral-950"></div>
+    </div></div><div class="nb-stack nb-stack--xs"><p class="text-sm font-semibold">brand</p>
+    <div class="grid gap-1" style="grid-template-columns: repeat(11, minmax(0, 1fr))">
+      <div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-50)" title="--nb-color-brand-50"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-100)" title="--nb-color-brand-100"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-200)" title="--nb-color-brand-200"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-300)" title="--nb-color-brand-300"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-400)" title="--nb-color-brand-400"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-500)" title="--nb-color-brand-500"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-600)" title="--nb-color-brand-600"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-700)" title="--nb-color-brand-700"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-800)" title="--nb-color-brand-800"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-900)" title="--nb-color-brand-900"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-brand-950)" title="--nb-color-brand-950"></div>
+    </div></div><div class="nb-stack nb-stack--xs"><p class="text-sm font-semibold">accent</p>
+    <div class="grid gap-1" style="grid-template-columns: repeat(11, minmax(0, 1fr))">
+      <div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-50)" title="--nb-color-accent-50"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-100)" title="--nb-color-accent-100"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-200)" title="--nb-color-accent-200"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-300)" title="--nb-color-accent-300"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-400)" title="--nb-color-accent-400"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-500)" title="--nb-color-accent-500"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-600)" title="--nb-color-accent-600"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-700)" title="--nb-color-accent-700"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-800)" title="--nb-color-accent-800"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-900)" title="--nb-color-accent-900"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-accent-950)" title="--nb-color-accent-950"></div>
+    </div></div><div class="nb-stack nb-stack--xs"><p class="text-sm font-semibold">success</p>
+    <div class="grid gap-1" style="grid-template-columns: repeat(11, minmax(0, 1fr))">
+      <div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-50)" title="--nb-color-success-50"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-100)" title="--nb-color-success-100"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-200)" title="--nb-color-success-200"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-300)" title="--nb-color-success-300"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-400)" title="--nb-color-success-400"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-500)" title="--nb-color-success-500"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-600)" title="--nb-color-success-600"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-700)" title="--nb-color-success-700"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-800)" title="--nb-color-success-800"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-900)" title="--nb-color-success-900"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-success-950)" title="--nb-color-success-950"></div>
+    </div></div><div class="nb-stack nb-stack--xs"><p class="text-sm font-semibold">warning</p>
+    <div class="grid gap-1" style="grid-template-columns: repeat(11, minmax(0, 1fr))">
+      <div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-50)" title="--nb-color-warning-50"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-100)" title="--nb-color-warning-100"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-200)" title="--nb-color-warning-200"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-300)" title="--nb-color-warning-300"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-400)" title="--nb-color-warning-400"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-500)" title="--nb-color-warning-500"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-600)" title="--nb-color-warning-600"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-700)" title="--nb-color-warning-700"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-800)" title="--nb-color-warning-800"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-900)" title="--nb-color-warning-900"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-warning-950)" title="--nb-color-warning-950"></div>
+    </div></div><div class="nb-stack nb-stack--xs"><p class="text-sm font-semibold">danger</p>
+    <div class="grid gap-1" style="grid-template-columns: repeat(11, minmax(0, 1fr))">
+      <div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-50)" title="--nb-color-danger-50"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-100)" title="--nb-color-danger-100"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-200)" title="--nb-color-danger-200"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-300)" title="--nb-color-danger-300"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-400)" title="--nb-color-danger-400"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-500)" title="--nb-color-danger-500"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-600)" title="--nb-color-danger-600"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-700)" title="--nb-color-danger-700"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-800)" title="--nb-color-danger-800"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-900)" title="--nb-color-danger-900"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-danger-950)" title="--nb-color-danger-950"></div>
+    </div></div><div class="nb-stack nb-stack--xs"><p class="text-sm font-semibold">info</p>
+    <div class="grid gap-1" style="grid-template-columns: repeat(11, minmax(0, 1fr))">
+      <div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-50)" title="--nb-color-info-50"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-100)" title="--nb-color-info-100"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-200)" title="--nb-color-info-200"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-300)" title="--nb-color-info-300"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-400)" title="--nb-color-info-400"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-500)" title="--nb-color-info-500"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-600)" title="--nb-color-info-600"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-700)" title="--nb-color-info-700"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-800)" title="--nb-color-info-800"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-900)" title="--nb-color-info-900"></div><div class="rounded-sm aspect-square border" style="background: var(--nb-color-info-950)" title="--nb-color-info-950"></div>
+    </div></div></div>
+    <div class="nb-stack nb-stack--sm">
+      <h3 class="text-xl">Fluid type scale</h3>
+      <p class="truncate" style="font-size: var(--nb-font-size-xs)"><code class="text-xs">xs</code> The quick brown fox</p><p class="truncate" style="font-size: var(--nb-font-size-sm)"><code class="text-xs">sm</code> The quick brown fox</p><p class="truncate" style="font-size: var(--nb-font-size-base)"><code class="text-xs">base</code> The quick brown fox</p><p class="truncate" style="font-size: var(--nb-font-size-lg)"><code class="text-xs">lg</code> The quick brown fox</p><p class="truncate" style="font-size: var(--nb-font-size-xl)"><code class="text-xs">xl</code> The quick brown fox</p><p class="truncate" style="font-size: var(--nb-font-size-2xl)"><code class="text-xs">2xl</code> The quick brown fox</p><p class="truncate" style="font-size: var(--nb-font-size-3xl)"><code class="text-xs">3xl</code> The quick brown fox</p><p class="truncate" style="font-size: var(--nb-font-size-4xl)"><code class="text-xs">4xl</code> The quick brown fox</p>
+      <h3 class="text-xl mt-4">Elevation</h3>
+      <div class="grid gap-4 grid-cols-3"><div class="nb-card p-4 text-center text-sm" style="box-shadow: var(--nb-elevation-0)">elevation 0</div><div class="nb-card p-4 text-center text-sm" style="box-shadow: var(--nb-elevation-1)">elevation 1</div><div class="nb-card p-4 text-center text-sm" style="box-shadow: var(--nb-elevation-2)">elevation 2</div><div class="nb-card p-4 text-center text-sm" style="box-shadow: var(--nb-elevation-3)">elevation 3</div><div class="nb-card p-4 text-center text-sm" style="box-shadow: var(--nb-elevation-4)">elevation 4</div><div class="nb-card p-4 text-center text-sm" style="box-shadow: var(--nb-elevation-5)">elevation 5</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="nb-stack" id="components" aria-labelledby="components-title">
+  <h2 id="components-title">Components</h2>
+  <p class="text-muted max-w-prose">Each component is native HTML + CSS — dialogs use <code>&lt;dialog&gt;</code>, accordions
+  <code>&lt;details&gt;</code>, tabs a radio group — so they work without JavaScript and pass axe accessibility checks in light and dark,
+  at three widths and in right-to-left layouts.</p>
+  <div class="nb-stack nb-stack--sm"><h3 class="text-2xl">Layout primitives</h3><div class="grid gap-6 lg:grid-cols-2">
+  <article class="nb-card" id="c-container" aria-labelledby="c-container-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-container-title" class="nb-card__title">Container</h4>
+        <code class="text-sm">.nb-container</code>
+      </div>
+      <p class="text-sm text-muted">Centers content with a max inline size and fluid gutters.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Container</p>
+        <div class="demo__stage"><div class="nb-container"><p>Centered content with fluid gutters.</p></div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-container&quot;&gt;&lt;p&gt;Centered content with fluid gutters.&lt;/p&gt;&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-container--narrow</code> <code>nb-container--wide</code> <code>nb-container--full</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-stack" aria-labelledby="c-stack-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-stack-title" class="nb-card__title">Stack</h4>
+        <code class="text-sm">.nb-stack</code>
+      </div>
+      <p class="text-sm text-muted">Vertical flow with consistent gaps between children.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Stack</p>
+        <div class="demo__stage"><div class="nb-stack"><div class="nb-card"><div class="nb-card__body">Item 1</div></div><div class="nb-card"><div class="nb-card__body">Item 2</div></div><div class="nb-card"><div class="nb-card__body">Item 3</div></div></div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-stack&quot;&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 1&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 2&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 3&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-stack--xs</code> <code>nb-stack--sm</code> <code>nb-stack--lg</code> <code>nb-stack--xl</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-cluster" aria-labelledby="c-cluster-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-cluster-title" class="nb-card__title">Cluster</h4>
+        <code class="text-sm">.nb-cluster</code>
+      </div>
+      <p class="text-sm text-muted">Inline group that wraps — tags, buttons, toolbars.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Cluster</p>
+        <div class="demo__stage"><div class="nb-cluster"><span class="nb-badge">One</span><span class="nb-badge">Two</span><span class="nb-badge">Three</span></div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-cluster&quot;&gt;&lt;span class=&quot;nb-badge&quot;&gt;One&lt;/span&gt;&lt;span class=&quot;nb-badge&quot;&gt;Two&lt;/span&gt;&lt;span class=&quot;nb-badge&quot;&gt;Three&lt;/span&gt;&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-cluster--between</code> <code>nb-cluster--end</code> <code>nb-cluster--center</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-grid" aria-labelledby="c-grid-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-grid-title" class="nb-card__title">Grid</h4>
+        <code class="text-sm">.nb-grid</code>
+      </div>
+      <p class="text-sm text-muted">Auto-fitting responsive grid without breakpoints.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Grid</p>
+        <div class="demo__stage"><div class="nb-grid"><div class="nb-card"><div class="nb-card__body">Item 1</div></div><div class="nb-card"><div class="nb-card__body">Item 2</div></div><div class="nb-card"><div class="nb-card__body">Item 3</div></div><div class="nb-card"><div class="nb-card__body">Item 4</div></div></div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-grid&quot;&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 1&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 2&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 3&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 4&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-grid--sm</code> <code>nb-grid--lg</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-sidebar" aria-labelledby="c-sidebar-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-sidebar-title" class="nb-card__title">Sidebar</h4>
+        <code class="text-sm">.nb-sidebar</code>
+      </div>
+      <p class="text-sm text-muted">Two-pane layout; the sidebar wraps below content when space runs out.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Sidebar</p>
+        <div class="demo__stage"><div class="nb-sidebar"><aside aria-label="Filters"><div class="nb-card"><div class="nb-card__body">Sidebar 1</div></div></aside><div><div class="nb-card"><div class="nb-card__body">Content 1</div></div></div></div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-sidebar&quot;&gt;&lt;aside aria-label=&quot;Filters&quot;&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Sidebar 1&lt;/div&gt;&lt;/div&gt;&lt;/aside&gt;&lt;div&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Content 1&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-sidebar--end</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-switcher" aria-labelledby="c-switcher-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-switcher-title" class="nb-card__title">Switcher</h4>
+        <code class="text-sm">.nb-switcher</code>
+      </div>
+      <p class="text-sm text-muted">Row of equal children that switches to a column below a container threshold.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Switcher</p>
+        <div class="demo__stage"><div class="nb-switcher"><div class="nb-card"><div class="nb-card__body">Item 1</div></div><div class="nb-card"><div class="nb-card__body">Item 2</div></div><div class="nb-card"><div class="nb-card__body">Item 3</div></div></div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-switcher&quot;&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 1&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 2&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;nb-card&quot;&gt;&lt;div class=&quot;nb-card__body&quot;&gt;Item 3&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</code></pre></details></div>
+      
+    </div>
+  </article>
+  <article class="nb-card" id="c-center" aria-labelledby="c-center-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-center-title" class="nb-card__title">Center</h4>
+        <code class="text-sm">.nb-center</code>
+      </div>
+      <p class="text-sm text-muted">Horizontally centered measure for readable text.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Center</p>
+        <div class="demo__stage"><div class="nb-center"><p>Readable measure, centered.</p></div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-center&quot;&gt;&lt;p&gt;Readable measure, centered.&lt;/p&gt;&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-center--text</code> <code>nb-center--intrinsic</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-cover" aria-labelledby="c-cover-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-cover-title" class="nb-card__title">Cover</h4>
+        <code class="text-sm">.nb-cover</code>
+      </div>
+      <p class="text-sm text-muted">Full-height region with a vertically centered principal element.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Cover</p>
+        <div class="demo__stage"><div class="nb-cover" style="--nb-cover-min: 16rem"><header>Top</header><h2 class="nb-cover__principal">Centered</h2><footer>Bottom</footer></div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-cover&quot; style=&quot;--nb-cover-min: 16rem&quot;&gt;&lt;header&gt;Top&lt;/header&gt;&lt;h2 class=&quot;nb-cover__principal&quot;&gt;Centered&lt;/h2&gt;&lt;footer&gt;Bottom&lt;/footer&gt;&lt;/div&gt;</code></pre></details></div>
+      
+    </div>
+  </article>
+  <article class="nb-card" id="c-frame" aria-labelledby="c-frame-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-frame-title" class="nb-card__title">Frame</h4>
+        <code class="text-sm">.nb-frame</code>
+      </div>
+      <p class="text-sm text-muted">Aspect-ratio box that crops media to fit.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Frame</p>
+        <div class="demo__stage"><div class="nb-frame nb-frame--photo"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'/%3E" alt="Placeholder"></div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-frame nb-frame--photo&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'/%3E&quot; alt=&quot;Placeholder&quot;&gt;&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-frame--square</code> <code>nb-frame--photo</code> <code>nb-frame--portrait</code></p>
+    </div>
+  </article></div></div><div class="nb-stack nb-stack--sm"><h3 class="text-2xl">Actions</h3><div class="grid gap-6 lg:grid-cols-2">
+  <article class="nb-card" id="c-button" aria-labelledby="c-button-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-button-title" class="nb-card__title">Button</h4>
+        <code class="text-sm">.nb-btn</code>
+      </div>
+      <p class="text-sm text-muted">Triggers an action. Works on &lt;button&gt; and on &lt;a&gt; for navigation styled as a button.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Variants</p>
+        <div class="demo__stage"><div class="nb-cluster">
+  <button class="nb-btn nb-btn--primary" type="button">Primary</button>
+  <button class="nb-btn" type="button">Secondary</button>
+  <button class="nb-btn nb-btn--ghost" type="button">Ghost</button>
+  <button class="nb-btn nb-btn--danger" type="button">Delete</button>
+  <button class="nb-btn nb-btn--link" type="button">Link</button>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-cluster&quot;&gt;
+  &lt;button class=&quot;nb-btn nb-btn--primary&quot; type=&quot;button&quot;&gt;Primary&lt;/button&gt;
+  &lt;button class=&quot;nb-btn&quot; type=&quot;button&quot;&gt;Secondary&lt;/button&gt;
+  &lt;button class=&quot;nb-btn nb-btn--ghost&quot; type=&quot;button&quot;&gt;Ghost&lt;/button&gt;
+  &lt;button class=&quot;nb-btn nb-btn--danger&quot; type=&quot;button&quot;&gt;Delete&lt;/button&gt;
+  &lt;button class=&quot;nb-btn nb-btn--link&quot; type=&quot;button&quot;&gt;Link&lt;/button&gt;
+&lt;/div&gt;</code></pre></details></div><div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Sizes and states</p>
+        <div class="demo__stage"><div class="nb-cluster">
+  <button class="nb-btn nb-btn--primary nb-btn--sm" type="button">Small</button>
+  <button class="nb-btn nb-btn--primary nb-btn--lg" type="button">Large</button>
+  <button class="nb-btn" type="button" disabled>Disabled</button>
+  <button class="nb-btn nb-btn--primary" type="button" aria-busy="true">Saving</button>
+  <button class="nb-btn nb-btn--icon" type="button" aria-label="Settings">⚙</button>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-cluster&quot;&gt;
+  &lt;button class=&quot;nb-btn nb-btn--primary nb-btn--sm&quot; type=&quot;button&quot;&gt;Small&lt;/button&gt;
+  &lt;button class=&quot;nb-btn nb-btn--primary nb-btn--lg&quot; type=&quot;button&quot;&gt;Large&lt;/button&gt;
+  &lt;button class=&quot;nb-btn&quot; type=&quot;button&quot; disabled&gt;Disabled&lt;/button&gt;
+  &lt;button class=&quot;nb-btn nb-btn--primary&quot; type=&quot;button&quot; aria-busy=&quot;true&quot;&gt;Saving&lt;/button&gt;
+  &lt;button class=&quot;nb-btn nb-btn--icon&quot; type=&quot;button&quot; aria-label=&quot;Settings&quot;&gt;⚙&lt;/button&gt;
+&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-btn--primary</code> <code>nb-btn--danger</code> <code>nb-btn--ghost</code> <code>nb-btn--link</code> <code>nb-btn--block</code> <code>nb-btn--icon</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-button-group" aria-labelledby="c-button-group-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-button-group-title" class="nb-card__title">Button group</h4>
+        <code class="text-sm">.nb-btn-group</code>
+      </div>
+      <p class="text-sm text-muted">Joins related buttons into one segmented control.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Segmented</p>
+        <div class="demo__stage"><div class="nb-btn-group" role="group" aria-label="Text alignment">
+  <button class="nb-btn" type="button" aria-pressed="true">Start</button>
+  <button class="nb-btn" type="button" aria-pressed="false">Center</button>
+  <button class="nb-btn" type="button" aria-pressed="false">End</button>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-btn-group&quot; role=&quot;group&quot; aria-label=&quot;Text alignment&quot;&gt;
+  &lt;button class=&quot;nb-btn&quot; type=&quot;button&quot; aria-pressed=&quot;true&quot;&gt;Start&lt;/button&gt;
+  &lt;button class=&quot;nb-btn&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot;&gt;Center&lt;/button&gt;
+  &lt;button class=&quot;nb-btn&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot;&gt;End&lt;/button&gt;
+&lt;/div&gt;</code></pre></details></div>
+      
+    </div>
+  </article></div></div><div class="nb-stack nb-stack--sm"><h3 class="text-2xl">Content</h3><div class="grid gap-6 lg:grid-cols-2">
+  <article class="nb-card" id="c-badge" aria-labelledby="c-badge-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-badge-title" class="nb-card__title">Badge</h4>
+        <code class="text-sm">.nb-badge</code>
+      </div>
+      <p class="text-sm text-muted">Small status or count label.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Tones</p>
+        <div class="demo__stage"><div class="nb-cluster">
+  <span class="nb-badge">Neutral</span>
+  <span class="nb-badge nb-badge--accent">New</span>
+  <span class="nb-badge nb-badge--success nb-badge--dot">Active</span>
+  <span class="nb-badge nb-badge--warning">Pending</span>
+  <span class="nb-badge nb-badge--danger">Failed</span>
+  <span class="nb-badge nb-badge--info nb-badge--solid">Beta</span>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-cluster&quot;&gt;
+  &lt;span class=&quot;nb-badge&quot;&gt;Neutral&lt;/span&gt;
+  &lt;span class=&quot;nb-badge nb-badge--accent&quot;&gt;New&lt;/span&gt;
+  &lt;span class=&quot;nb-badge nb-badge--success nb-badge--dot&quot;&gt;Active&lt;/span&gt;
+  &lt;span class=&quot;nb-badge nb-badge--warning&quot;&gt;Pending&lt;/span&gt;
+  &lt;span class=&quot;nb-badge nb-badge--danger&quot;&gt;Failed&lt;/span&gt;
+  &lt;span class=&quot;nb-badge nb-badge--info nb-badge--solid&quot;&gt;Beta&lt;/span&gt;
+&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-badge--accent</code> <code>nb-badge--success</code> <code>nb-badge--warning</code> <code>nb-badge--danger</code> <code>nb-badge--info</code> <code>nb-badge--solid</code> <code>nb-badge--dot</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-chip" aria-labelledby="c-chip-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-chip-title" class="nb-card__title">Chip</h4>
+        <code class="text-sm">.nb-chip</code>
+      </div>
+      <p class="text-sm text-muted">Compact interactive token: filters, selections and removable tags.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Filter chips</p>
+        <div class="demo__stage"><fieldset class="nb-cluster" style="border: 0; padding: 0">
+  <legend>Filter by tag</legend>
+  <label class="nb-chip"><input type="checkbox" checked> Design</label>
+  <label class="nb-chip"><input type="checkbox"> Engineering</label>
+  <button class="nb-chip" type="button" aria-pressed="false">Remote</button>
+  <span class="nb-chip">CSS <button class="nb-chip__remove" type="button" aria-label="Remove CSS">×</button></span>
+</fieldset></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;fieldset class=&quot;nb-cluster&quot; style=&quot;border: 0; padding: 0&quot;&gt;
+  &lt;legend&gt;Filter by tag&lt;/legend&gt;
+  &lt;label class=&quot;nb-chip&quot;&gt;&lt;input type=&quot;checkbox&quot; checked&gt; Design&lt;/label&gt;
+  &lt;label class=&quot;nb-chip&quot;&gt;&lt;input type=&quot;checkbox&quot;&gt; Engineering&lt;/label&gt;
+  &lt;button class=&quot;nb-chip&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot;&gt;Remote&lt;/button&gt;
+  &lt;span class=&quot;nb-chip&quot;&gt;CSS &lt;button class=&quot;nb-chip__remove&quot; type=&quot;button&quot; aria-label=&quot;Remove CSS&quot;&gt;×&lt;/button&gt;&lt;/span&gt;
+&lt;/fieldset&gt;</code></pre></details></div>
+      
+    </div>
+  </article></div></div><div class="nb-stack nb-stack--sm"><h3 class="text-2xl">Forms</h3><div class="grid gap-6 lg:grid-cols-2">
+  <article class="nb-card" id="c-check" aria-labelledby="c-check-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-check-title" class="nb-card__title">Checkbox &amp; radio</h4>
+        <code class="text-sm">.nb-check</code>
+      </div>
+      <p class="text-sm text-muted">Native checkbox or radio wrapped in its label, sized to meet the 24px target minimum.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Checkboxes and radios</p>
+        <div class="demo__stage"><fieldset class="nb-stack nb-stack--xs">
+  <legend>Notifications</legend>
+  <label class="nb-check"><input type="checkbox" checked> Email</label>
+  <label class="nb-check"><input type="checkbox"> <span>SMS <span class="nb-check__description">Carrier rates may apply.</span></span></label>
+  <label class="nb-check"><input type="radio" name="freq" checked> Daily</label>
+  <label class="nb-check"><input type="radio" name="freq"> Weekly</label>
+  <label class="nb-check"><input type="checkbox" disabled> Push (unavailable)</label>
+</fieldset></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;fieldset class=&quot;nb-stack nb-stack--xs&quot;&gt;
+  &lt;legend&gt;Notifications&lt;/legend&gt;
+  &lt;label class=&quot;nb-check&quot;&gt;&lt;input type=&quot;checkbox&quot; checked&gt; Email&lt;/label&gt;
+  &lt;label class=&quot;nb-check&quot;&gt;&lt;input type=&quot;checkbox&quot;&gt; &lt;span&gt;SMS &lt;span class=&quot;nb-check__description&quot;&gt;Carrier rates may apply.&lt;/span&gt;&lt;/span&gt;&lt;/label&gt;
+  &lt;label class=&quot;nb-check&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;freq&quot; checked&gt; Daily&lt;/label&gt;
+  &lt;label class=&quot;nb-check&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;freq&quot;&gt; Weekly&lt;/label&gt;
+  &lt;label class=&quot;nb-check&quot;&gt;&lt;input type=&quot;checkbox&quot; disabled&gt; Push (unavailable)&lt;/label&gt;
+&lt;/fieldset&gt;</code></pre></details></div>
+      
+    </div>
+  </article>
+  <article class="nb-card" id="c-field" aria-labelledby="c-field-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-field-title" class="nb-card__title">Field</h4>
+        <code class="text-sm">.nb-field</code>
+      </div>
+      <p class="text-sm text-muted">Label, control, hint and error message laid out consistently.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">With hint and error</p>
+        <div class="demo__stage"><div class="nb-field" style="max-inline-size: 24rem">
+  <label class="nb-field__label" for="f-email">Email <span class="nb-field__required" aria-hidden="true">*</span></label>
+  <input class="nb-input" id="f-email" type="email" required aria-invalid="true" aria-describedby="f-email-hint f-email-error" value="not-an-email">
+  <p class="nb-field__hint" id="f-email-hint">We never share your email.</p>
+  <p class="nb-field__error" id="f-email-error">Enter a valid email address.</p>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-field&quot; style=&quot;max-inline-size: 24rem&quot;&gt;
+  &lt;label class=&quot;nb-field__label&quot; for=&quot;f-email&quot;&gt;Email &lt;span class=&quot;nb-field__required&quot; aria-hidden=&quot;true&quot;&gt;*&lt;/span&gt;&lt;/label&gt;
+  &lt;input class=&quot;nb-input&quot; id=&quot;f-email&quot; type=&quot;email&quot; required aria-invalid=&quot;true&quot; aria-describedby=&quot;f-email-hint f-email-error&quot; value=&quot;not-an-email&quot;&gt;
+  &lt;p class=&quot;nb-field__hint&quot; id=&quot;f-email-hint&quot;&gt;We never share your email.&lt;/p&gt;
+  &lt;p class=&quot;nb-field__error&quot; id=&quot;f-email-error&quot;&gt;Enter a valid email address.&lt;/p&gt;
+&lt;/div&gt;</code></pre></details></div>
+      
+    </div>
+  </article>
+  <article class="nb-card" id="c-input" aria-labelledby="c-input-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-input-title" class="nb-card__title">Input</h4>
+        <code class="text-sm">.nb-input</code>
+      </div>
+      <p class="text-sm text-muted">Text input and textarea with hover, focus, invalid, disabled and read-only states.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">States</p>
+        <div class="demo__stage"><div class="nb-stack nb-stack--sm" style="max-inline-size: 24rem">
+  <label for="i1">Name</label><input class="nb-input" id="i1" type="text" placeholder="Ada Lovelace" autocomplete="name">
+  <label for="i2">Disabled</label><input class="nb-input" id="i2" type="text" value="Locked" disabled>
+  <label for="i3">Notes</label><textarea class="nb-input" id="i3">Grows with its content where supported.</textarea>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-stack nb-stack--sm&quot; style=&quot;max-inline-size: 24rem&quot;&gt;
+  &lt;label for=&quot;i1&quot;&gt;Name&lt;/label&gt;&lt;input class=&quot;nb-input&quot; id=&quot;i1&quot; type=&quot;text&quot; placeholder=&quot;Ada Lovelace&quot; autocomplete=&quot;name&quot;&gt;
+  &lt;label for=&quot;i2&quot;&gt;Disabled&lt;/label&gt;&lt;input class=&quot;nb-input&quot; id=&quot;i2&quot; type=&quot;text&quot; value=&quot;Locked&quot; disabled&gt;
+  &lt;label for=&quot;i3&quot;&gt;Notes&lt;/label&gt;&lt;textarea class=&quot;nb-input&quot; id=&quot;i3&quot;&gt;Grows with its content where supported.&lt;/textarea&gt;
+&lt;/div&gt;</code></pre></details></div>
+      
+    </div>
+  </article>
+  <article class="nb-card" id="c-select" aria-labelledby="c-select-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-select-title" class="nb-card__title">Select</h4>
+        <code class="text-sm">.nb-select</code>
+      </div>
+      <p class="text-sm text-muted">Native &lt;select&gt; with consistent styling; the wrapper draws the chevron.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Basic</p>
+        <div class="demo__stage"><div style="max-inline-size: 24rem">
+  <label for="s1">Plan</label>
+  <div class="nb-select"><select id="s1"><option>Starter</option><option selected>Pro</option><option>Team</option></select></div>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div style=&quot;max-inline-size: 24rem&quot;&gt;
+  &lt;label for=&quot;s1&quot;&gt;Plan&lt;/label&gt;
+  &lt;div class=&quot;nb-select&quot;&gt;&lt;select id=&quot;s1&quot;&gt;&lt;option&gt;Starter&lt;/option&gt;&lt;option selected&gt;Pro&lt;/option&gt;&lt;option&gt;Team&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre></details></div>
+      
+    </div>
+  </article>
+  <article class="nb-card" id="c-switch" aria-labelledby="c-switch-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-switch-title" class="nb-card__title">Switch</h4>
+        <code class="text-sm">.nb-switch</code>
+      </div>
+      <p class="text-sm text-muted">On/off toggle built on a native checkbox with role=switch.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Basic</p>
+        <div class="demo__stage"><div class="nb-stack nb-stack--xs">
+  <label class="nb-switch-label"><input class="nb-switch" type="checkbox" role="switch" checked> Dark mode</label>
+  <label class="nb-switch-label"><input class="nb-switch" type="checkbox" role="switch"> Notifications</label>
+  <label class="nb-switch-label"><input class="nb-switch" type="checkbox" role="switch" disabled> Beta features</label>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-stack nb-stack--xs&quot;&gt;
+  &lt;label class=&quot;nb-switch-label&quot;&gt;&lt;input class=&quot;nb-switch&quot; type=&quot;checkbox&quot; role=&quot;switch&quot; checked&gt; Dark mode&lt;/label&gt;
+  &lt;label class=&quot;nb-switch-label&quot;&gt;&lt;input class=&quot;nb-switch&quot; type=&quot;checkbox&quot; role=&quot;switch&quot;&gt; Notifications&lt;/label&gt;
+  &lt;label class=&quot;nb-switch-label&quot;&gt;&lt;input class=&quot;nb-switch&quot; type=&quot;checkbox&quot; role=&quot;switch&quot; disabled&gt; Beta features&lt;/label&gt;
+&lt;/div&gt;</code></pre></details></div>
+      
+    </div>
+  </article></div></div><div class="nb-stack nb-stack--sm"><h3 class="text-2xl">Feedback</h3><div class="grid gap-6 lg:grid-cols-2">
+  <article class="nb-card" id="c-alert" aria-labelledby="c-alert-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-alert-title" class="nb-card__title">Alert</h4>
+        <code class="text-sm">.nb-alert</code>
+      </div>
+      <p class="text-sm text-muted">Inline message communicating status, with optional title, actions and dismiss button.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Tones</p>
+        <div class="demo__stage"><div class="nb-stack nb-stack--sm">
+  <div class="nb-alert" role="status"><span class="nb-alert__icon" aria-hidden="true">ℹ</span>
+    <div class="nb-alert__content"><p class="nb-alert__title">Heads up</p><p>New tokens are available in v0.2.</p></div></div>
+  <div class="nb-alert nb-alert--success" role="status"><span class="nb-alert__icon" aria-hidden="true">✓</span>
+    <div class="nb-alert__content"><p class="nb-alert__title">Saved</p><p>Your theme was published.</p></div></div>
+  <div class="nb-alert nb-alert--warning" role="status"><span class="nb-alert__icon" aria-hidden="true">!</span>
+    <div class="nb-alert__content"><p class="nb-alert__title">Almost out of quota</p><p>90% of builds used.</p></div></div>
+  <div class="nb-alert nb-alert--danger" role="alert"><span class="nb-alert__icon" aria-hidden="true">✕</span>
+    <div class="nb-alert__content"><p class="nb-alert__title">Build failed</p><p>Contrast check failed for 2 pairs.</p>
+      <div class="nb-alert__actions"><button class="nb-btn nb-btn--sm" type="button">View report</button></div></div>
+    <button class="nb-alert__close" type="button" aria-label="Dismiss">×</button></div>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-stack nb-stack--sm&quot;&gt;
+  &lt;div class=&quot;nb-alert&quot; role=&quot;status&quot;&gt;&lt;span class=&quot;nb-alert__icon&quot; aria-hidden=&quot;true&quot;&gt;ℹ&lt;/span&gt;
+    &lt;div class=&quot;nb-alert__content&quot;&gt;&lt;p class=&quot;nb-alert__title&quot;&gt;Heads up&lt;/p&gt;&lt;p&gt;New tokens are available in v0.2.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;nb-alert nb-alert--success&quot; role=&quot;status&quot;&gt;&lt;span class=&quot;nb-alert__icon&quot; aria-hidden=&quot;true&quot;&gt;✓&lt;/span&gt;
+    &lt;div class=&quot;nb-alert__content&quot;&gt;&lt;p class=&quot;nb-alert__title&quot;&gt;Saved&lt;/p&gt;&lt;p&gt;Your theme was published.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;nb-alert nb-alert--warning&quot; role=&quot;status&quot;&gt;&lt;span class=&quot;nb-alert__icon&quot; aria-hidden=&quot;true&quot;&gt;!&lt;/span&gt;
+    &lt;div class=&quot;nb-alert__content&quot;&gt;&lt;p class=&quot;nb-alert__title&quot;&gt;Almost out of quota&lt;/p&gt;&lt;p&gt;90% of builds used.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;nb-alert nb-alert--danger&quot; role=&quot;alert&quot;&gt;&lt;span class=&quot;nb-alert__icon&quot; aria-hidden=&quot;true&quot;&gt;✕&lt;/span&gt;
+    &lt;div class=&quot;nb-alert__content&quot;&gt;&lt;p class=&quot;nb-alert__title&quot;&gt;Build failed&lt;/p&gt;&lt;p&gt;Contrast check failed for 2 pairs.&lt;/p&gt;
+      &lt;div class=&quot;nb-alert__actions&quot;&gt;&lt;button class=&quot;nb-btn nb-btn--sm&quot; type=&quot;button&quot;&gt;View report&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;button class=&quot;nb-alert__close&quot; type=&quot;button&quot; aria-label=&quot;Dismiss&quot;&gt;×&lt;/button&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-alert--success</code> <code>nb-alert--warning</code> <code>nb-alert--danger</code></p>
+    </div>
+  </article></div></div><div class="nb-stack nb-stack--sm"><h3 class="text-2xl">Navigation</h3><div class="grid gap-6 lg:grid-cols-2">
+  <article class="nb-card" id="c-navbar" aria-labelledby="c-navbar-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-navbar-title" class="nb-card__title">Navbar</h4>
+        <code class="text-sm">.nb-navbar</code>
+      </div>
+      <p class="text-sm text-muted">Site header with brand, primary navigation and actions; adapts to its container width without JS.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Basic</p>
+        <div class="demo__stage"><header class="nb-navbar">
+  <a class="nb-navbar__brand" href="#home">newBrush</a>
+  <nav class="nb-navbar__nav" aria-label="Main">
+    <ul class="nb-navbar__links">
+      <li><a class="nb-navbar__link" href="#docs" aria-current="page">Docs</a></li>
+      <li><a class="nb-navbar__link" href="#components">Components</a></li>
+      <li><a class="nb-navbar__link" href="#themes">Themes</a></li>
+      <li><a class="nb-navbar__link" href="#mcp">MCP</a></li>
+    </ul>
+  </nav>
+  <div class="nb-navbar__actions"><a class="nb-btn nb-btn--primary nb-btn--sm" href="#start">Get started</a></div>
+</header></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;header class=&quot;nb-navbar&quot;&gt;
+  &lt;a class=&quot;nb-navbar__brand&quot; href=&quot;#home&quot;&gt;newBrush&lt;/a&gt;
+  &lt;nav class=&quot;nb-navbar__nav&quot; aria-label=&quot;Main&quot;&gt;
+    &lt;ul class=&quot;nb-navbar__links&quot;&gt;
+      &lt;li&gt;&lt;a class=&quot;nb-navbar__link&quot; href=&quot;#docs&quot; aria-current=&quot;page&quot;&gt;Docs&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a class=&quot;nb-navbar__link&quot; href=&quot;#components&quot;&gt;Components&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a class=&quot;nb-navbar__link&quot; href=&quot;#themes&quot;&gt;Themes&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a class=&quot;nb-navbar__link&quot; href=&quot;#mcp&quot;&gt;MCP&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+  &lt;div class=&quot;nb-navbar__actions&quot;&gt;&lt;a class=&quot;nb-btn nb-btn--primary nb-btn--sm&quot; href=&quot;#start&quot;&gt;Get started&lt;/a&gt;&lt;/div&gt;
+&lt;/header&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-navbar--sticky</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-tabs" aria-labelledby="c-tabs-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-tabs-title" class="nb-card__title">Tabs</h4>
+        <code class="text-sm">.nb-tabs</code>
+      </div>
+      <p class="text-sm text-muted">CSS-only tabs driven by a native radio group (up to 8 tabs); enhanced to ARIA tabs by @newbrush/js.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Underline tabs</p>
+        <div class="demo__stage"><div class="nb-tabs">
+  <fieldset class="nb-tabs__list"><legend hidden>Sections</legend>
+    <label class="nb-tabs__tab"><input type="radio" name="tabs-1" checked> Overview</label>
+    <label class="nb-tabs__tab"><input type="radio" name="tabs-1"> Tokens</label>
+    <label class="nb-tabs__tab"><input type="radio" name="tabs-1"> Usage</label>
+  </fieldset>
+  <div class="nb-tabs__panel"><p>Overview content.</p></div>
+  <div class="nb-tabs__panel"><p>Tokens content.</p></div>
+  <div class="nb-tabs__panel"><p>Usage content.</p></div>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-tabs&quot;&gt;
+  &lt;fieldset class=&quot;nb-tabs__list&quot;&gt;&lt;legend hidden&gt;Sections&lt;/legend&gt;
+    &lt;label class=&quot;nb-tabs__tab&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;tabs-1&quot; checked&gt; Overview&lt;/label&gt;
+    &lt;label class=&quot;nb-tabs__tab&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;tabs-1&quot;&gt; Tokens&lt;/label&gt;
+    &lt;label class=&quot;nb-tabs__tab&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;tabs-1&quot;&gt; Usage&lt;/label&gt;
+  &lt;/fieldset&gt;
+  &lt;div class=&quot;nb-tabs__panel&quot;&gt;&lt;p&gt;Overview content.&lt;/p&gt;&lt;/div&gt;
+  &lt;div class=&quot;nb-tabs__panel&quot;&gt;&lt;p&gt;Tokens content.&lt;/p&gt;&lt;/div&gt;
+  &lt;div class=&quot;nb-tabs__panel&quot;&gt;&lt;p&gt;Usage content.&lt;/p&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-tabs--pills</code></p>
+    </div>
+  </article></div></div><div class="nb-stack nb-stack--sm"><h3 class="text-2xl">Overlay</h3><div class="grid gap-6 lg:grid-cols-2">
+  <article class="nb-card" id="c-accordion" aria-labelledby="c-accordion-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-accordion-title" class="nb-card__title">Accordion</h4>
+        <code class="text-sm">.nb-accordion</code>
+      </div>
+      <p class="text-sm text-muted">Disclosure list built on &lt;details&gt;/&lt;summary&gt;. A shared name attribute makes items exclusive; height animates where ::details-content is supported.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">FAQ</p>
+        <div class="demo__stage"><div class="nb-accordion">
+  <details class="nb-accordion__item" name="faq" open>
+    <summary class="nb-accordion__trigger">Does newBrush need JavaScript?</summary>
+    <div class="nb-accordion__panel"><p>No. Every component works with CSS and native HTML alone.</p></div>
+  </details>
+  <details class="nb-accordion__item" name="faq">
+    <summary class="nb-accordion__trigger">Can I theme it?</summary>
+    <div class="nb-accordion__panel"><p>Yes — override tokens or generate a theme from one brand color.</p></div>
+  </details>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-accordion&quot;&gt;
+  &lt;details class=&quot;nb-accordion__item&quot; name=&quot;faq&quot; open&gt;
+    &lt;summary class=&quot;nb-accordion__trigger&quot;&gt;Does newBrush need JavaScript?&lt;/summary&gt;
+    &lt;div class=&quot;nb-accordion__panel&quot;&gt;&lt;p&gt;No. Every component works with CSS and native HTML alone.&lt;/p&gt;&lt;/div&gt;
+  &lt;/details&gt;
+  &lt;details class=&quot;nb-accordion__item&quot; name=&quot;faq&quot;&gt;
+    &lt;summary class=&quot;nb-accordion__trigger&quot;&gt;Can I theme it?&lt;/summary&gt;
+    &lt;div class=&quot;nb-accordion__panel&quot;&gt;&lt;p&gt;Yes — override tokens or generate a theme from one brand color.&lt;/p&gt;&lt;/div&gt;
+  &lt;/details&gt;
+&lt;/div&gt;</code></pre></details></div>
+      
+    </div>
+  </article>
+  <article class="nb-card" id="c-modal" aria-labelledby="c-modal-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-modal-title" class="nb-card__title">Modal</h4>
+        <code class="text-sm">.nb-modal</code>
+      </div>
+      <p class="text-sm text-muted">Dialog built on native &lt;dialog&gt;: focus trapping, Esc to close and inert background come from the platform. Open with dialog.showModal() or the command/commandfor attributes.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Confirm dialog (shown open, non-modal, for preview)</p>
+        <div class="demo__stage"><dialog class="nb-modal" open aria-labelledby="m-title" style="position: static">
+  <header class="nb-modal__header">
+    <h2 class="nb-modal__title" id="m-title">Delete theme?</h2>
+    <form method="dialog"><button class="nb-btn nb-btn--ghost nb-btn--icon nb-modal__close" type="submit" aria-label="Close">×</button></form>
+  </header>
+  <div class="nb-modal__body"><p>“Ocean” will be removed from all projects. This cannot be undone.</p></div>
+  <form class="nb-modal__footer" method="dialog">
+    <button class="nb-btn" type="submit" value="cancel">Cancel</button>
+    <button class="nb-btn nb-btn--danger" type="submit" value="delete">Delete</button>
+  </form>
+</dialog></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;dialog class=&quot;nb-modal&quot; open aria-labelledby=&quot;m-title&quot; style=&quot;position: static&quot;&gt;
+  &lt;header class=&quot;nb-modal__header&quot;&gt;
+    &lt;h2 class=&quot;nb-modal__title&quot; id=&quot;m-title&quot;&gt;Delete theme?&lt;/h2&gt;
+    &lt;form method=&quot;dialog&quot;&gt;&lt;button class=&quot;nb-btn nb-btn--ghost nb-btn--icon nb-modal__close&quot; type=&quot;submit&quot; aria-label=&quot;Close&quot;&gt;×&lt;/button&gt;&lt;/form&gt;
+  &lt;/header&gt;
+  &lt;div class=&quot;nb-modal__body&quot;&gt;&lt;p&gt;“Ocean” will be removed from all projects. This cannot be undone.&lt;/p&gt;&lt;/div&gt;
+  &lt;form class=&quot;nb-modal__footer&quot; method=&quot;dialog&quot;&gt;
+    &lt;button class=&quot;nb-btn&quot; type=&quot;submit&quot; value=&quot;cancel&quot;&gt;Cancel&lt;/button&gt;
+    &lt;button class=&quot;nb-btn nb-btn--danger&quot; type=&quot;submit&quot; value=&quot;delete&quot;&gt;Delete&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/dialog&gt;</code></pre></details></div>
+      
+    </div>
+  </article></div></div><div class="nb-stack nb-stack--sm"><h3 class="text-2xl">Data</h3><div class="grid gap-6 lg:grid-cols-2">
+  <article class="nb-card" id="c-card" aria-labelledby="c-card-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-card-title" class="nb-card__title">Card</h4>
+        <code class="text-sm">.nb-card</code>
+      </div>
+      <p class="text-sm text-muted">Groups related content and actions on a raised surface.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Basic</p>
+        <div class="demo__stage"><article class="nb-card" style="max-inline-size: 22rem">
+  <header class="nb-card__header">
+    <h3 class="nb-card__title">Token-driven</h3>
+    <p class="nb-card__subtitle">Layered and accessible</p>
+  </header>
+  <div class="nb-card__body"><p>Every value comes from a design token, so themes re-skin everything at once.</p></div>
+  <footer class="nb-card__footer">
+    <button class="nb-btn nb-btn--primary nb-btn--sm" type="button">Get started</button>
+    <button class="nb-btn nb-btn--ghost nb-btn--sm" type="button">Docs</button>
+  </footer>
+</article></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;article class=&quot;nb-card&quot; style=&quot;max-inline-size: 22rem&quot;&gt;
+  &lt;header class=&quot;nb-card__header&quot;&gt;
+    &lt;h3 class=&quot;nb-card__title&quot;&gt;Token-driven&lt;/h3&gt;
+    &lt;p class=&quot;nb-card__subtitle&quot;&gt;Layered and accessible&lt;/p&gt;
+  &lt;/header&gt;
+  &lt;div class=&quot;nb-card__body&quot;&gt;&lt;p&gt;Every value comes from a design token, so themes re-skin everything at once.&lt;/p&gt;&lt;/div&gt;
+  &lt;footer class=&quot;nb-card__footer&quot;&gt;
+    &lt;button class=&quot;nb-btn nb-btn--primary nb-btn--sm&quot; type=&quot;button&quot;&gt;Get started&lt;/button&gt;
+    &lt;button class=&quot;nb-btn nb-btn--ghost nb-btn--sm&quot; type=&quot;button&quot;&gt;Docs&lt;/button&gt;
+  &lt;/footer&gt;
+&lt;/article&gt;</code></pre></details></div><div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Interactive</p>
+        <div class="demo__stage"><article class="nb-card nb-card--interactive" style="max-inline-size: 22rem">
+  <div class="nb-card__body">
+    <h3 class="nb-card__title"><a class="nb-card__link" href="#post">Release notes</a></h3>
+    <p>The whole card is clickable; only the title link is focusable.</p>
+  </div>
+</article></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;article class=&quot;nb-card nb-card--interactive&quot; style=&quot;max-inline-size: 22rem&quot;&gt;
+  &lt;div class=&quot;nb-card__body&quot;&gt;
+    &lt;h3 class=&quot;nb-card__title&quot;&gt;&lt;a class=&quot;nb-card__link&quot; href=&quot;#post&quot;&gt;Release notes&lt;/a&gt;&lt;/h3&gt;
+    &lt;p&gt;The whole card is clickable; only the title link is focusable.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/article&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-card--elevated</code> <code>nb-card--flat</code> <code>nb-card--interactive</code> <code>nb-card--horizontal</code></p>
+    </div>
+  </article>
+  <article class="nb-card" id="c-table" aria-labelledby="c-table-title">
+    <div class="nb-card__body nb-stack nb-stack--sm">
+      <div class="nb-cluster nb-cluster--between">
+        <h4 id="c-table-title" class="nb-card__title">Table</h4>
+        <code class="text-sm">.nb-table</code>
+      </div>
+      <p class="text-sm text-muted">Data table with tabular numbers, optional stripes, hover rows and a scrollable wrapper.</p>
+      <div class="demo nb-stack nb-stack--xs"><p class="text-xs text-muted uppercase tracking-wide">Striped</p>
+        <div class="demo__stage"><div class="nb-table-wrap" tabindex="0" role="region" aria-label="Invoices">
+  <table class="nb-table nb-table--striped nb-table--hover">
+    <caption>Invoices</caption>
+    <thead><tr><th scope="col">Invoice</th><th scope="col">Status</th><th scope="col" class="nb-table__num">Amount</th></tr></thead>
+    <tbody>
+      <tr><td>INV-001</td><td><span class="nb-badge nb-badge--success">Paid</span></td><td class="nb-table__num">$1,200.00</td></tr>
+      <tr><td>INV-002</td><td><span class="nb-badge nb-badge--warning">Due</span></td><td class="nb-table__num">$340.50</td></tr>
+      <tr><td>INV-003</td><td><span class="nb-badge nb-badge--danger">Overdue</span></td><td class="nb-table__num">$89.99</td></tr>
+    </tbody>
+  </table>
+</div></div>
+        <details class="demo__code"><summary class="text-sm">Markup</summary><pre><code>&lt;div class=&quot;nb-table-wrap&quot; tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Invoices&quot;&gt;
+  &lt;table class=&quot;nb-table nb-table--striped nb-table--hover&quot;&gt;
+    &lt;caption&gt;Invoices&lt;/caption&gt;
+    &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Invoice&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Status&lt;/th&gt;&lt;th scope=&quot;col&quot; class=&quot;nb-table__num&quot;&gt;Amount&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;&lt;td&gt;INV-001&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb-badge nb-badge--success&quot;&gt;Paid&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;nb-table__num&quot;&gt;$1,200.00&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;INV-002&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb-badge nb-badge--warning&quot;&gt;Due&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;nb-table__num&quot;&gt;$340.50&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;INV-003&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb-badge nb-badge--danger&quot;&gt;Overdue&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;nb-table__num&quot;&gt;$89.99&lt;/td&gt;&lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/div&gt;</code></pre></details></div>
+      <p class="text-xs text-muted">Modifiers: <code>nb-table--striped</code> <code>nb-table--hover</code> <code>nb-table--compact</code></p>
+    </div>
+  </article></div></div>
+</section>
+
+<section class="nb-stack" id="engine" aria-labelledby="engine-title">
+  <h2 id="engine-title">Utility engine</h2>
+  <p class="text-muted max-w-prose">Tailwind-compatible class names, newBrush tokens and logical properties underneath. The engine scans
+  your files and writes only what you use; output is deterministic. Cold build of 1,000 files: ~150 ms · incremental rebuild: &lt; 1 ms.</p>
+  <div class="nb-cluster"><span class="nb-chip">layout · 33</span><span class="nb-chip">spacing · 19</span><span class="nb-chip">sizing · 7</span><span class="nb-chip">typography · 12</span><span class="nb-chip">color · 19</span><span class="nb-chip">border · 25</span><span class="nb-chip">effects · 10</span><span class="nb-chip">motion · 10</span><span class="nb-chip">interactivity · 1</span><span class="nb-chip">a11y · 1</span></div>
+  <div class="nb-table-wrap" tabindex="0" role="region" aria-label="Class to CSS examples">
+    <table class="nb-table">
+      <caption>Class → generated CSS (produced live by the engine for this page)</caption>
+      <thead><tr><th scope="col">Class</th><th scope="col">Family</th><th scope="col">CSS</th></tr></thead>
+      <tbody><tr><td><code>p-4</code></td><td class="text-sm text-muted">padding</td><td><pre class="text-xs"><code>.p-4 {
+    padding: var(--nb-space-4);
+  }
+}</code></pre></td></tr><tr><td><code>md:grid-cols-3</code></td><td class="text-sm text-muted">grid-template-columns</td><td><pre class="text-xs"><code>@media (width &gt;= 48rem) {
+    .md\:grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}</code></pre></td></tr><tr><td><code>hover:bg-brand-600/80</code></td><td class="text-sm text-muted">background-color</td><td><pre class="text-xs"><code>@media (hover: hover) {
+    .hover\:bg-brand-600\/80:hover {
+      background-color: oklch(from var(--nb-color-brand-600) l c h / 0.8);
+    }
+  }
+}</code></pre></td></tr><tr><td><code>dark:text-neutral-50</code></td><td class="text-sm text-muted">text-color</td><td><pre class="text-xs"><code>:where([data-nb-theme=dark]) .dark\:text-neutral-50:not(:where([data-nb-theme=dark] [data-nb-theme=light]) *), :where([data-nb-theme=light] [data-nb-theme=dark]) .dark\:text-neutral-50, [data-nb-theme=dark].dark\:text-neutral-50 {
+    color: var(--nb-color-neutral-50);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-nb-theme]) .dark\:text-neutral-50:not(:where([data-nb-theme]) *) {
+      color: var(--nb-color-neutral-50);
+    }
+  }
+}</code></pre></td></tr><tr><td><code>w-[37ch]</code></td><td class="text-sm text-muted">inline-size</td><td><pre class="text-xs"><code>.w-\[37ch\] {
+    inline-size: 37ch;
+  }
+}</code></pre></td></tr><tr><td><code>-mt-2</code></td><td class="text-sm text-muted">margin-block-start</td><td><pre class="text-xs"><code>.-mt-2 {
+    margin-block-start: calc(var(--nb-space-2) * -1);
+  }
+}</code></pre></td></tr><tr><td><code>@lg:flex-row</code></td><td class="text-sm text-muted">flex-direction</td><td><pre class="text-xs"><code>@container (width &gt;= 64rem) {
+    .\@lg\:flex-row {
+      flex-direction: row;
+    }
+  }
+}</code></pre></td></tr><tr><td><code>group-hover:opacity-100</code></td><td class="text-sm text-muted">opacity</td><td><pre class="text-xs"><code>@media (hover: hover) {
+    :where(.group):hover .group-hover\:opacity-100 {
+      opacity: 1;
+    }
+  }
+}</code></pre></td></tr></tbody>
+    </table>
+  </div>
+  <details><summary>All 77 variants</summary><p class="mt-2"><code class="text-xs">before</code> <code class="text-xs">after</code> <code class="text-xs">placeholder</code> <code class="text-xs">selection</code> <code class="text-xs">marker</code> <code class="text-xs">file</code> <code class="text-xs">backdrop</code> <code class="text-xs">first-line</code> <code class="text-xs">first-letter</code> <code class="text-xs">first</code> <code class="text-xs">last</code> <code class="text-xs">only</code> <code class="text-xs">odd</code> <code class="text-xs">even</code> <code class="text-xs">first-of-type</code> <code class="text-xs">last-of-type</code> <code class="text-xs">empty</code> <code class="text-xs">visited</code> <code class="text-xs">target</code> <code class="text-xs">open</code> <code class="text-xs">default</code> <code class="text-xs">checked</code> <code class="text-xs">indeterminate</code> <code class="text-xs">placeholder-shown</code> <code class="text-xs">autofill</code> <code class="text-xs">optional</code> <code class="text-xs">required</code> <code class="text-xs">valid</code> <code class="text-xs">invalid</code> <code class="text-xs">user-valid</code> <code class="text-xs">user-invalid</code> <code class="text-xs">in-range</code> <code class="text-xs">out-of-range</code> <code class="text-xs">read-only</code> <code class="text-xs">focus-within</code> <code class="text-xs">hover</code> <code class="text-xs">focus</code> <code class="text-xs">focus-visible</code> <code class="text-xs">active</code> <code class="text-xs">enabled</code> <code class="text-xs">disabled</code> <code class="text-xs">group</code> <code class="text-xs">peer</code> <code class="text-xs">aria</code> <code class="text-xs">data</code> <code class="text-xs">has</code> <code class="text-xs">not</code> <code class="text-xs">[arbitrary]</code> <code class="text-xs">ltr</code> <code class="text-xs">rtl</code> <code class="text-xs">motion-safe</code> <code class="text-xs">motion-reduce</code> <code class="text-xs">contrast-more</code> <code class="text-xs">forced-colors</code> <code class="text-xs">portrait</code> <code class="text-xs">landscape</code> <code class="text-xs">print</code> <code class="text-xs">light</code> <code class="text-xs">dark</code> <code class="text-xs">contrast</code> <code class="text-xs">starting</code> <code class="text-xs">max-2xl</code> <code class="text-xs">max-xl</code> <code class="text-xs">max-lg</code> <code class="text-xs">max-md</code> <code class="text-xs">max-sm</code> <code class="text-xs">sm</code> <code class="text-xs">md</code> <code class="text-xs">lg</code> <code class="text-xs">xl</code> <code class="text-xs">2xl</code> <code class="text-xs">@sm</code> <code class="text-xs">@md</code> <code class="text-xs">@lg</code> <code class="text-xs">@xl</code> <code class="text-xs">@2xl</code> <code class="text-xs">supports</code></p></details>
+</section>
+
+<section class="nb-stack" id="themes" aria-labelledby="themes-title">
+  <h2 id="themes-title">Themes and islands</h2>
+  <p class="text-muted max-w-prose">Light, dark and high-contrast themes follow the operating system or <code>data-nb-theme</code>, and any
+  element can be an island with its own theme — the nearest one wins.</p>
+  <div class="grid gap-4 md:grid-cols-3">
+    <div data-nb-theme="light" class="rounded-xl p-6 border nb-stack nb-stack--sm"><p class="font-semibold">data-nb-theme="light"</p>
+      <div class="nb-cluster"><button class="nb-btn nb-btn--primary nb-btn--sm" type="button">Primary</button><span class="nb-badge nb-badge--success">Active</span></div>
+      <p class="text-sm text-muted">Muted text stays readable.</p></div><div data-nb-theme="dark" class="rounded-xl p-6 border nb-stack nb-stack--sm"><p class="font-semibold">data-nb-theme="dark"</p>
+      <div class="nb-cluster"><button class="nb-btn nb-btn--primary nb-btn--sm" type="button">Primary</button><span class="nb-badge nb-badge--success">Active</span></div>
+      <p class="text-sm text-muted">Muted text stays readable.</p></div><div data-nb-theme="contrast" class="rounded-xl p-6 border nb-stack nb-stack--sm"><p class="font-semibold">data-nb-theme="contrast"</p>
+      <div class="nb-cluster"><button class="nb-btn nb-btn--primary nb-btn--sm" type="button">Primary</button><span class="nb-badge nb-badge--success">Active</span></div>
+      <p class="text-sm text-muted">Muted text stays readable.</p></div>
+  </div>
+</section>
+
+<section class="nb-stack" id="styles" aria-labelledby="styles-title">
+  <h2 id="styles-title">Coming next: design styles</h2>
+  <p class="text-muted max-w-prose">newBrush's signature feature (planned in spec 004): one class re-skins the whole project —
+  <code>&lt;body class="g-morph"&gt;</code> or <code>&lt;body class="nb-g-morph"&gt;</code>. Styles change the skin and density, never the layout,
+  and ship as pure CSS in the same file.</p>
+  <div class="grid gap-4 md:grid-cols-3">
+    <div class="nb-card p-5"><p class="font-semibold"><code>g-morph</code></p><p class="text-sm text-muted mt-1">Glassmorphism — translucent surfaces and backdrop blur</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>n-morph</code></p><p class="text-sm text-muted mt-1">Neumorphism — soft, extruded, tactile</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>neon</code></p><p class="text-sm text-muted mt-1">Glowing accents on deep, dark surfaces</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>cyber</code></p><p class="text-sm text-muted mt-1">Cyberpunk HUD — notched corners, scanlines</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>pixelate</code></p><p class="text-sm text-muted mt-1">8-bit — stepped borders and pixel type</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>minimal</code></p><p class="text-sm text-muted mt-1">Quiet and editorial — hairlines, no shadows</p><p class="nb-badge mt-3">planned</p></div>
+  </div>
+</section>
+
+<section class="nb-stack" id="status" aria-labelledby="status-title">
+  <h2 id="status-title">Build status</h2>
+  <div class="grid gap-4 md:grid-cols-2">
+    <div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Core framework</p><p class="text-sm text-muted">61/94 tasks</p></div>
+        <div class="progress" role="progressbar" aria-label="Core framework progress" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"><span style="inline-size: 65%"></span></div>
+        <p class="text-sm text-muted">Tokens, components, utility engine, tooling</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Design styles</p><p class="text-sm text-muted">1/43 tasks</p></div>
+        <div class="progress" role="progressbar" aria-label="Design styles progress" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"><span style="inline-size: 2%"></span></div>
+        <p class="text-sm text-muted">g-morph, n-morph, neon, cyber, pixelate, minimal</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">MCP server</p><p class="text-sm text-muted">0/38 tasks</p></div>
+        <div class="progress" role="progressbar" aria-label="MCP server progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><span style="inline-size: 0%"></span></div>
+        <p class="text-sm text-muted">CSS & page generation for AI agents</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Distribution</p><p class="text-sm text-muted">0/30 tasks</p></div>
+        <div class="progress" role="progressbar" aria-label="Distribution progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><span style="inline-size: 0%"></span></div>
+        <p class="text-sm text-muted">npm, CDN, downloads, release pipeline</p></div>
+  </div>
+  <div class="nb-alert nb-alert--success" role="status"><div class="nb-alert__content"><p class="nb-alert__title">Quality gates on every change</p>
+  <p>Unit tests across 13 packages, contrast checks for every color pair, 350 browser tests (axe accessibility, 24 px touch targets,
+  themes, RTL) and enforced size budgets.</p></div></div>
+</section>
+<footer class="text-sm text-muted border-t pt-6"><p>newBrush · MIT · generated by <code>apps/overview</code> from the build outputs.
+Source: github.com/newsignlabs/css-project</p></footer>
+</main>
+<script>
+const root = document.documentElement;
+const buttons = document.querySelectorAll("[data-theme]");
+const apply = (t) => {
+  if (t === "auto") delete root.dataset.nbTheme; else root.dataset.nbTheme = t;
+  buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.theme === t)));
+  try { localStorage.setItem("nb-overview-theme", t); } catch {}
+};
+buttons.forEach((b) => b.addEventListener("click", () => apply(b.dataset.theme)));
+try { const saved = localStorage.getItem("nb-overview-theme"); if (saved) apply(saved); } catch {}
+</script>
+<!-- utilities generated for this page: 62 classes, 3.3 kB -->
+</body>
+</html>

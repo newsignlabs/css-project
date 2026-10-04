@@ -15,7 +15,8 @@
     "visual": "turbo run visual",
     "format": "biome format --write .",
     "changeset": "changeset",
-    "prepare": "husky"
+    "prepare": "husky",
+    "overview": "pnpm --filter @newbrush/overview overview"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",

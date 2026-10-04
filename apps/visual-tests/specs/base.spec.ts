@@ -37,3 +37,14 @@ test("base styles come from tokens", async ({ page }) => {
     .evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
   expect(h1).toBeGreaterThan(p * 2);
 });
+
+test('lists with role="list" have no marker or indent (reset is not undone by base styles)', async ({
+  page,
+}) => {
+  await renderFixture(page, { html: '<ul role="list"><li>One</li></ul><ul><li>Two</li></ul>' });
+  const [plain, styled] = await page
+    .locator("ul")
+    .evaluateAll((els) => els.map((el) => getComputedStyle(el).paddingInlineStart));
+  expect(plain).toBe("0px");
+  expect(styled).not.toBe("0px");
+});

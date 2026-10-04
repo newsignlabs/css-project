@@ -4,7 +4,7 @@
 
 ## Summary
 
-Add switchable whole-project design styles (`minimal`, `glassy`, `neon`, `cyber`, `pixel`) activated by one class or
+Add switchable whole-project design styles (`minimal`, `g-morph`, `n-morph`, `neon`, `cyber`, `pixelate`) activated by one class or
 `data-nb-style` on any element. Each style = DTCG token overrides (light/dark) + small zero-specificity recipes in a new
 `nb.styles` layer. Styles compose with themes and brand seeds, support islands, add `<style>:` utility variants, appear in
 the manifest, drive a style-first docs IA, and are exposed to AI agents through the MCP server.
@@ -38,7 +38,7 @@ the manifest, drive a style-first docs IA, and are exposed to AI agents through 
 
 ```text
 packages/styles/                       # @newbrush/styles (build-time)
-├── src/{minimal,glassy,neon,cyber,pixel}/{style.json,recipes.css,preview.html}
+├── src/{minimal,g-morph,n-morph,neon,cyber,pixelate}/{style.json,recipes.css,preview.html}
 ├── src/_shared/                       # shared recipe helpers (focus ring under clip-path, scanline overlay…)
 ├── build.ts                           # resolves DTCG overrides → per-style CSS + Style manifest entries
 └── test/                              # contrast per style × scheme, recipe scoping, size
@@ -61,8 +61,8 @@ engine: <style>: variants (nearest style via --nb-style) ─► utilities still 
 | Milestone | Scope | Exit criteria |
 | --------- | ----- | ------------- |
 | S0 Foundations | Amendment, `nb.styles` layer, schema, `*-base` tokens, styles package skeleton, style marker + islands | Default style snapshots unchanged; layer-order tests updated |
-| S1 MVP styles | `minimal` + `glassy` across all US1 components | US1 + US3 scenarios pass; contrast + axe green |
-| S2 Expressive styles | `neon`, `cyber`, `pixel` (+ opt-in pixel font) | All acceptance scenarios; reduced-motion/transparency/forced-colors tests |
+| S1 MVP styles | `minimal` + `g-morph` across all US1 components | US1 + US3 scenarios pass; contrast + axe green |
+| S2 Expressive styles | `n-morph`, `neon`, `cyber`, `pixelate` (+ opt-in pixel font) | All acceptance scenarios; reduced-motion/transparency/forced-colors tests |
 | S3 Utilities & tooling | `<style>:` variants, config `styles`, `nb style list/create`, `setStyle()` | US4, US7 |
 | S4 Docs & MCP | Style-first docs IA + switcher; MCP `list_styles`, `style` args, `restyle` prompt | US5, US6, SC-005 eval |
 

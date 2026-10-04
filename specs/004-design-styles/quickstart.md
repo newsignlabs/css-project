@@ -4,7 +4,7 @@
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/newbrush@1/dist/newbrush.min.css">
-<body class="glassy">
+<body class="g-morph">
   <header class="nb-navbar">…</header>
   <main class="nb-container">
     <article class="nb-card">…</article>
@@ -12,7 +12,7 @@
   </main>
 </body>
 ```
-✅ Change `glassy` → `minimal` → `neon` → `cyber` → `pixel`: the page re-skins each time, no other edits.
+✅ Change `g-morph` → `minimal` → `neon` → `cyber` → `pixelate`: the page re-skins each time, no other edits.
 
 ## 2. Style + theme + brand (US2)
 
@@ -34,15 +34,15 @@
 ## 4. Style variants (US4)
 
 ```html
-<div class="nb-card p-6 neon:p-8 pixel:rounded-none">…</div>
+<div class="nb-card p-6 neon:p-8 pixelate:rounded-none">…</div>
 ```
 
 ## 5. Bundler config (FR-016)
 
 ```ts
-export default defineConfig({ content: ["src/**/*.html"], styles: ["glassy", "minimal"] });
+export default defineConfig({ content: ["src/**/*.html"], styles: ["g-morph", "minimal"] });
 ```
-✅ Output contains only glassy and minimal recipes.
+✅ Output contains only g-morph and minimal recipes.
 
 ## 6. Runtime switch with transition (R-07)
 
@@ -54,6 +54,6 @@ document.querySelector("#style").addEventListener("change", (e) => setStyle(e.ta
 ## 7. MCP (US6)
 
 ```json
-{ "tool": "build_page", "arguments": { "title": "Arcade", "style": "pixel", "sections": [{ "type": "hero" }] } }
+{ "tool": "build_page", "arguments": { "title": "Arcade", "style": "pixelate", "sections": [{ "type": "hero" }] } }
 ```
-✅ `<body class="pixel">`, CSS contains pixel recipes only, zero axe violations.
+✅ `<body class="pixelate">`, CSS contains pixelate recipes only, zero axe violations.
