@@ -390,8 +390,12 @@ const pageCss = `
 `;
 const candidates = extractCandidates(body);
 const utilities = engine.generate(candidates, { reportUnknown: false });
-const framework = await read(join(dist, "newbrush.min.css"));
-const utilityCss = optimize(utilities.css, { minify: true, cwd: new URL(".", root).pathname }).code;
+// Inlined CSS has no sibling .map file, so drop source map references (they 404 in devtools).
+const stripSourceMap = (css: string) => css.replace(/\/\*# sourceMappingURL=[^*]*\*\/\s*/g, "");
+const framework = stripSourceMap(await read(join(dist, "newbrush.min.css")));
+const utilityCss = stripSourceMap(
+  optimize(utilities.css, { minify: true, cwd: new URL(".", root).pathname }).code,
+);
 
 const script = `
 const root = document.documentElement;
