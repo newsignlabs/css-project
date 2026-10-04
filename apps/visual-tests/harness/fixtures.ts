@@ -30,6 +30,9 @@ export interface FixtureOptions {
 export async function renderFixture(page: Page, opts: FixtureOptions): Promise<void> {
   const { html, theme = "light", dir = "ltr", width = 1280, extraCss = "" } = opts;
   await page.setViewportSize({ width, height: 800 });
+  // Assert the settled state: newBrush disables transitions (e.g. the modal fade-in) under reduced motion, so axe never
+  // measures half-transparent mid-transition colors. Motion itself is covered by dedicated tests.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   const themeAttr = theme === "auto" ? "" : ` data-nb-theme="${theme}"`;
   await page.setContent(
     `<!doctype html><html lang="en" dir="${dir}"${themeAttr}><head><meta charset="utf-8">` +
