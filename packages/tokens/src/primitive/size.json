@@ -1,0 +1,30 @@
+{
+  "size": {
+    "$type": "dimension",
+    "container": {
+      "sm": {
+        "$value": "40rem"
+      },
+      "md": {
+        "$value": "48rem"
+      },
+      "lg": {
+        "$value": "64rem"
+      },
+      "xl": {
+        "$value": "80rem"
+      },
+      "2xl": {
+        "$value": "96rem"
+      }
+    },
+    "prose": {
+      "$value": "65ch",
+      "$description": "Comfortable reading measure"
+    },
+    "target": {
+      "$value": "1.5rem",
+      "$description": "Minimum interactive target (WCAG 2.2 AA, 24px)"
+    }
+  }
+}

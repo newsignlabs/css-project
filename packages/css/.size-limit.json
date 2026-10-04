@@ -1,0 +1,20 @@
+[
+  {
+    "name": "newbrush-core.min.css (reset + tokens + base + layout)",
+    "path": "dist/newbrush-core.min.css",
+    "limit": "8 kB",
+    "brotli": true
+  },
+  {
+    "name": "newbrush.min.css (core + components)",
+    "path": "dist/newbrush.min.css",
+    "limit": "35 kB",
+    "brotli": true
+  },
+  {
+    "name": "newbrush-full.min.css (+ utility preset)",
+    "path": "dist/newbrush-full.min.css",
+    "limit": "70 kB",
+    "brotli": true
+  }
+]

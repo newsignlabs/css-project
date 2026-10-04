@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>newBrush — plain HTML showcase</title>
+  <!-- Zero build: one stylesheet. From npm: node_modules/newbrush/dist/newbrush.css; from a CDN: see README. -->
+  <link rel="stylesheet" href="../../packages/css/dist/newbrush.css">
+  <style>
+    /* Page-only styles (unlayered, so they win over newBrush without !important). */
+    .demo { padding: var(--nb-space-5); border: 1px dashed var(--nb-color-border); border-radius: var(--nb-radius-lg); }
+  </style>
+</head>
+<body>
+  <header class="nb-navbar nb-navbar--sticky">
+    <a class="nb-navbar__brand" href="#top">newBrush</a>
+    <nav class="nb-navbar__nav" aria-label="Sections">
+      <ul class="nb-navbar__links">
+        <li><a class="nb-navbar__link" href="#cat-layout">Layout</a></li>
+        <li><a class="nb-navbar__link" href="#cat-actions">Actions</a></li>
+        <li><a class="nb-navbar__link" href="#cat-content">Content</a></li>
+        <li><a class="nb-navbar__link" href="#cat-forms">Forms</a></li>
+        <li><a class="nb-navbar__link" href="#cat-feedback">Feedback</a></li>
+        <li><a class="nb-navbar__link" href="#cat-navigation">Navigation</a></li>
+        <li><a class="nb-navbar__link" href="#cat-overlay">Overlay</a></li>
+        <li><a class="nb-navbar__link" href="#cat-data">Data</a></li>
+      </ul>
+    </nav>
+    <div class="nb-navbar__actions">
+      <label class="nb-switch-label"><input class="nb-switch" type="checkbox" role="switch" id="dark"> Dark</label>
+    </div>
+  </header>
+  <main class="nb-container nb-stack nb-stack--xl" id="top" style="padding-block: var(--nb-space-fluid-xl)">
+    <div class="nb-stack nb-stack--sm">
+      <h1>newBrush</h1>
+      <p>Platform-native CSS framework — v0.0.0. 25 components and layout primitives, 251 design tokens, light/dark/contrast themes, zero JavaScript required.</p>
+    </div>
+    
+    <section class="nb-stack" aria-labelledby="cat-layout">
+      <h2 id="cat-layout">Layout</h2>
+      <article class="nb-stack nb-stack--sm" id="container">
+        <h3>Container <code>.nb-container</code></h3>
+        <p>Centers content with a max inline size and fluid gutters.</p>
+        <div class="demo"><div class="nb-container"><p>Centered content with fluid gutters.</p></div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="stack">
+        <h3>Stack <code>.nb-stack</code></h3>
+        <p>Vertical flow with consistent gaps between children.</p>
+        <div class="demo"><div class="nb-stack"><div class="nb-card"><div class="nb-card__body">Item 1</div></div><div class="nb-card"><div class="nb-card__body">Item 2</div></div><div class="nb-card"><div class="nb-card__body">Item 3</div></div></div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="cluster">
+        <h3>Cluster <code>.nb-cluster</code></h3>
+        <p>Inline group that wraps — tags, buttons, toolbars.</p>
+        <div class="demo"><div class="nb-cluster"><span class="nb-badge">One</span><span class="nb-badge">Two</span><span class="nb-badge">Three</span></div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="grid">
+        <h3>Grid <code>.nb-grid</code></h3>
+        <p>Auto-fitting responsive grid without breakpoints.</p>
+        <div class="demo"><div class="nb-grid"><div class="nb-card"><div class="nb-card__body">Item 1</div></div><div class="nb-card"><div class="nb-card__body">Item 2</div></div><div class="nb-card"><div class="nb-card__body">Item 3</div></div><div class="nb-card"><div class="nb-card__body">Item 4</div></div></div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="sidebar">
+        <h3>Sidebar <code>.nb-sidebar</code></h3>
+        <p>Two-pane layout; the sidebar wraps below content when space runs out.</p>
+        <div class="demo"><div class="nb-sidebar"><aside aria-label="Filters"><div class="nb-card"><div class="nb-card__body">Sidebar 1</div></div></aside><div><div class="nb-card"><div class="nb-card__body">Content 1</div></div></div></div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="switcher">
+        <h3>Switcher <code>.nb-switcher</code></h3>
+        <p>Row of equal children that switches to a column below a container threshold.</p>
+        <div class="demo"><div class="nb-switcher"><div class="nb-card"><div class="nb-card__body">Item 1</div></div><div class="nb-card"><div class="nb-card__body">Item 2</div></div><div class="nb-card"><div class="nb-card__body">Item 3</div></div></div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="center">
+        <h3>Center <code>.nb-center</code></h3>
+        <p>Horizontally centered measure for readable text.</p>
+        <div class="demo"><div class="nb-center"><p>Readable measure, centered.</p></div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="cover">
+        <h3>Cover <code>.nb-cover</code></h3>
+        <p>Full-height region with a vertically centered principal element.</p>
+        <div class="demo"><div class="nb-cover" style="--nb-cover-min: 16rem"><header>Top</header><h2 class="nb-cover__principal">Centered</h2><footer>Bottom</footer></div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="frame">
+        <h3>Frame <code>.nb-frame</code></h3>
+        <p>Aspect-ratio box that crops media to fit.</p>
+        <div class="demo"><div class="nb-frame nb-frame--photo"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'/%3E" alt="Placeholder"></div></div>
+      </article>
+    </section>
+
+    <section class="nb-stack" aria-labelledby="cat-actions">
+      <h2 id="cat-actions">Actions</h2>
+      <article class="nb-stack nb-stack--sm" id="button">
+        <h3>Button <code>.nb-btn</code></h3>
+        <p>Triggers an action. Works on &lt;button&gt; and on &lt;a&gt; for navigation styled as a button.</p>
+        <div class="demo"><div class="nb-cluster">
+  <button class="nb-btn nb-btn--primary" type="button">Primary</button>
+  <button class="nb-btn" type="button">Secondary</button>
+  <button class="nb-btn nb-btn--ghost" type="button">Ghost</button>
+  <button class="nb-btn nb-btn--danger" type="button">Delete</button>
+  <button class="nb-btn nb-btn--link" type="button">Link</button>
+</div></div>
+        <div class="demo"><div class="nb-cluster">
+  <button class="nb-btn nb-btn--primary nb-btn--sm" type="button">Small</button>
+  <button class="nb-btn nb-btn--primary nb-btn--lg" type="button">Large</button>
+  <button class="nb-btn" type="button" disabled>Disabled</button>
+  <button class="nb-btn nb-btn--primary" type="button" aria-busy="true">Saving</button>
+  <button class="nb-btn nb-btn--icon" type="button" aria-label="Settings">⚙</button>
+</div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="button-group">
+        <h3>Button group <code>.nb-btn-group</code></h3>
+        <p>Joins related buttons into one segmented control.</p>
+        <div class="demo"><div class="nb-btn-group" role="group" aria-label="Text alignment">
+  <button class="nb-btn" type="button" aria-pressed="true">Start</button>
+  <button class="nb-btn" type="button" aria-pressed="false">Center</button>
+  <button class="nb-btn" type="button" aria-pressed="false">End</button>
+</div></div>
+      </article>
+    </section>
+
+    <section class="nb-stack" aria-labelledby="cat-content">
+      <h2 id="cat-content">Content</h2>
+      <article class="nb-stack nb-stack--sm" id="badge">
+        <h3>Badge <code>.nb-badge</code></h3>
+        <p>Small status or count label.</p>
+        <div class="demo"><div class="nb-cluster">
+  <span class="nb-badge">Neutral</span>
+  <span class="nb-badge nb-badge--accent">New</span>
+  <span class="nb-badge nb-badge--success nb-badge--dot">Active</span>
+  <span class="nb-badge nb-badge--warning">Pending</span>
+  <span class="nb-badge nb-badge--danger">Failed</span>
+  <span class="nb-badge nb-badge--info nb-badge--solid">Beta</span>
+</div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="chip">
+        <h3>Chip <code>.nb-chip</code></h3>
+        <p>Compact interactive token: filters, selections and removable tags.</p>
+        <div class="demo"><fieldset class="nb-cluster" style="border: 0; padding: 0">
+  <legend>Filter by tag</legend>
+  <label class="nb-chip"><input type="checkbox" checked> Design</label>
+  <label class="nb-chip"><input type="checkbox"> Engineering</label>
+  <button class="nb-chip" type="button" aria-pressed="false">Remote</button>
+  <span class="nb-chip">CSS <button class="nb-chip__remove" type="button" aria-label="Remove CSS">×</button></span>
+</fieldset></div>
+      </article>
+    </section>
+
+    <section class="nb-stack" aria-labelledby="cat-forms">
+      <h2 id="cat-forms">Forms</h2>
+      <article class="nb-stack nb-stack--sm" id="check">
+        <h3>Checkbox &amp; radio <code>.nb-check</code></h3>
+        <p>Native checkbox or radio wrapped in its label, sized to meet the 24px target minimum.</p>
+        <div class="demo"><fieldset class="nb-stack nb-stack--xs">
+  <legend>Notifications</legend>
+  <label class="nb-check"><input type="checkbox" checked> Email</label>
+  <label class="nb-check"><input type="checkbox"> <span>SMS <span class="nb-check__description">Carrier rates may apply.</span></span></label>
+  <label class="nb-check"><input type="radio" name="freq" checked> Daily</label>
+  <label class="nb-check"><input type="radio" name="freq"> Weekly</label>
+  <label class="nb-check"><input type="checkbox" disabled> Push (unavailable)</label>
+</fieldset></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="field">
+        <h3>Field <code>.nb-field</code></h3>
+        <p>Label, control, hint and error message laid out consistently.</p>
+        <div class="demo"><div class="nb-field" style="max-inline-size: 24rem">
+  <label class="nb-field__label" for="f-email">Email <span class="nb-field__required" aria-hidden="true">*</span></label>
+  <input class="nb-input" id="f-email" type="email" required aria-invalid="true" aria-describedby="f-email-hint f-email-error" value="not-an-email">
+  <p class="nb-field__hint" id="f-email-hint">We never share your email.</p>
+  <p class="nb-field__error" id="f-email-error">Enter a valid email address.</p>
+</div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="input">
+        <h3>Input <code>.nb-input</code></h3>
+        <p>Text input and textarea with hover, focus, invalid, disabled and read-only states.</p>
+        <div class="demo"><div class="nb-stack nb-stack--sm" style="max-inline-size: 24rem">
+  <label for="i1">Name</label><input class="nb-input" id="i1" type="text" placeholder="Ada Lovelace" autocomplete="name">
+  <label for="i2">Disabled</label><input class="nb-input" id="i2" type="text" value="Locked" disabled>
+  <label for="i3">Notes</label><textarea class="nb-input" id="i3">Grows with its content where supported.</textarea>
+</div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="select">
+        <h3>Select <code>.nb-select</code></h3>
+        <p>Native &lt;select&gt; with consistent styling; the wrapper draws the chevron.</p>
+        <div class="demo"><div style="max-inline-size: 24rem">
+  <label for="s1">Plan</label>
+  <div class="nb-select"><select id="s1"><option>Starter</option><option selected>Pro</option><option>Team</option></select></div>
+</div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="switch">
+        <h3>Switch <code>.nb-switch</code></h3>
+        <p>On/off toggle built on a native checkbox with role=switch.</p>
+        <div class="demo"><div class="nb-stack nb-stack--xs">
+  <label class="nb-switch-label"><input class="nb-switch" type="checkbox" role="switch" checked> Dark mode</label>
+  <label class="nb-switch-label"><input class="nb-switch" type="checkbox" role="switch"> Notifications</label>
+  <label class="nb-switch-label"><input class="nb-switch" type="checkbox" role="switch" disabled> Beta features</label>
+</div></div>
+      </article>
+    </section>
+
+    <section class="nb-stack" aria-labelledby="cat-feedback">
+      <h2 id="cat-feedback">Feedback</h2>
+      <article class="nb-stack nb-stack--sm" id="alert">
+        <h3>Alert <code>.nb-alert</code></h3>
+        <p>Inline message communicating status, with optional title, actions and dismiss button.</p>
+        <div class="demo"><div class="nb-stack nb-stack--sm">
+  <div class="nb-alert" role="status"><span class="nb-alert__icon" aria-hidden="true">ℹ</span>
+    <div class="nb-alert__content"><p class="nb-alert__title">Heads up</p><p>New tokens are available in v0.2.</p></div></div>
+  <div class="nb-alert nb-alert--success" role="status"><span class="nb-alert__icon" aria-hidden="true">✓</span>
+    <div class="nb-alert__content"><p class="nb-alert__title">Saved</p><p>Your theme was published.</p></div></div>
+  <div class="nb-alert nb-alert--warning" role="status"><span class="nb-alert__icon" aria-hidden="true">!</span>
+    <div class="nb-alert__content"><p class="nb-alert__title">Almost out of quota</p><p>90% of builds used.</p></div></div>
+  <div class="nb-alert nb-alert--danger" role="alert"><span class="nb-alert__icon" aria-hidden="true">✕</span>
+    <div class="nb-alert__content"><p class="nb-alert__title">Build failed</p><p>Contrast check failed for 2 pairs.</p>
+      <div class="nb-alert__actions"><button class="nb-btn nb-btn--sm" type="button">View report</button></div></div>
+    <button class="nb-alert__close" type="button" aria-label="Dismiss">×</button></div>
+</div></div>
+      </article>
+    </section>
+
+    <section class="nb-stack" aria-labelledby="cat-navigation">
+      <h2 id="cat-navigation">Navigation</h2>
+      <article class="nb-stack nb-stack--sm" id="navbar">
+        <h3>Navbar <code>.nb-navbar</code></h3>
+        <p>Site header with brand, primary navigation and actions; adapts to its container width without JS.</p>
+        <div class="demo"><header class="nb-navbar">
+  <a class="nb-navbar__brand" href="#home">newBrush</a>
+  <nav class="nb-navbar__nav" aria-label="Main">
+    <ul class="nb-navbar__links">
+      <li><a class="nb-navbar__link" href="#docs" aria-current="page">Docs</a></li>
+      <li><a class="nb-navbar__link" href="#components">Components</a></li>
+      <li><a class="nb-navbar__link" href="#themes">Themes</a></li>
+      <li><a class="nb-navbar__link" href="#mcp">MCP</a></li>
+    </ul>
+  </nav>
+  <div class="nb-navbar__actions"><a class="nb-btn nb-btn--primary nb-btn--sm" href="#start">Get started</a></div>
+</header></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="tabs">
+        <h3>Tabs <code>.nb-tabs</code></h3>
+        <p>CSS-only tabs driven by a native radio group (up to 8 tabs); enhanced to ARIA tabs by @newbrush/js.</p>
+        <div class="demo"><div class="nb-tabs">
+  <fieldset class="nb-tabs__list"><legend hidden>Sections</legend>
+    <label class="nb-tabs__tab"><input type="radio" name="tabs-1" checked> Overview</label>
+    <label class="nb-tabs__tab"><input type="radio" name="tabs-1"> Tokens</label>
+    <label class="nb-tabs__tab"><input type="radio" name="tabs-1"> Usage</label>
+  </fieldset>
+  <div class="nb-tabs__panel"><p>Overview content.</p></div>
+  <div class="nb-tabs__panel"><p>Tokens content.</p></div>
+  <div class="nb-tabs__panel"><p>Usage content.</p></div>
+</div></div>
+      </article>
+    </section>
+
+    <section class="nb-stack" aria-labelledby="cat-overlay">
+      <h2 id="cat-overlay">Overlay</h2>
+      <article class="nb-stack nb-stack--sm" id="accordion">
+        <h3>Accordion <code>.nb-accordion</code></h3>
+        <p>Disclosure list built on &lt;details&gt;/&lt;summary&gt;. A shared name attribute makes items exclusive; height animates where ::details-content is supported.</p>
+        <div class="demo"><div class="nb-accordion">
+  <details class="nb-accordion__item" name="faq" open>
+    <summary class="nb-accordion__trigger">Does newBrush need JavaScript?</summary>
+    <div class="nb-accordion__panel"><p>No. Every component works with CSS and native HTML alone.</p></div>
+  </details>
+  <details class="nb-accordion__item" name="faq">
+    <summary class="nb-accordion__trigger">Can I theme it?</summary>
+    <div class="nb-accordion__panel"><p>Yes — override tokens or generate a theme from one brand color.</p></div>
+  </details>
+</div></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="modal">
+        <h3>Modal <code>.nb-modal</code></h3>
+        <p>Dialog built on native &lt;dialog&gt;: focus trapping, Esc to close and inert background come from the platform. Open with dialog.showModal() or the command/commandfor attributes.</p>
+        <div class="demo"><dialog class="nb-modal" open aria-labelledby="m-title" style="position: static">
+  <header class="nb-modal__header">
+    <h2 class="nb-modal__title" id="m-title">Delete theme?</h2>
+    <form method="dialog"><button class="nb-btn nb-btn--ghost nb-btn--icon nb-modal__close" type="submit" aria-label="Close">×</button></form>
+  </header>
+  <div class="nb-modal__body"><p>“Ocean” will be removed from all projects. This cannot be undone.</p></div>
+  <form class="nb-modal__footer" method="dialog">
+    <button class="nb-btn" type="submit" value="cancel">Cancel</button>
+    <button class="nb-btn nb-btn--danger" type="submit" value="delete">Delete</button>
+  </form>
+</dialog></div>
+      </article>
+    </section>
+
+    <section class="nb-stack" aria-labelledby="cat-data">
+      <h2 id="cat-data">Data</h2>
+      <article class="nb-stack nb-stack--sm" id="card">
+        <h3>Card <code>.nb-card</code></h3>
+        <p>Groups related content and actions on a raised surface.</p>
+        <div class="demo"><article class="nb-card" style="max-inline-size: 22rem">
+  <header class="nb-card__header">
+    <h3 class="nb-card__title">Token-driven</h3>
+    <p class="nb-card__subtitle">Layered and accessible</p>
+  </header>
+  <div class="nb-card__body"><p>Every value comes from a design token, so themes re-skin everything at once.</p></div>
+  <footer class="nb-card__footer">
+    <button class="nb-btn nb-btn--primary nb-btn--sm" type="button">Get started</button>
+    <button class="nb-btn nb-btn--ghost nb-btn--sm" type="button">Docs</button>
+  </footer>
+</article></div>
+        <div class="demo"><article class="nb-card nb-card--interactive" style="max-inline-size: 22rem">
+  <div class="nb-card__body">
+    <h3 class="nb-card__title"><a class="nb-card__link" href="#post">Release notes</a></h3>
+    <p>The whole card is clickable; only the title link is focusable.</p>
+  </div>
+</article></div>
+      </article>
+      <article class="nb-stack nb-stack--sm" id="table">
+        <h3>Table <code>.nb-table</code></h3>
+        <p>Data table with tabular numbers, optional stripes, hover rows and a scrollable wrapper.</p>
+        <div class="demo"><div class="nb-table-wrap" tabindex="0" role="region" aria-label="Invoices">
+  <table class="nb-table nb-table--striped nb-table--hover">
+    <caption>Invoices</caption>
+    <thead><tr><th scope="col">Invoice</th><th scope="col">Status</th><th scope="col" class="nb-table__num">Amount</th></tr></thead>
+    <tbody>
+      <tr><td>INV-001</td><td><span class="nb-badge nb-badge--success">Paid</span></td><td class="nb-table__num">$1,200.00</td></tr>
+      <tr><td>INV-002</td><td><span class="nb-badge nb-badge--warning">Due</span></td><td class="nb-table__num">$340.50</td></tr>
+      <tr><td>INV-003</td><td><span class="nb-badge nb-badge--danger">Overdue</span></td><td class="nb-table__num">$89.99</td></tr>
+    </tbody>
+  </table>
+</div></div>
+      </article>
+    </section>
+  </main>
+  <script>
+    // Optional: the page follows the OS theme without this; the switch just forces one.
+    const toggle = document.getElementById("dark");
+    toggle.checked = matchMedia("(prefers-color-scheme: dark)").matches;
+    toggle.addEventListener("change", () => document.documentElement.dataset.nbTheme = toggle.checked ? "dark" : "light");
+  </script>
+</body>
+</html>

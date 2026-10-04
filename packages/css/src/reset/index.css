@@ -1,0 +1,74 @@
+/* Modern reset (T020). Zero-specificity where possible so base styles and consumers override cleanly. */
+@layer nb.reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    text-size-adjust: none;
+    interpolate-size: allow-keywords;
+    hanging-punctuation: first last;
+  }
+
+  body {
+    min-block-size: 100dvb;
+  }
+
+  :where(img, picture, video, canvas, svg) {
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  :where(img, video) {
+    block-size: auto;
+  }
+
+  :where(input, button, textarea, select) {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+  }
+
+  :where(p, h1, h2, h3, h4, h5, h6, li, figcaption, blockquote) {
+    overflow-wrap: break-word;
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) {
+    text-wrap: balance;
+  }
+
+  :where(p, li, figcaption, blockquote) {
+    text-wrap: pretty;
+  }
+
+  :where(ul, ol)[role="list"] {
+    list-style: none;
+    padding: 0;
+  }
+
+  :target {
+    scroll-margin-block: 5ex;
+  }
+
+  [hidden]:not([hidden="until-found"]) {
+    display: none !important;
+  }
+
+  /* Constitution §IV: honour reduced motion everywhere. Layered !important beats later layers and unlayered CSS. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

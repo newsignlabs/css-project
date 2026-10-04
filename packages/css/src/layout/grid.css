@@ -1,0 +1,16 @@
+@layer nb.layout {
+  /* Gap owns spacing: neutralise flow margins from base typography on direct children. */
+  .nb-grid > * {
+    margin-block: 0;
+  }
+
+  /* Intrinsically responsive: as many columns of at least --nb-grid-min as fit, no breakpoints needed. */
+  .nb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--nb-grid-min, 16rem), 100%), 1fr));
+    gap: var(--nb-grid-gap, var(--nb-space-fluid-md));
+  }
+
+  .nb-grid--sm { --nb-grid-min: 10rem; }
+  .nb-grid--lg { --nb-grid-min: 22rem; }
+}

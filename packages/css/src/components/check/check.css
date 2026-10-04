@@ -1,0 +1,34 @@
+@layer nb.components {
+  /* Native checkbox/radio, sized and tinted with accent-color: keeps platform a11y and forced-colors behaviour. */
+  .nb-check {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--nb-space-2);
+    min-block-size: var(--nb-size-target);
+    padding-block: var(--nb-space-0-5);
+    font-weight: var(--nb-font-weight-regular);
+    line-height: var(--nb-font-leading-snug);
+    cursor: pointer;
+
+    & > input {
+      flex-shrink: 0;
+      inline-size: 1.25em;
+      block-size: 1.25em;
+      margin: 0;
+      margin-block-start: 0.0625em;
+      accent-color: var(--nb-color-accent);
+      cursor: inherit;
+    }
+
+    &:has(:disabled) {
+      color: var(--nb-color-text-subtle);
+      cursor: not-allowed;
+    }
+  }
+
+  .nb-check__description {
+    display: block;
+    font-size: var(--nb-font-size-sm);
+    color: var(--nb-color-text-muted);
+  }
+}

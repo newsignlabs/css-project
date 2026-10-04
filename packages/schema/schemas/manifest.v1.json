@@ -1,0 +1,532 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "const": "newbrush"
+    },
+    "version": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Dot path, e.g. color.surface.default"
+          },
+          "cssVar": {
+            "type": "string",
+            "pattern": "^--nb-[a-z0-9-]+$"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "primitive",
+              "semantic",
+              "component"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "color",
+              "dimension",
+              "fontFamily",
+              "fontWeight",
+              "duration",
+              "cubicBezier",
+              "number",
+              "shadow",
+              "typography",
+              "strokeStyle",
+              "other"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "description": "Resolved value for the default (light) theme"
+          },
+          "themes": {
+            "default": {},
+            "description": "Per-theme overrides, keyed by theme name",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "references": {
+            "default": [],
+            "description": "Token names this token aliases",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "name",
+          "cssVar",
+          "tier",
+          "type",
+          "value"
+        ]
+      }
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "colorScheme": {
+            "type": "string",
+            "enum": [
+              "light",
+              "dark"
+            ]
+          },
+          "extends": {
+            "type": "string"
+          },
+          "overrides": {
+            "default": {},
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "colorScheme"
+        ]
+      }
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "media",
+              "container",
+              "selector",
+              "at-rule",
+              "parent-selector"
+            ]
+          },
+          "template": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "composable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "template",
+          "order",
+          "composable"
+        ]
+      }
+    },
+    "utilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "patterns": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "values": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "const": "token"
+                  },
+                  "group": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source",
+                  "group"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "const": "static"
+                  },
+                  "map": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "source",
+                  "map"
+                ]
+              }
+            ]
+          },
+          "arbitrary": {
+            "type": "object",
+            "properties": {
+              "grammar": {
+                "type": "string",
+                "enum": [
+                  "length",
+                  "color",
+                  "percentage",
+                  "number",
+                  "time",
+                  "image-safe",
+                  "grid-template",
+                  "ident"
+                ]
+              }
+            },
+            "required": [
+              "grammar"
+            ]
+          },
+          "negative": {
+            "type": "boolean"
+          },
+          "modifiers": {
+            "type": "object",
+            "properties": {
+              "opacity": {
+                "type": "boolean"
+              },
+              "lineHeight": {
+                "type": "boolean"
+              }
+            }
+          },
+          "variants": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "all"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "layout",
+              "spacing",
+              "sizing",
+              "typography",
+              "color",
+              "border",
+              "effects",
+              "motion",
+              "interactivity",
+              "a11y"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "patterns",
+          "properties",
+          "values",
+          "variants",
+          "category",
+          "description"
+        ]
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string",
+            "pattern": "^nb-[a-z0-9-]+$"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "layout",
+              "content",
+              "actions",
+              "forms",
+              "navigation",
+              "feedback",
+              "overlay",
+              "data",
+              "marketing"
+            ]
+          },
+          "anatomy": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "part": {
+                  "type": "string"
+                },
+                "className": {
+                  "type": "string"
+                },
+                "element": {
+                  "type": "string"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "requiredParent": {
+                  "description": "Class of the part this element must be nested in",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "part",
+                "className",
+                "required"
+              ]
+            }
+          },
+          "modifiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "className": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "className",
+                "description"
+              ]
+            }
+          },
+          "sizes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "html": {
+            "type": "object",
+            "properties": {
+              "element": {
+                "type": "string"
+              },
+              "attributes": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "element"
+            ]
+          },
+          "a11y": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string"
+              },
+              "requirements": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "keyboard": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "requirements"
+            ]
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "examples": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "html": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "title",
+                "html"
+              ]
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "stable",
+              "beta",
+              "deprecated"
+            ]
+          },
+          "since": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+"
+          }
+        },
+        "required": [
+          "name",
+          "title",
+          "description",
+          "className",
+          "category",
+          "anatomy",
+          "modifiers",
+          "sizes",
+          "states",
+          "html",
+          "a11y",
+          "tokens",
+          "examples",
+          "status",
+          "since"
+        ]
+      }
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "schemaVersion",
+    "layers",
+    "tokens",
+    "themes",
+    "variants",
+    "utilities",
+    "components"
+  ],
+  "$id": "https://newbrush.dev/schema/manifest.v1.json"
+}

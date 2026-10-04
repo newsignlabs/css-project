@@ -1,0 +1,36 @@
+@layer nb.layout {
+  /* Gap owns spacing: neutralise flow margins from base typography on direct children. */
+  .nb-sidebar > * {
+    margin-block: 0;
+  }
+
+  /* Sidebar wraps below content when content would be narrower than --nb-sidebar-content-min. */
+  .nb-sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nb-sidebar-gap, var(--nb-space-fluid-md));
+  }
+
+  .nb-sidebar > :first-child {
+    flex-basis: var(--nb-sidebar-width, 20rem);
+    flex-grow: 1;
+  }
+
+  .nb-sidebar > :last-child {
+    flex-basis: 0;
+    flex-grow: 999;
+    min-inline-size: var(--nb-sidebar-content-min, 50%);
+  }
+
+  .nb-sidebar--end > :first-child {
+    flex-basis: 0;
+    flex-grow: 999;
+    min-inline-size: var(--nb-sidebar-content-min, 50%);
+  }
+
+  .nb-sidebar--end > :last-child {
+    flex-basis: var(--nb-sidebar-width, 20rem);
+    flex-grow: 1;
+    min-inline-size: auto;
+  }
+}

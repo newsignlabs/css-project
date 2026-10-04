@@ -1,0 +1,3 @@
+/* newbrush-full.css — newbrush.css + the curated utility preset (CDN default for prototyping). */
+@import "./index.css";
+@import "./utilities/preset.css";

@@ -1,0 +1,99 @@
+{
+  "shadow": {
+    "0": {
+      "$value": [
+        {
+          "color": "oklch(0% 0 0 / 0)",
+          "offsetX": "0rem",
+          "offsetY": "0rem",
+          "blur": "0rem",
+          "spread": "0rem"
+        }
+      ]
+    },
+    "1": {
+      "$value": [
+        {
+          "color": "oklch(22% 0.02 260 / 0.06)",
+          "offsetX": "0rem",
+          "offsetY": "0.0625rem",
+          "blur": "0.125rem",
+          "spread": "0rem"
+        },
+        {
+          "color": "oklch(22% 0.02 260 / 0.1)",
+          "offsetX": "0rem",
+          "offsetY": "0.0625rem",
+          "blur": "0.1875rem",
+          "spread": "0rem"
+        }
+      ]
+    },
+    "2": {
+      "$value": [
+        {
+          "color": "oklch(22% 0.02 260 / 0.06)",
+          "offsetX": "0rem",
+          "offsetY": "0.125rem",
+          "blur": "0.25rem",
+          "spread": "-0.0625rem"
+        },
+        {
+          "color": "oklch(22% 0.02 260 / 0.1)",
+          "offsetX": "0rem",
+          "offsetY": "0.25rem",
+          "blur": "0.375rem",
+          "spread": "-0.0625rem"
+        }
+      ]
+    },
+    "3": {
+      "$value": [
+        {
+          "color": "oklch(22% 0.02 260 / 0.05)",
+          "offsetX": "0rem",
+          "offsetY": "0.25rem",
+          "blur": "0.375rem",
+          "spread": "-0.125rem"
+        },
+        {
+          "color": "oklch(22% 0.02 260 / 0.1)",
+          "offsetX": "0rem",
+          "offsetY": "0.625rem",
+          "blur": "0.9375rem",
+          "spread": "-0.1875rem"
+        }
+      ]
+    },
+    "4": {
+      "$value": [
+        {
+          "color": "oklch(22% 0.02 260 / 0.04)",
+          "offsetX": "0rem",
+          "offsetY": "0.625rem",
+          "blur": "0.625rem",
+          "spread": "-0.3125rem"
+        },
+        {
+          "color": "oklch(22% 0.02 260 / 0.1)",
+          "offsetX": "0rem",
+          "offsetY": "1.25rem",
+          "blur": "1.5625rem",
+          "spread": "-0.3125rem"
+        }
+      ]
+    },
+    "5": {
+      "$value": [
+        {
+          "color": "oklch(22% 0.02 260 / 0.25)",
+          "offsetX": "0rem",
+          "offsetY": "1.5625rem",
+          "blur": "3.125rem",
+          "spread": "-0.75rem"
+        }
+      ]
+    },
+    "$type": "shadow"
+  }
+}

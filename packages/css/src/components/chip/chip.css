@@ -1,0 +1,66 @@
+@layer nb.components {
+  .nb-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nb-space-1-5);
+    min-block-size: var(--nb-control-height-sm);
+    padding-inline: var(--nb-space-3);
+    border: var(--nb-border-width-thin) solid var(--nb-color-border-strong);
+    border-radius: var(--nb-radius-full);
+    background-color: var(--nb-color-surface-raised);
+    color: var(--nb-color-text);
+    font: inherit;
+    font-size: var(--nb-font-size-sm);
+    line-height: var(--nb-font-leading-snug);
+    white-space: nowrap;
+
+    &:is(button, label) {
+      cursor: pointer;
+    }
+
+    @media (hover: hover) {
+      &:is(button, label):hover {
+        background-color: var(--nb-color-surface-subtle);
+      }
+    }
+
+    /* Selected: toggle buttons (aria-pressed) or chips wrapping a checkbox/radio. */
+    &[aria-pressed="true"],
+    &:has(:checked) {
+      border-color: var(--nb-color-accent);
+      background-color: var(--nb-color-accent-subtle);
+      color: var(--nb-color-accent-text);
+    }
+
+    &:has(:focus-visible) {
+      outline: var(--nb-control-focus-ring-width) solid var(--nb-color-focus-ring);
+      outline-offset: var(--nb-control-focus-ring-offset);
+    }
+
+    & > input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  .nb-chip__remove {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--nb-size-target);
+    block-size: var(--nb-size-target);
+    margin-inline-end: calc(var(--nb-space-2) * -1);
+    padding: 0;
+    border: 0;
+    border-radius: var(--nb-radius-full);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--nb-color-surface-sunken);
+      }
+    }
+  }
+}

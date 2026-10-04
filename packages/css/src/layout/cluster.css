@@ -1,0 +1,18 @@
+@layer nb.layout {
+  /* Gap owns spacing: neutralise flow margins from base typography on direct children. */
+  .nb-cluster > * {
+    margin-block: 0;
+  }
+
+  .nb-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: var(--nb-cluster-align, center);
+    justify-content: var(--nb-cluster-justify, flex-start);
+    gap: var(--nb-cluster-gap, var(--nb-space-fluid-xs));
+  }
+
+  .nb-cluster--between { --nb-cluster-justify: space-between; }
+  .nb-cluster--end { --nb-cluster-justify: flex-end; }
+  .nb-cluster--center { --nb-cluster-justify: center; }
+}

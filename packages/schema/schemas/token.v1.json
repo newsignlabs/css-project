@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "path": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "name": {
+      "type": "string",
+      "description": "Dot path, e.g. color.surface.default"
+    },
+    "cssVar": {
+      "type": "string",
+      "pattern": "^--nb-[a-z0-9-]+$"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "primitive",
+        "semantic",
+        "component"
+      ]
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "color",
+        "dimension",
+        "fontFamily",
+        "fontWeight",
+        "duration",
+        "cubicBezier",
+        "number",
+        "shadow",
+        "typography",
+        "strokeStyle",
+        "other"
+      ]
+    },
+    "value": {
+      "type": "string",
+      "description": "Resolved value for the default (light) theme"
+    },
+    "themes": {
+      "default": {},
+      "description": "Per-theme overrides, keyed by theme name",
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "references": {
+      "default": [],
+      "description": "Token names this token aliases",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "path",
+    "name",
+    "cssVar",
+    "tier",
+    "type",
+    "value"
+  ],
+  "$id": "https://newbrush.dev/schema/token.v1.json"
+}

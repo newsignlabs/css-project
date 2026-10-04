@@ -171,7 +171,7 @@ live examples, theme switcher, and an in-browser playground.
 - **FR-005**: Framework MUST verify contrast of all semantic fg/bg pairs at build time and fail/warn per config.
 
 **Architecture**
-- **FR-006**: All CSS MUST be placed in ordered cascade layers: `nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities`.
+- **FR-006**: All CSS MUST be placed in ordered cascade layers: `nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities`. *(Feature 004 plans an `nb.styles` layer between components and utilities, pending a constitution amendment.)*
 - **FR-007**: Framework MUST use logical properties exclusively for direction-sensitive styling.
 - **FR-008**: Components MUST be responsive to container size via container queries where layout depends on width.
 - **FR-009**: A configurable class prefix MUST be supported. Defaults: components `nb-`, utilities unprefixed; `nb doctor` MUST warn when Tailwind/Bootstrap are detected alongside unprefixed utilities.
@@ -198,7 +198,7 @@ live examples, theme switcher, and an in-browser playground.
 - **FR-020**: Build MUST emit TypeScript types for config and class names (for editor autocompletion).
 
 **Docs**
-- **FR-021**: Documentation site MUST include a page per component/utility family/token group with live, copyable examples generated from the manifest.
+- **FR-021**: Documentation site MUST include a page per component/utility family/token group with live, copyable examples generated from the manifest, organised around design styles per feature 004 (global style switcher, style galleries, per-component style tabs).
 - **FR-022**: Default typography MUST use a system UI font stack with no font downloads; an opt-in `@newbrush/fonts` package MUST provide self-hostable variable fonts (`font-display: swap`, subsetted WOFF2) wired to the `font.family.*` tokens.
 
 ### Key Entities

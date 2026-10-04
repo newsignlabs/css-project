@@ -1,0 +1,177 @@
+@layer nb.components {
+  .nb-btn {
+    --_bg: var(--nb-color-surface-raised);
+    --_bg-hover: var(--nb-color-surface-subtle);
+    --_bg-active: var(--nb-color-surface-sunken);
+    --_fg: var(--nb-color-text);
+    --_border: var(--nb-color-border-strong);
+    --_height: var(--nb-control-height-md);
+    --_pad: var(--nb-control-padding-inline-md);
+    --_font: var(--nb-control-font-size-md);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--nb-space-2);
+    min-block-size: var(--_height);
+    min-inline-size: var(--nb-size-target);
+    padding-block: 0;
+    padding-inline: var(--_pad);
+    border: var(--nb-control-border-width) solid var(--_border);
+    border-radius: var(--nb-control-radius);
+    background-color: var(--_bg);
+    color: var(--_fg);
+    font: inherit;
+    font-size: var(--_font);
+    font-weight: var(--nb-font-weight-medium);
+    line-height: var(--nb-font-leading-snug);
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--nb-motion-duration-fast) var(--nb-motion-easing-standard),
+      border-color var(--nb-motion-duration-fast) var(--nb-motion-easing-standard),
+      color var(--nb-motion-duration-fast) var(--nb-motion-easing-standard),
+      box-shadow var(--nb-motion-duration-fast) var(--nb-motion-easing-standard);
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--_bg-hover);
+      }
+    }
+
+    &:active {
+      background-color: var(--_bg-active);
+    }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+      opacity: var(--nb-opacity-disabled);
+      cursor: not-allowed;
+    }
+
+    &[aria-disabled="true"] {
+      pointer-events: none;
+    }
+
+    &[aria-pressed="true"] {
+      --_bg: var(--nb-color-accent-subtle);
+      --_bg-hover: var(--nb-color-accent-subtle);
+      --_fg: var(--nb-color-accent-text);
+      --_border: var(--nb-color-accent);
+    }
+
+    &[aria-busy="true"] {
+      cursor: progress;
+    }
+
+    &[aria-busy="true"]::before {
+      content: "";
+      inline-size: 1em;
+      block-size: 1em;
+      border: var(--nb-border-width-medium) solid currentcolor;
+      border-inline-end-color: transparent;
+      border-radius: var(--nb-radius-full);
+      animation: nb-spin var(--nb-motion-duration-slower) linear infinite;
+    }
+
+    & > svg {
+      inline-size: 1.25em;
+      block-size: 1.25em;
+      flex-shrink: 0;
+    }
+  }
+
+  .nb-btn--primary {
+    --_bg: var(--nb-color-accent);
+    --_bg-hover: var(--nb-color-accent-hover);
+    --_bg-active: var(--nb-color-accent-active);
+    --_fg: var(--nb-color-on-accent);
+    --_border: transparent;
+  }
+
+  .nb-btn--danger {
+    --_bg: var(--nb-color-danger);
+    --_bg-hover: var(--nb-color-danger-hover);
+    --_bg-active: var(--nb-color-danger-hover);
+    --_fg: var(--nb-color-on-danger);
+    --_border: transparent;
+  }
+
+  .nb-btn--ghost {
+    --_bg: transparent;
+    --_bg-hover: var(--nb-color-surface-subtle);
+    --_bg-active: var(--nb-color-surface-sunken);
+    --_fg: var(--nb-color-accent-text);
+    --_border: transparent;
+  }
+
+  .nb-btn--link {
+    --_bg: transparent;
+    --_bg-hover: transparent;
+    --_bg-active: transparent;
+    --_fg: var(--nb-color-text-link);
+    --_border: transparent;
+    --_pad: 0;
+
+    text-decoration-line: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .nb-btn--sm {
+    --_height: var(--nb-control-height-sm);
+    --_pad: var(--nb-control-padding-inline-sm);
+    --_font: var(--nb-control-font-size-sm);
+  }
+
+  .nb-btn--lg {
+    --_height: var(--nb-control-height-lg);
+    --_pad: var(--nb-control-padding-inline-lg);
+    --_font: var(--nb-control-font-size-lg);
+  }
+
+  .nb-btn--block {
+    display: flex;
+    inline-size: 100%;
+  }
+
+  .nb-btn--icon {
+    --_pad: 0;
+
+    inline-size: var(--_height);
+  }
+
+  .nb-btn-group {
+    display: inline-flex;
+    isolation: isolate;
+
+    & > .nb-btn:not(:first-child) {
+      margin-inline-start: calc(var(--nb-control-border-width) * -1);
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+    }
+
+    & > .nb-btn:not(:last-child) {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    & > .nb-btn:focus-visible {
+      z-index: 1;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .nb-btn {
+      border-color: ButtonText;
+    }
+  }
+}
+
+@keyframes nb-spin {
+  to {
+    rotate: 1turn;
+  }
+}

@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      update-snapshots:
+        description: Regenerate visual baselines and upload them as an artifact
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, typecheck, test, build, size
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec biome ci .
+      - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm turbo run lint
+      - run: pnpm size
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: packages/css/dist
+          retention-days: 7
+
+  visual:
+    name: Visual + a11y (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    env:
+      NB_BROWSERS: ${{ matrix.browser }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm --filter @newbrush/visual-tests exec playwright install --with-deps ${{ matrix.browser }}
+      - name: Run visual tests
+        if: ${{ !inputs.update-snapshots }}
+        run: pnpm --filter @newbrush/visual-tests visual
+      - name: Update visual baselines
+        if: ${{ inputs.update-snapshots }}
+        run: pnpm --filter @newbrush/visual-tests visual:update
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() || inputs.update-snapshots }}
+        with:
+          name: visual-${{ matrix.browser }}
+          path: |
+            apps/visual-tests/playwright-report
+            apps/visual-tests/test-results
+            apps/visual-tests/specs/__screenshots__
+          retention-days: 7

@@ -1,0 +1,21 @@
+{
+  "breakpoint": {
+    "$type": "dimension",
+    "$description": "Mobile-first min-width breakpoints (media queries cannot read custom properties; exposed for JS and docs)",
+    "sm": {
+      "$value": "40rem"
+    },
+    "md": {
+      "$value": "48rem"
+    },
+    "lg": {
+      "$value": "64rem"
+    },
+    "xl": {
+      "$value": "80rem"
+    },
+    "2xl": {
+      "$value": "96rem"
+    }
+  }
+}

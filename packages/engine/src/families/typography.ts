@@ -1,0 +1,170 @@
+import type { Family } from "../types.ts";
+import { colorFamily, keywords, range, scaleFamily, staticFamily } from "./helpers.ts";
+
+// T047 — typography.
+export const typography: Family[] = [
+  scaleFamily({
+    name: "font-family",
+    category: "typography",
+    description: "Font stack (sans, serif, mono)",
+    roots: ["font"],
+    properties: ["font-family"],
+    scale: (t) => t.fontFamily,
+    tokenGroup: "font.family",
+    arbitrary: "ident",
+  }),
+  scaleFamily({
+    name: "font-weight",
+    category: "typography",
+    description: "Font weight",
+    roots: ["font"],
+    properties: ["font-weight"],
+    scale: (t) => t.fontWeight,
+    tokenGroup: "font.weight",
+    arbitrary: "number",
+  }),
+  scaleFamily({
+    name: "font-size",
+    category: "typography",
+    description: "Fluid type scale (xs…6xl)",
+    roots: ["text"],
+    properties: ["font-size"],
+    scale: (t) => t.fontSize,
+    tokenGroup: "font.size",
+    arbitrary: "length",
+  }),
+  colorFamily({
+    name: "text-color",
+    description: "Text color; semantic keys like text-muted resolve color.text.*",
+    roots: ["text"],
+    properties: ["color"],
+    ns: "text",
+  }),
+  staticFamily("text-align", "typography", "Text alignment (logical)", {
+    ...keywords("text", "text-align", {
+      start: "start",
+      center: "center",
+      end: "end",
+      justify: "justify",
+    }),
+  }),
+  scaleFamily({
+    name: "line-height",
+    category: "typography",
+    description: "Line height",
+    roots: ["leading"],
+    properties: ["line-height"],
+    scale: (t) => t.leading,
+    tokenGroup: "font.leading",
+    arbitrary: "number",
+  }),
+  scaleFamily({
+    name: "letter-spacing",
+    category: "typography",
+    description: "Letter spacing",
+    roots: ["tracking"],
+    properties: ["letter-spacing"],
+    scale: (t) => t.tracking,
+    tokenGroup: "font.tracking",
+    negative: true,
+  }),
+  staticFamily("font-style", "typography", "Font style, case and numerals", {
+    italic: [["font-style", "italic"]],
+    "not-italic": [["font-style", "normal"]],
+    ...keywords("", "text-transform", {
+      uppercase: "uppercase",
+      lowercase: "lowercase",
+      capitalize: "capitalize",
+      "normal-case": "none",
+    }),
+    "tabular-nums": [["font-variant-numeric", "tabular-nums"]],
+    "proportional-nums": [["font-variant-numeric", "proportional-nums"]],
+    "slashed-zero": [["font-variant-numeric", "slashed-zero"]],
+  }),
+  staticFamily("text-decoration", "typography", "Text decoration", {
+    ...keywords("", "text-decoration-line", {
+      underline: "underline",
+      overline: "overline",
+      "line-through": "line-through",
+      "no-underline": "none",
+    }),
+    ...keywords("decoration", "text-decoration-style", {
+      solid: "solid",
+      double: "double",
+      dotted: "dotted",
+      dashed: "dashed",
+      wavy: "wavy",
+    }),
+  }),
+  scaleFamily({
+    name: "underline-offset",
+    category: "typography",
+    description: "Underline offset",
+    roots: ["underline-offset"],
+    properties: ["text-underline-offset"],
+    extra: {
+      auto: "auto",
+      ...Object.fromEntries(["0", "1", "2", "4", "8"].map((n) => [n, `${n}px`])),
+    },
+  }),
+  colorFamily({
+    name: "text-decoration-color",
+    description: "Decoration color",
+    roots: ["decoration"],
+    properties: ["text-decoration-color"],
+  }),
+  staticFamily("text-wrap", "typography", "Wrapping, truncation and white space", {
+    truncate: [
+      ["overflow", "hidden"],
+      ["text-overflow", "ellipsis"],
+      ["white-space", "nowrap"],
+    ],
+    "text-ellipsis": [["text-overflow", "ellipsis"]],
+    "text-clip": [["text-overflow", "clip"]],
+    ...keywords("text", "text-wrap", {
+      wrap: "wrap",
+      nowrap: "nowrap",
+      balance: "balance",
+      pretty: "pretty",
+    }),
+    ...keywords("whitespace", "white-space", {
+      normal: "normal",
+      nowrap: "nowrap",
+      pre: "pre",
+      "pre-line": "pre-line",
+      "pre-wrap": "pre-wrap",
+      "break-spaces": "break-spaces",
+    }),
+    "break-words": [["overflow-wrap", "break-word"]],
+    "break-all": [["word-break", "break-all"]],
+    "break-keep": [["word-break", "keep-all"]],
+    hyphens: [["hyphens", "auto"]],
+  }),
+  scaleFamily({
+    name: "line-clamp",
+    category: "typography",
+    description: "Clamp text to n lines",
+    roots: ["line-clamp"],
+    properties: ["-webkit-line-clamp"],
+    extra: { none: "unset", ...Object.fromEntries(range(1, 6).map((n) => [n, n])) },
+    arbitrary: "number",
+    build: (v) =>
+      v === "unset"
+        ? [
+            ["overflow", "visible"],
+            ["display", "block"],
+            ["-webkit-box-orient", "horizontal"],
+            ["-webkit-line-clamp", "unset"],
+          ]
+        : [
+            ["overflow", "hidden"],
+            ["display", "-webkit-box"],
+            ["-webkit-box-orient", "vertical"],
+            ["-webkit-line-clamp", v],
+          ],
+  }),
+  staticFamily("list-style", "typography", "List markers", {
+    ...keywords("list", "list-style-type", { none: "none", disc: "disc", decimal: "decimal" }),
+    ...keywords("list", "list-style-position", { inside: "inside", outside: "outside" }),
+  }),
+];

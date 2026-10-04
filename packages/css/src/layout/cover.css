@@ -1,0 +1,13 @@
+@layer nb.layout {
+  .nb-cover {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nb-space-fluid-md);
+    min-block-size: var(--nb-cover-min, 100dvb);
+    padding: var(--nb-space-fluid-md);
+  }
+
+  .nb-cover__principal {
+    margin-block: auto;
+  }
+}

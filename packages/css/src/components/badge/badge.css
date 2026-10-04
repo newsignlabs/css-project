@@ -1,0 +1,78 @@
+@layer nb.components {
+  .nb-badge {
+    --_subtle: var(--nb-color-surface-subtle);
+    --_text: var(--nb-color-text);
+    --_border: var(--nb-color-border);
+    --_fill: var(--nb-color-text);
+    --_on: var(--nb-color-surface);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nb-space-1);
+    padding-block: var(--nb-space-0-5);
+    padding-inline: var(--nb-space-2);
+    border: var(--nb-border-width-thin) solid var(--_border);
+    border-radius: var(--nb-radius-full);
+    background-color: var(--_subtle);
+    color: var(--_text);
+    font-size: var(--nb-font-size-xs);
+    font-weight: var(--nb-font-weight-semibold);
+    line-height: var(--nb-font-leading-snug);
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  .nb-badge--accent {
+    --_subtle: var(--nb-color-accent-subtle);
+    --_text: var(--nb-color-accent-text);
+    --_border: var(--nb-color-accent-subtle);
+    --_fill: var(--nb-color-accent);
+    --_on: var(--nb-color-on-accent);
+  }
+
+  .nb-badge--success {
+    --_subtle: var(--nb-color-success-subtle);
+    --_text: var(--nb-color-success-text);
+    --_border: var(--nb-color-success-border);
+    --_fill: var(--nb-color-success);
+    --_on: var(--nb-color-on-success);
+  }
+
+  .nb-badge--warning {
+    --_subtle: var(--nb-color-warning-subtle);
+    --_text: var(--nb-color-warning-text);
+    --_border: var(--nb-color-warning-border);
+    --_fill: var(--nb-color-warning);
+    --_on: var(--nb-color-on-warning);
+  }
+
+  .nb-badge--danger {
+    --_subtle: var(--nb-color-danger-subtle);
+    --_text: var(--nb-color-danger-text);
+    --_border: var(--nb-color-danger-border);
+    --_fill: var(--nb-color-danger);
+    --_on: var(--nb-color-on-danger);
+  }
+
+  .nb-badge--info {
+    --_subtle: var(--nb-color-info-subtle);
+    --_text: var(--nb-color-info-text);
+    --_border: var(--nb-color-info-border);
+    --_fill: var(--nb-color-info);
+    --_on: var(--nb-color-on-info);
+  }
+
+  .nb-badge--solid {
+    border-color: transparent;
+    background-color: var(--_fill);
+    color: var(--_on);
+  }
+
+  .nb-badge--dot::before {
+    content: "";
+    inline-size: 0.5em;
+    block-size: 0.5em;
+    border-radius: var(--nb-radius-full);
+    background-color: currentcolor;
+  }
+}

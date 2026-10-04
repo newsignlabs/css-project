@@ -1,0 +1,55 @@
+{
+  "name": "@newbrush/engine",
+  "version": "0.0.0",
+  "description": "newBrush utility engine: parses Tailwind-compatible class names and generates token-driven, layered CSS on demand.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/newsignlabs/css-project",
+    "directory": "packages/engine"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node/index.d.ts",
+      "import": "./dist/node/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json",
+    "bench": "tsx bench/bench.ts"
+  },
+  "dependencies": {
+    "@newbrush/schema": "workspace:*",
+    "browserslist": "^4.25.0",
+    "chokidar": "^4.0.3",
+    "fast-glob": "^3.3.3",
+    "jiti": "^2.7.0",
+    "lightningcss": "^1.33.0",
+    "picomatch": "^4.0.7"
+  },
+  "devDependencies": {
+    "@newbrush/tokens": "workspace:*",
+    "@types/picomatch": "^4.0.3",
+    "fast-check": "^4.10.2",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  }
+}

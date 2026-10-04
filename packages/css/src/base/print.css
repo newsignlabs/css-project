@@ -1,0 +1,23 @@
+@layer nb.base {
+  @media print {
+    :root,
+    [data-nb-theme] {
+      color: CanvasText;
+      background: Canvas;
+    }
+
+    :where(article, main) :where(p, li) a[href^="http"]::after {
+      content: " (" attr(href) ")";
+      font-size: 0.875em;
+      overflow-wrap: anywhere;
+    }
+
+    :where(pre, blockquote, img, tr, figure) {
+      break-inside: avoid;
+    }
+
+    :where(h1, h2, h3, h4) {
+      break-after: avoid;
+    }
+  }
+}

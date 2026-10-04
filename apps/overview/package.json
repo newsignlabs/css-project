@@ -1,0 +1,19 @@
+{
+  "name": "@newbrush/overview",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generates catalyst/client/index.html — a self-contained 'how newBrush is made' overview page.",
+  "scripts": {
+    "overview": "tsx build.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@newbrush/engine": "workspace:*",
+    "@newbrush/schema": "workspace:*",
+    "@newbrush/tokens": "workspace:*",
+    "newbrush": "workspace:*",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

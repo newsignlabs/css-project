@@ -1,0 +1,49 @@
+{
+  "name": "@newbrush/tokens",
+  "version": "0.0.0",
+  "description": "newBrush design tokens (W3C DTCG) compiled to layered CSS custom properties, JS/TS, JSON and Figma variables.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/newsignlabs/css-project",
+    "directory": "packages/tokens"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/tokens.d.ts",
+      "default": "./dist/tokens.js"
+    },
+    "./tokens.css": "./dist/css/tokens.css",
+    "./css/*": "./dist/css/*",
+    "./tokens.json": "./dist/tokens.json",
+    "./figma-variables.json": "./dist/figma-variables.json",
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/tokens.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsx build.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@newbrush/schema": "workspace:*",
+    "@types/culori": "^4.0.1",
+    "culori": "^4.0.2",
+    "style-dictionary": "^4.4.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  }
+}
