@@ -96,7 +96,10 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 
 ## Phase 5: User Story 3 – Theming (P2) (M3)
 
-- [ ] T060 [P] [US3] Tests: seed → 11-step OKLCH scale golden values; gamut mapping; contrast pairs
+- [x] T060 [P] [US3] Tests: seed → 11-step OKLCH scale golden values; gamut mapping; contrast pairs
+  — `packages/tokens/test/scale.test.ts` against the pure generator `packages/tokens/lib/scale.ts` (fixed lightness
+  curve + chroma easing, sRGB/P3 mapping by chroma, contrast guard); every semantic pair holds for any brand or
+  neutral seed (fast-check). Step 600 lightness 54 % → 53.5 % so the sRGB-mapped default passes AA with margin.
 - [ ] T061 [US3] Scale generator (culori) + SD transform for `theme.seeds`
 - [ ] T062 [US3] Contrast checker (WCAG 2 + APCA) with `error|warn|fix`; `nb contrast` command
 - [ ] T063 [US3] Runtime re-tint via relative color syntax with `@supports` fallback

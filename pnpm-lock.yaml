@@ -263,6 +263,9 @@ importers:
       culori:
         specifier: ^4.0.2
         version: 4.0.2
+      fast-check:
+        specifier: ^4.10.2
+        version: 4.10.2
       style-dictionary:
         specifier: ^4.4.0
         version: 4.4.0

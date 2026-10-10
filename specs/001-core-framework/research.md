@@ -26,6 +26,11 @@ Each decision lists the choice, rationale, and alternatives considered.
 - **Rationale**: Perceptually uniform steps, predictable contrast, wide-gamut ready. Tailwind v4 and Radix moved to OKLCH.
 - **Alternatives**: HSL (non-uniform lightness), HEX scales (manual), LCH (hue shift in blues).
 - **Library**: `culori` for generation and gamut mapping at build time.
+- **Contrast guard (T060)**: at equal OKLCH lightness, yellows and greens have higher WCAG luminance than blues, so a
+  fixed curve alone cannot promise AA for every seed. After gamut mapping, each step's luminance is kept on the safe
+  side of the default brand (or neutral) scale (dark steps 500–950 never lighter, light steps 50–400 never darker),
+  adjusting lightness only. Any pair of a dark and a light step, or a step and a fixed colour, then contrasts at least
+  as much as on the default scale. Gamut mapping reduces chroma at constant lightness and hue (sRGB value + P3 value).
 
 ## R-04 Cascade layering
 
