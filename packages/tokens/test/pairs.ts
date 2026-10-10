@@ -1,0 +1,46 @@
+/**
+ * Semantic colour pairs that must meet WCAG 2 contrast in every theme (constitution §IV).
+ * Shared by the built-token check (contrast.test.ts) and the seed-scale checks (scale.test.ts).
+ */
+export const THEMES = ["light", "dark", "contrast"] as const;
+export type ThemeName = (typeof THEMES)[number];
+
+export const TEXT = 4.5;
+export const UI = 3; // non-text contrast (WCAG 1.4.11): borders of controls, focus indicators
+
+const surfaces = [
+  "color.surface",
+  "color.surface.subtle",
+  "color.surface.raised",
+  "color.surface.overlay",
+];
+const tones = ["success", "warning", "danger", "info"];
+
+export const PAIRS: [fg: string, bg: string, min: number][] = [
+  ...surfaces.flatMap(
+    (s) =>
+      [
+        ["color.text", s, TEXT],
+        ["color.text.muted", s, TEXT],
+        ["color.text.link", s, TEXT],
+        ["color.accent.text", s, TEXT],
+        ["color.border.strong", s, UI],
+        ["color.focus.ring", s, UI],
+        ...tones.map((t) => [`color.${t}.text`, s, TEXT]),
+      ] as [string, string, number][],
+  ),
+  ["color.text.inverse", "color.surface.inverse", TEXT],
+  ["color.on-accent", "color.accent", TEXT],
+  ["color.on-accent", "color.accent.hover", TEXT],
+  ["color.accent.text", "color.accent.subtle", TEXT],
+  ["color.text", "color.selection", TEXT],
+  ...tones.flatMap(
+    (t) =>
+      [
+        [`color.on-${t}`, `color.${t}`, TEXT],
+        [`color.on-${t}`, `color.${t}.hover`, TEXT],
+        [`color.${t}.text`, `color.${t}.subtle`, TEXT],
+        ["color.text", `color.${t}.subtle`, TEXT],
+      ] as [string, string, number][],
+  ),
+];

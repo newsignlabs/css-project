@@ -41,6 +41,7 @@
     "@newbrush/schema": "workspace:*",
     "@types/culori": "^4.0.1",
     "culori": "^4.0.2",
+    "fast-check": "^4.10.2",
     "style-dictionary": "^4.4.0",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
