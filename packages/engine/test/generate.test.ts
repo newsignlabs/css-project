@@ -152,4 +152,22 @@ describe("processDirectives()", () => {
     ).toBe(0);
     expect(css.indexOf('@import "newbrush"')).toBeGreaterThan(0);
   });
+  it("emits theme.seeds palette overrides with the utilities (T061)", async () => {
+    const { processDirectives, Engine } = await import("../src/index.ts");
+    const seeded = new Engine({ content: ["**/*"], theme: { seeds: { brand: "#16a34a" } } });
+    const { css } = processDirectives("@newbrush utilities;\n", seeded, ["p-4"]);
+    expect(css).toMatch(/@layer nb\.tokens \{\s*:root:root,\s*:root ::backdrop \{/);
+    expect(css).toMatch(/--nb-color-brand-600: oklch\([^)]+\);/);
+    expect(css.indexOf("@layer nb.tokens {")).toBeLessThan(css.indexOf("@layer nb.utilities {"));
+    expect(processDirectives("@newbrush utilities;\n", engine, ["p-4"]).css).not.toContain(
+      "nb.tokens {",
+    );
+  });
+
+  it("rejects invalid seeds when the engine is created", async () => {
+    const { Engine } = await import("../src/index.ts");
+    expect(() => new Engine({ content: ["**/*"], theme: { seeds: { brand: "nope" } } })).toThrow(
+      /theme\.seeds\.brand: "nope" is not a valid CSS colour/,
+    );
+  });
 });

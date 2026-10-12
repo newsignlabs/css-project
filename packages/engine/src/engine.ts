@@ -6,6 +6,7 @@ import {
   type UtilityFamily,
   type Variant,
 } from "@newbrush/schema";
+import { seedTokensCss } from "@newbrush/tokens/seeds";
 import { escapeClassName } from "./escape.ts";
 import { families as defaultFamilies } from "./families/index.ts";
 import { createTheme, type Theme } from "./theme.ts";
@@ -97,12 +98,16 @@ export class Engine {
   private readonly cache = new Map<string, Compiled>();
   private readonly candidates = new Set<string>();
 
+  /** CSS for config `theme.seeds` (palette overrides in nb.tokens), or "" without seeds. */
+  readonly themeCss: string;
+
   constructor(
     config: Config = { content: ["**/*"] },
     families: Family[] = defaultFamilies,
     theme: Theme = createTheme(),
   ) {
     this.config = Config.parse(config);
+    this.themeCss = seedTokensCss(this.config.theme?.seeds);
     this.theme = theme;
     this.families = families;
     families.forEach((f, i) => {

@@ -45,6 +45,20 @@ describe("loadConfig()", () => {
     await expect(loadConfig(dir)).rejects.toThrow(ConfigError);
     await expect(loadConfig(dir)).rejects.toThrow(/content/);
   });
+
+  it("validates theme.seeds colours (T061)", async () => {
+    await writeFile(
+      join(dir, "newbrush.config.json"),
+      JSON.stringify({ content: ["**/*.html"], theme: { seeds: { brand: "#16a34a" } } }),
+    );
+    expect((await loadConfig(dir)).config.theme?.seeds?.brand).toBe("#16a34a");
+    await writeFile(
+      join(dir, "newbrush.config.json"),
+      JSON.stringify({ content: ["**/*.html"], theme: { seeds: { brand: "bluish" } } }),
+    );
+    await expect(loadConfig(dir)).rejects.toThrow(ConfigError);
+    await expect(loadConfig(dir)).rejects.toThrow(/theme\.seeds\.brand: "bluish"/);
+  });
 });
 
 describe("Scanner", () => {

@@ -163,8 +163,10 @@ async function compileCss(
   minify: boolean,
 ): Promise<string> {
   if (!input)
-    return optimize(engine.generate(candidates, { reportUnknown: false }).css, { minify, cwd })
-      .code;
+    return optimize(engine.themeCss + engine.generate(candidates, { reportUnknown: false }).css, {
+      minify,
+      cwd,
+    }).code;
   const { code } = await bundleAsync({
     filename: input,
     minify,

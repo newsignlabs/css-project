@@ -69,7 +69,7 @@ const newbrush: PluginCreator<NewBrushPostcssOptions> = (options = {}) => ({
     });
     root.walkAtRules("newbrush", (at) => {
       if (at.params.trim() !== "utilities") return;
-      const css = engine.generate(candidates, { reportUnknown: false }).css;
+      const css = engine.themeCss + engine.generate(candidates, { reportUnknown: false }).css;
       at.replaceWith(
         postcss.parse(css, { from: parent ? relative(cwd, parent) : undefined }).nodes,
       );

@@ -105,6 +105,43 @@ describe("nb build", () => {
     expect(css).not.toMatch(/@layer nb\.reset\s*\{/);
   });
 
+  it("re-tints the bundle for theme.seeds (T061)", async () => {
+    const seeded = {
+      ...files,
+      "newbrush.config.json": JSON.stringify({
+        content: ["src/**/*.html"],
+        theme: { seeds: { brand: "#16a34a" } },
+      }),
+    };
+    const f = await fixture(seeded);
+    cleanup = f.cleanup;
+    for (const flags of [[], ["--minify"]]) {
+      expect((await nb(f.dir, "build", "-i", "src/app.css", "-o", "out.css", ...flags)).code).toBe(
+        0,
+      );
+      const css = await read(f.dir, "out.css");
+      // framework defaults stay, followed by the seeded override that outranks them
+      expect(css.match(/--nb-color-brand-600:/g)?.length).toBeGreaterThanOrEqual(3);
+      expect(css).toMatch(/:root:root,\s*:root ::backdrop\s*\{[^}]*--nb-color-brand-600:/);
+    }
+    expect((await nb(f.dir, "build", "-o", "u.css")).code).toBe(0);
+    expect(await read(f.dir, "u.css")).toMatch(/:root:root[^{]*\{[^}]*--nb-color-brand-50:/);
+  });
+
+  it("exits 2 for an invalid theme seed", async () => {
+    const f = await fixture({
+      ...files,
+      "newbrush.config.json": JSON.stringify({
+        content: ["src/**/*.html"],
+        theme: { seeds: { brand: "bluish" } },
+      }),
+    });
+    cleanup = f.cleanup;
+    const r = await nb(f.dir, "build", "-o", "out.css");
+    expect(r.code).toBe(2);
+    expect(r.err).toMatch(/theme\.seeds\.brand: "bluish" is not a valid CSS colour/);
+  });
+
   it("exits 1 for unknown @nb-apply utilities", async () => {
     const f = await fixture({ ...files, "src/app.css": ".x { @nb-apply p-4 not-real; }\n" });
     cleanup = f.cleanup;

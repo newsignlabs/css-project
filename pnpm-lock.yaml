@@ -166,6 +166,9 @@ importers:
       chokidar:
         specifier: ^4.0.3
         version: 4.0.3
+      culori:
+        specifier: ^4.0.2
+        version: 4.0.2
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3
@@ -253,6 +256,10 @@ importers:
         version: 5.0.3(@types/node@22.20.4)(vite@8.3.2(@types/node@22.20.4)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/tokens:
+    dependencies:
+      culori:
+        specifier: ^4.0.2
+        version: 4.0.2
     devDependencies:
       '@newbrush/schema':
         specifier: workspace:*
@@ -260,15 +267,15 @@ importers:
       '@types/culori':
         specifier: ^4.0.1
         version: 4.0.1
-      culori:
-        specifier: ^4.0.2
-        version: 4.0.2
       fast-check:
         specifier: ^4.10.2
         version: 4.10.2
       style-dictionary:
         specifier: ^4.4.0
         version: 4.4.0
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(typescript@5.9.3)(yaml@2.9.1)
       tsx:
         specifier: ^4.23.15
         version: 4.23.15

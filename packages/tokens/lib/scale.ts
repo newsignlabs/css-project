@@ -2,7 +2,8 @@
  * Seed → 11-step OKLCH colour scale (specs/001 FR-004, research R-02).
  *
  * 1. Target: every step starts from a fixed lightness; chroma follows an easing curve scaled from the seed's
- *    chroma (the peak, at step 500); hue is the seed's hue. This curve reproduces the default palettes exactly.
+ *    chroma (the peak, at step 500); hue is the seed's hue. This curve reproduces the hand-written palettes
+ *    newBrush shipped before palettes were seeded (T061).
  * 2. Gamut: each step is mapped to Display P3 (`p3`, for `@media (color-gamut: p3)`) and to sRGB (`value`) by
  *    reducing chroma only, so hue and lightness never shift.
  * 3. Contrast guard: at equal OKLCH lightness a yellow or green is brighter (WCAG luminance) than a blue, so a
