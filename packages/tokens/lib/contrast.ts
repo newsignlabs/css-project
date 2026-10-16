@@ -7,7 +7,7 @@
  * foreground is replaced by the nearest palette colour that passes every pair it takes part in (or, when no
  * foreground can pass, the background is), without making any other pair fail.
  */
-import { converter, differenceCiede2000, parse, wcagContrast } from "culori";
+import { converter, differenceCiede2000, parse, wcagLuminance } from "culori";
 import colorSource from "../src/primitive/color.json" with { type: "json" };
 import semanticSource from "../src/semantic/color.json" with { type: "json" };
 import { aliasPath, cssVarName } from "./names.ts";
@@ -191,11 +191,27 @@ export interface CheckOptions {
   fix?: boolean;
 }
 
+/** WCAG 2 relative luminance, cached per colour string (the fix search measures the same colours many times). */
+const luminanceCache = new Map<string, number>();
+function luminance(color: string): number {
+  let y = luminanceCache.get(color);
+  if (y === undefined) {
+    y = wcagLuminance(parse(color) ?? "black");
+    luminanceCache.set(color, y);
+  }
+  return y;
+}
+/** WCAG 2 contrast ratio (same as culori's wcagContrast, on cached luminances). */
+function ratioOf(a: string, b: string): number {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return ((hi ?? 0) + 0.05) / ((lo ?? 0) + 0.05);
+}
+
 function measure(r: Resolver, level: Level, overrides: Overrides, theme: ThemeName): PairResult[] {
   return PAIRS.map((p) => {
     const fgValue = r.color(p.fg, theme, overrides);
     const bgValue = r.color(p.bg, theme, overrides);
-    const ratio = wcagContrast(fgValue, bgValue);
+    const ratio = ratioOf(fgValue, bgValue);
     const min = MINIMUMS[level][p.kind];
     return {
       ...p,
@@ -228,31 +244,40 @@ export function checkContrast({
   /**
    * Replaces `token` in `theme` with the nearest primitive colour (CIEDE2000) that makes every pair selected by
    * `involves` pass without making any other pair, in any theme, fail. Returns whether a replacement was found.
+   * Only pairs that use the token are re-measured per candidate: in `theme`, and, for a light change, in the
+   * themes that inherit the token's light value. Every other pair keeps its colours.
    */
   const attempt = (theme: ThemeName, token: string, involves: (p: PairResult) => boolean) => {
+    const name = tokenName(token);
     const before = failing(results);
-    const targets = results.filter((p) => p.theme === theme && !p.pass && involves(p)).map(key);
-    if (!targets.length) return true; // already fixed by an earlier replacement
+    const targets = new Set(
+      results.filter((p) => p.theme === theme && !p.pass && involves(p)).map(key),
+    );
+    if (!targets.size) return true; // already fixed by an earlier replacement
+    const themes =
+      theme === "light"
+        ? THEME_NAMES.filter(
+            (t) => t === "light" || !(overrides[t]?.[name] ?? semantic.get(name)?.[t]),
+          )
+        : [theme];
+    const uses = PAIRS.filter((p) => tokenName(p.fg) === name || tokenName(p.bg) === name);
+    const affected = themes.flatMap((t) => uses.map((p) => ({ t, p, k: `${t}|${p.fg}|${p.bg}` })));
     const current = r.color(token, theme, overrides);
     const candidates = [...r.primitives]
       .map(([ref, value]) => ({ ref, distance: differenceCiede2000()(current, value) }))
       .sort((a, b) => a.distance - b.distance);
     for (const { ref } of candidates) {
-      const trial: Overrides = {
-        ...overrides,
-        [theme]: { ...overrides[theme], [tokenName(token)]: ref },
-      };
-      const next = all(r, level, trial);
-      const after = failing(next);
-      if (targets.every((k) => !after.has(k)) && [...after].every((k) => before.has(k))) {
-        fixes.push({
-          theme,
-          token: tokenName(token),
-          from: r.alias(token, theme, overrides),
-          to: ref,
-        });
+      const trial: Overrides = { ...overrides, [theme]: { ...overrides[theme], [name]: ref } };
+      const ok = affected.every(({ t, p, k }) => {
+        const pass =
+          ratioOf(r.color(p.fg, t, trial), r.color(p.bg, t, trial)) >= MINIMUMS[level][p.kind];
+        // A pair may stay failing only if it already failed and is not one this replacement must fix.
+        return pass || (before.has(k) && !targets.has(k));
+      });
+      if (ok) {
+        fixes.push({ theme, token: name, from: r.alias(token, theme, overrides), to: ref });
         Object.assign(overrides, trial);
-        results = next;
+        results = all(r, level, overrides);
         return true;
       }
     }

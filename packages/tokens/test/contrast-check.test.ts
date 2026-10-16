@@ -96,6 +96,14 @@ describe("fix", () => {
     ).toBeUndefined();
   });
 
+  it("fixes AAA for a seeded brand too, without regressing any pair", () => {
+    const seeded = checkContrast({ level: "AAA", fix: true, seeds: { brand: "#facc15" } });
+    const unfixed = checkContrast({ level: "AAA", seeds: { brand: "#facc15" } });
+    expect(seeded.failures).toEqual([]);
+    expect(seeded.fixes.length).toBeGreaterThan(0);
+    expect(unfixed.failures.length).toBeGreaterThan(0);
+  });
+
   it("does nothing when everything passes", () => {
     const aa = checkContrast({ fix: true });
     expect(aa.fixes).toEqual([]);
