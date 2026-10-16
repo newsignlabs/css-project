@@ -11,6 +11,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@newbrush/schema": "workspace:*",
+    "@newbrush/tokens": "workspace:*",
     "@playwright/test": "1.56.1",
     "newbrush": "workspace:*",
     "typescript": "^5.9.3"

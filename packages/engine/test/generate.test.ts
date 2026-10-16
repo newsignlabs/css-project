@@ -164,6 +164,26 @@ describe("processDirectives()", () => {
     );
   });
 
+  it("reports contrast and emits fixes for contrast.onFail: fix (T062)", async () => {
+    const { processDirectives, Engine } = await import("../src/index.ts");
+    const plain = new Engine({ content: ["**/*"], contrast: { level: "AAA", onFail: "warn" } });
+    expect(plain.contrast.failures.length).toBeGreaterThan(0);
+    expect(plain.contrastVerdict().fail).toBe(false);
+    expect(plain.themeCss).toBe("");
+    const strict = new Engine({ content: ["**/*"], contrast: { level: "AAA", onFail: "error" } });
+    expect(strict.contrastVerdict().fail).toBe(true);
+    const fixing = new Engine({ content: ["**/*"], contrast: { level: "AAA", onFail: "fix" } });
+    expect(fixing.contrast.failures).toEqual([]);
+    expect(fixing.contrastVerdict().messages[0]).toMatch(/^fixed light: /);
+    expect(processDirectives("@newbrush utilities;\n", fixing, []).css).toContain(
+      "/* newBrush contrast fixes",
+    );
+    expect(new Engine({ content: ["**/*"] }).contrastVerdict()).toEqual({
+      messages: [],
+      fail: false,
+    });
+  });
+
   it("rejects invalid seeds when the engine is created", async () => {
     const { Engine } = await import("../src/index.ts");
     expect(() => new Engine({ content: ["**/*"], theme: { seeds: { brand: "nope" } } })).toThrow(

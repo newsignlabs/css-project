@@ -105,7 +105,11 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
   Style Dictionary preprocessor (sRGB values, Display P3 under `@media (color-gamut: p3)`). Config `theme.seeds`
   (brand, accent, neutral) is validated by `loadConfig`/`Engine` and emitted as an `nb.tokens` override with the
   utilities (CLI, PostCSS, Vite) via `@newbrush/tokens/seeds`.
-- [ ] T062 [US3] Contrast checker (WCAG 2 + APCA) with `error|warn|fix`; `nb contrast` command
+- [x] T062 [US3] Contrast checker (WCAG 2 + APCA) with `error|warn|fix`; `nb contrast` command
+  — `@newbrush/tokens/contrast`: every semantic pair × theme for the project's palettes (incl. `theme.seeds`);
+  WCAG 2 decides pass/fail at `contrast.level`, APCA Lc reported. `fix` swaps the failing foreground (else the
+  background) for the nearest passing palette colour without breaking other pairs, emitted as theme-scoped overrides.
+  `nb build`, PostCSS and Vite warn, fail (`error`, CLI exit 3) or apply fixes; `nb contrast [--level] [--all] [--json]`.
 - [ ] T063 [US3] Runtime re-tint via relative color syntax with `@supports` fallback
 - [ ] T064 [US3] Scoped themes (`[data-nb-theme]` any scope) + high-contrast theme + `forced-colors` pass
 - [ ] T065 [US3] `nb theme create` scaffold; brand theme example

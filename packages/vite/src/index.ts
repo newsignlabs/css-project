@@ -65,6 +65,16 @@ export default function newbrush(options: NewBrushViteOptions = {}): Plugin {
       root = config.root;
       ready = setup();
     },
+    async buildStart() {
+      await ready;
+      if (!engine) return;
+      const contrast = engine.contrastVerdict();
+      for (const message of contrast.messages) this.warn(`contrast: ${message}`);
+      if (contrast.fail)
+        this.error(
+          `semantic colours fail ${engine.contrast.level} contrast (contrast.onFail: "error")`,
+        );
+    },
     async transform(code, id) {
       if (!CSS.test(id) || !hasDirectives(code)) return null;
       await ready;

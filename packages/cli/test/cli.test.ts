@@ -214,6 +214,98 @@ describe("nb explain", () => {
   });
 });
 
+describe("nb contrast (T062)", () => {
+  const cfg = (contrast?: object, seeds?: object) => ({
+    "newbrush.config.json": JSON.stringify({
+      content: ["src/**/*.html"],
+      ...(contrast ? { contrast } : {}),
+      ...(seeds ? { theme: { seeds } } : {}),
+    }),
+    "src/index.html": '<p class="p-4">x</p>',
+    "src/app.css": '@import "newbrush";\n@newbrush utilities;\n',
+  });
+
+  it("passes AA for the defaults and summarises every theme", async () => {
+    const f = await fixture(cfg());
+    cleanup = f.cleanup;
+    const r = await nb(f.dir, "contrast");
+    expect(r.code).toBe(0);
+    expect(r.out).toMatch(/WCAG 2 AA · APCA Lc/);
+    for (const theme of ["light", "dark", "contrast"])
+      expect(r.out).toMatch(new RegExp(`${theme}\\s+✓`));
+    expect(r.out).toMatch(/✓ all \d+ pairs pass AA/);
+  });
+
+  it("exits 3 and lists failures at AAA; --all prints every pair with APCA Lc", async () => {
+    const f = await fixture(cfg());
+    cleanup = f.cleanup;
+    const r = await nb(f.dir, "contrast", "--level", "AAA", "--all");
+    expect(r.code).toBe(3);
+    expect(r.out).toMatch(
+      /✗ light\s+[\d.]+:1\s+7\.00:1\s+-?[\d.]+\s+color\.text\.link on color\.surface/,
+    );
+    expect(r.out).toMatch(/light: color\.text\.link on color\.surface\.subtle [\d.]+:1 < 7\.00:1/);
+    expect(r.out).toMatch(/✗ \d+ pair\(s\) below AAA/);
+  });
+
+  it("applies contrast.onFail: fix and reports the fixes", async () => {
+    const f = await fixture(cfg({ level: "AAA", onFail: "fix" }));
+    cleanup = f.cleanup;
+    const r = await nb(f.dir, "contrast");
+    expect(r.code).toBe(0);
+    expect(r.out).toContain("fixed light: color.text.link {color.brand.600} → {color.brand.800}");
+    expect(r.out).toMatch(/✓ all pairs pass AAA with \d+ fix\(es\)/);
+  });
+
+  it("prints JSON with --json", async () => {
+    const f = await fixture(cfg());
+    cleanup = f.cleanup;
+    const r = await nb(f.dir, "contrast", "--json");
+    const report = JSON.parse(r.out);
+    expect(report.level).toBe("AA");
+    expect(report.failures).toEqual([]);
+    expect(report.results[0]).toHaveProperty("lc");
+  });
+
+  it("rejects an unknown level", async () => {
+    const f = await fixture(cfg());
+    cleanup = f.cleanup;
+    expect((await nb(f.dir, "contrast", "--level", "AAAA")).code).toBe(1);
+  });
+
+  it("nb build warns by default, fails with onFail: error (exit 3), and emits fixes with onFail: fix", async () => {
+    const warn = await fixture(cfg({ level: "AAA" }));
+    cleanup = warn.cleanup;
+    const w = await nb(warn.dir, "build", "-i", "src/app.css", "-o", "out.css");
+    expect(w.code).toBe(0);
+    expect(w.err).toMatch(/nb: contrast: light: color\.text\.link on color\.surface/);
+    await warn.cleanup();
+
+    const error = await fixture(cfg({ level: "AAA", onFail: "error" }));
+    cleanup = error.cleanup;
+    const e = await nb(error.dir, "build", "-i", "src/app.css", "-o", "out.css");
+    expect(e.code).toBe(3);
+    expect(e.err).toMatch(/fail AAA contrast \(contrast\.onFail: "error"\)/);
+    await error.cleanup();
+
+    const fix = await fixture(cfg({ level: "AAA", onFail: "fix" }));
+    cleanup = fix.cleanup;
+    const x = await nb(fix.dir, "build", "-i", "src/app.css", "-o", "out.css");
+    expect(x.code).toBe(0);
+    expect(x.err).toMatch(/nb: contrast: fixed light: color\.text\.link/);
+    expect(await read(fix.dir, "out.css")).toMatch(
+      /\[data-nb-theme="light"\]\[data-nb-theme="light"\][^{]*\{[^}]*--nb-color-text-link: var\(--nb-color-brand-800\)/,
+    );
+  });
+
+  it("stays silent for a default build", async () => {
+    const f = await fixture(cfg());
+    cleanup = f.cleanup;
+    const r = await nb(f.dir, "build", "-i", "src/app.css", "-o", "out.css");
+    expect(r.err).not.toMatch(/contrast/);
+  });
+});
+
 describe("nb doctor", () => {
   it("passes a healthy project", async () => {
     const f = await fixture({

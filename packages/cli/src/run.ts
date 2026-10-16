@@ -9,6 +9,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { DirectiveError, type Engine, hasDirectives, processDirectives } from "@newbrush/engine";
 import { ConfigError, createProjectEngine, optimize, Scanner, watch } from "@newbrush/engine/node";
+import { checkContrast, formatContrast, type PairResult } from "@newbrush/tokens/contrast";
 import { bundleAsync } from "lightningcss";
 
 export interface IO {
@@ -27,6 +28,7 @@ Commands:
   watch     Alias for build --watch
   explain   Show how classes parse and the CSS they generate     <class...>
   doctor    Check config, content globs, browserslist and class collisions
+  contrast  Report semantic colour contrast (WCAG 2 + APCA)       [--level AA|AAA] [--all] [--json] [-c config]
   tokens    Export design tokens                                 [--format css|json|ts|figma] [-o dir]
 
 Options:
@@ -64,6 +66,8 @@ export async function run(argv: string[], io: IO): Promise<number> {
         return await doctor(rest, io);
       case "tokens":
         return await tokens(rest, io);
+      case "contrast":
+        return await contrast(rest, io);
       default:
         io.stderr(`nb: Unknown command "${command}"\n\n${USAGE}`);
         return EXIT.error;
@@ -201,6 +205,7 @@ async function buildCommand(argv: string[], io: IO): Promise<number> {
   if (input && !existsSync(input)) throw new UsageError(`Input file not found: ${values.input}`);
   const output = resolve(io.cwd, values.output ?? "newbrush.out.css");
   const { engine, config } = await createProjectEngine(io.cwd, values.config);
+  if (!reportContrast(engine, io)) return EXIT.budget;
   const scanner = new Scanner(config.content, io.cwd);
   await scanner.scanAll();
 
@@ -271,6 +276,81 @@ async function explain(argv: string[], io: IO): Promise<number> {
 }
 
 // ── doctor ───────────────────────────────────────────────────────────────────
+
+/** Prints contrast warnings/fixes for a build; false when `contrast.onFail: "error"` must stop it (exit 3). */
+function reportContrast(engine: Engine, io: IO): boolean {
+  const { messages, fail } = engine.contrastVerdict();
+  for (const message of messages) io.stderr(`nb: contrast: ${message}\n`);
+  if (fail)
+    io.stderr(
+      `nb: ${engine.contrast.failures.length} semantic colour pair(s) fail ${engine.contrast.level} contrast (contrast.onFail: "error"); run \`nb contrast\` for details\n`,
+    );
+  return !fail;
+}
+
+// ── contrast ─────────────────────────────────────────────────────────────────
+
+async function contrast(argv: string[], io: IO): Promise<number> {
+  const { values } = parseArgs({
+    args: argv,
+    options: {
+      level: { type: "string" },
+      all: { type: "boolean", default: false },
+      json: { type: "boolean", default: false },
+      config: { type: "string", short: "c" },
+    },
+  });
+  if (values.level && values.level !== "AA" && values.level !== "AAA")
+    throw new UsageError(`--level must be AA or AAA (got "${values.level}")`);
+  const { config } = await createProjectEngine(io.cwd, values.config);
+  const level = (values.level ?? config.contrast?.level ?? "AA") as "AA" | "AAA";
+  const report = checkContrast({
+    seeds: config.theme?.seeds,
+    level,
+    fix: config.contrast?.onFail === "fix",
+  });
+  if (values.json) {
+    io.stdout(`${JSON.stringify(report, null, 2)}\n`);
+    return report.failures.length ? EXIT.budget : EXIT.ok;
+  }
+
+  const ratio = (n: number) => `${n.toFixed(2)}:1`;
+  const lines = [`newBrush contrast · WCAG 2 ${level} · APCA Lc for reference`, ""];
+  for (const theme of ["light", "dark", "contrast"] as const) {
+    const rows = report.results.filter((p) => p.theme === theme);
+    const passed = rows.filter((p) => p.pass).length;
+    const lowest = rows.reduce<PairResult | undefined>(
+      (low, p) => (!low || p.ratio / p.min < low.ratio / low.min ? p : low),
+      undefined,
+    );
+    lines.push(
+      `  ${theme.padEnd(9)} ${passed === rows.length ? "✓" : "✗"} ${passed}/${rows.length} pass` +
+        (lowest
+          ? `   closest: ${lowest.fg} on ${lowest.bg} ${ratio(lowest.ratio)} (needs ${ratio(lowest.min)})`
+          : ""),
+    );
+  }
+  if (values.all) {
+    lines.push("", "  theme     ratio    min     APCA Lc  pair");
+    for (const p of report.results)
+      lines.push(
+        `  ${p.pass ? "✓" : "✗"} ${p.theme.padEnd(8)} ${ratio(p.ratio).padStart(7)} ${ratio(p.min).padStart(7)} ${p.lc.toFixed(1).padStart(8)}  ${p.fg} on ${p.bg}`,
+      );
+  }
+  const details = formatContrast(report);
+  if (details.length) lines.push("", ...details.map((d) => `  ${d}`));
+  lines.push(
+    "",
+    report.failures.length
+      ? `✗ ${report.failures.length} pair(s) below ${level}` +
+          (config.contrast?.onFail === "fix" ? " that no palette colour can fix" : "")
+      : report.fixes.length
+        ? `✓ all pairs pass ${level} with ${report.fixes.length} fix(es) (contrast.onFail: "fix")`
+        : `✓ all ${report.results.length} pairs pass ${level}`,
+  );
+  io.stdout(`${lines.join("\n")}\n`);
+  return report.failures.length ? EXIT.budget : EXIT.ok;
+}
 
 async function doctor(_argv: string[], io: IO): Promise<number> {
   const { config, configPath } = await createProjectEngine(io.cwd);

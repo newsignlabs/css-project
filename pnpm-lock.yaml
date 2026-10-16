@@ -68,6 +68,9 @@ importers:
       '@newbrush/schema':
         specifier: workspace:*
         version: link:../../packages/schema
+      '@newbrush/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
       '@playwright/test':
         specifier: 1.56.1
         version: 1.56.1

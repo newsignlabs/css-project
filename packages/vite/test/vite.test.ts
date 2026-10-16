@@ -28,6 +28,30 @@ beforeEach(async () => {
 afterEach(() => rm(dir, { recursive: true, force: true }));
 
 describe("@newbrush/vite", () => {
+  it("warns about contrast in production builds and stops with contrast.onFail: error (T062)", async () => {
+    const config = (contrast: object) =>
+      writeFile(
+        join(dir, "newbrush.config.json"),
+        JSON.stringify({ content: ["index.html", "src/**/*.{js,ts}"], contrast }),
+      );
+    const warnings: string[] = [];
+    const run = () =>
+      build({
+        root: dir,
+        logLevel: "silent",
+        plugins: [newbrush()],
+        build: {
+          write: false,
+          rollupOptions: { onwarn: (w) => void warnings.push(w.message) },
+        },
+      });
+    await config({ level: "AAA" });
+    await run();
+    expect(warnings).toContainEqual(expect.stringMatching(/contrast: light: color\.text\.link/));
+    await config({ level: "AAA", onFail: "error" });
+    await expect(run()).rejects.toThrow(/fail AAA contrast/);
+  });
+
   it("builds CSS with the framework, used utilities and @nb-apply", async () => {
     const result = await build({
       root: dir,

@@ -9,6 +9,7 @@ import StyleDictionary from "style-dictionary";
 import type { TransformedToken } from "style-dictionary/types";
 import { aliasPath, cssVarName } from "./lib/names.ts";
 import { expandSeeds } from "./lib/seeds.ts";
+import { themeBlocks } from "./lib/themes.ts";
 
 const THEMES: Theme[] = [
   { name: "light", colorScheme: "light", overrides: {} },
@@ -97,25 +98,16 @@ const p3 = allTokens
 const dark = [...marker("dark"), ...themed("dark")];
 const contrast = ["    --nb-contrast: more;", ...themed("contrast")];
 const indent = (s: string) => s.replace(/^/gm, "  ");
+const unindent = (line: string) => line.trimStart();
 
 const blocks = {
   primitives: [
     block(":root,\n  ::backdrop", primitives),
     `  @media (color-gamut: p3) {\n${indent(block(":root,\n  ::backdrop", p3))}\n  }`,
   ].join("\n\n"),
-  // ::backdrop does not inherit custom properties in every supported engine, so tokens are declared on it too.
-  light: block(':root,\n  ::backdrop,\n  [data-nb-theme="light"],\n  [data-nb-theme="contrast"]', [
-    ...marker("light"),
-    ...base,
-  ]),
-  dark: [
-    block('[data-nb-theme="dark"]', dark),
-    `  @media (prefers-color-scheme: dark) {\n${indent(block(":root:not([data-nb-theme])", dark))}\n  }`,
-  ].join("\n\n"),
-  contrast: [
-    block('[data-nb-theme="contrast"]', contrast),
-    `  @media (prefers-contrast: more) and (prefers-color-scheme: light) {\n${indent(block(":root:not([data-nb-theme])", contrast))}\n  }`,
-  ].join("\n\n"),
+  light: themeBlocks("light", [...marker("light"), ...base].map(unindent)).join("\n\n"),
+  dark: themeBlocks("dark", dark.map(unindent)).join("\n\n"),
+  contrast: themeBlocks("contrast", contrast.map(unindent)).join("\n\n"),
 };
 const layer = (...parts: string[]) => `${HEADER}@layer nb.tokens {\n${parts.join("\n\n")}\n}\n`;
 

@@ -18,6 +18,10 @@
       "types": "./dist/seeds.d.ts",
       "default": "./dist/seeds.js"
     },
+    "./contrast": {
+      "types": "./dist/contrast.d.ts",
+      "default": "./dist/contrast.js"
+    },
     "./tokens.css": "./dist/css/tokens.css",
     "./css/*": "./dist/css/*",
     "./tokens.json": "./dist/tokens.json",

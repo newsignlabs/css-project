@@ -43,6 +43,23 @@ describe("@newbrush/postcss", () => {
     expect(css).toContain("color: red");
   });
 
+  it("warns about contrast failures and fails with contrast.onFail: error (T062)", async () => {
+    const config = (contrast: object) =>
+      writeFile(
+        join(dir, "newbrush.config.json"),
+        JSON.stringify({ content: ["src/**/*.html"], contrast }),
+      );
+    await config({ level: "AAA" });
+    const result = await processCss("@newbrush utilities;\n");
+    expect(result.warnings().map((w) => w.text)).toContainEqual(
+      expect.stringMatching(/^contrast: light: color\.text\.link on color\.surface/),
+    );
+    await config({ level: "AAA", onFail: "error" });
+    await expect(processCss("@newbrush utilities;\n")).rejects.toThrow(/fail AAA contrast/);
+    await config({ level: "AAA", onFail: "fix" });
+    expect((await processCss("@newbrush utilities;\n")).css).toContain("newBrush contrast fixes");
+  });
+
   it("fails the build for unknown @nb-apply utilities", async () => {
     await expect(processCss(".card { @nb-apply p-6 nope; }")).rejects.toThrow(/nope/);
   });
