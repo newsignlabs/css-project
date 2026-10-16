@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { palettes as seededPalettes } from "../lib/seeds.ts";
 import type { ThemeName } from "./pairs.ts";
 
 /**
@@ -23,6 +24,14 @@ const semantic = new Map<string, Node>();
 /** Palettes to substitute, e.g. `{ brand: { "600": "oklch(…)" } }`. */
 export type Palettes = Record<string, Record<string, string>>;
 
+/** Default palettes as the token build generates them from their seeds (sRGB values). */
+const defaults: Palettes = Object.fromEntries(
+  Object.entries(seededPalettes({}, { all: true })).map(([name, steps]) => [
+    name,
+    Object.fromEntries(steps.map((s) => [String(s.step), s.value])),
+  ]),
+);
+
 export function semanticColor(name: string, theme: ThemeName, palettes: Palettes = {}): string {
   const token = semantic.get(name) ?? semantic.get(`${name}.default`);
   if (!token?.$value) throw new Error(`Unknown semantic colour ${name}`);
@@ -31,11 +40,5 @@ export function semanticColor(name: string, theme: ThemeName, palettes: Palettes
   if (!match) return ref;
   const [, palette = "", step] = match;
   if (!step) return primitives[palette]?.$value ?? ref;
-  return palettes[palette]?.[step] ?? primitives[palette]?.[step]?.$value ?? ref;
+  return palettes[palette]?.[step] ?? defaults[palette]?.[step] ?? ref;
 }
-
-/** The default value of every step of a primitive palette, 50 → 950. */
-export const primitivePalette = (palette: string) =>
-  Object.entries(primitives[palette] ?? {})
-    .filter(([key]) => !key.startsWith("$"))
-    .map(([, node]) => (node as Node).$value);

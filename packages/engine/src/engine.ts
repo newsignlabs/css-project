@@ -6,6 +6,13 @@ import {
   type UtilityFamily,
   type Variant,
 } from "@newbrush/schema";
+import {
+  type ContrastReport,
+  checkContrast,
+  contrastFixCss,
+  formatContrast,
+} from "@newbrush/tokens/contrast";
+import { seedTokensCss } from "@newbrush/tokens/seeds";
 import { escapeClassName } from "./escape.ts";
 import { families as defaultFamilies } from "./families/index.ts";
 import { createTheme, type Theme } from "./theme.ts";
@@ -97,12 +104,17 @@ export class Engine {
   private readonly cache = new Map<string, Compiled>();
   private readonly candidates = new Set<string>();
 
+  /** CSS for config `theme.seeds` (palette overrides in nb.tokens), or "" without seeds. */
+  private readonly seedCss: string;
+  private contrastReport?: ContrastReport;
+
   constructor(
     config: Config = { content: ["**/*"] },
     families: Family[] = defaultFamilies,
     theme: Theme = createTheme(),
   ) {
     this.config = Config.parse(config);
+    this.seedCss = seedTokensCss(this.config.theme?.seeds);
     this.theme = theme;
     this.families = families;
     families.forEach((f, i) => {
@@ -112,6 +124,37 @@ export class Engine {
         this.functional.set(root, [...(this.functional.get(root) ?? []), i]);
     });
     this.variantRegistry = createVariants(theme, this.config);
+  }
+
+  /**
+   * Token CSS emitted with the utilities: palette overrides for config `theme.seeds`, then contrast fixes when
+   * `contrast.onFail` is "fix". Empty for a default config.
+   */
+  get themeCss(): string {
+    const fixes = this.config.contrast?.onFail === "fix" ? contrastFixCss(this.contrast) : "";
+    return this.seedCss + fixes;
+  }
+
+  /** Semantic contrast report for this config's palettes and `contrast` settings (computed once, T062). */
+  get contrast(): ContrastReport {
+    this.contrastReport ??= checkContrast({
+      seeds: this.config.theme?.seeds,
+      level: this.config.contrast?.level ?? "AA",
+      fix: this.config.contrast?.onFail === "fix",
+    });
+    return this.contrastReport;
+  }
+
+  /**
+   * What a build should do about contrast: one message per remaining failure or applied fix, and whether to fail
+   * (`contrast.onFail: "error"` with failures). Integrations print the messages as warnings.
+   */
+  contrastVerdict(): { messages: string[]; fail: boolean } {
+    const report = this.contrast;
+    return {
+      messages: formatContrast(report),
+      fail: this.config.contrast?.onFail === "error" && report.failures.length > 0,
+    };
   }
 
   private get prefix(): string {

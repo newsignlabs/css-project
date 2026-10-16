@@ -42,7 +42,8 @@ export function expandApply(engine: Engine, classList: string): string {
 }
 
 /**
- * Replaces `@newbrush utilities;` with generated utilities for the given candidates and expands `@nb-apply`.
+ * Replaces `@newbrush utilities;` with generated utilities for the given candidates (preceded by the palette
+ * overrides for config `theme.seeds`, if any) and expands `@nb-apply`.
  * Returns the processed CSS; throws DirectiveError for unknown @nb-apply utilities.
  */
 export function processDirectives(
@@ -54,7 +55,7 @@ export function processDirectives(
   let out = css.replace(APPLY, (_, list: string) => expandApply(engine, list));
   out = out.replace(UTILITIES, () => {
     hasUtilities = true;
-    return engine.generate(candidates, { reportUnknown: false }).css;
+    return engine.themeCss + engine.generate(candidates, { reportUnknown: false }).css;
   });
   // Hoist the full layer order above any @import (allowed by CSS Cascade 5), so bundlers that inline or reorder
   // imports can never demote nb.utilities below the framework layers.

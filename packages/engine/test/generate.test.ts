@@ -152,4 +152,42 @@ describe("processDirectives()", () => {
     ).toBe(0);
     expect(css.indexOf('@import "newbrush"')).toBeGreaterThan(0);
   });
+  it("emits theme.seeds palette overrides with the utilities (T061)", async () => {
+    const { processDirectives, Engine } = await import("../src/index.ts");
+    const seeded = new Engine({ content: ["**/*"], theme: { seeds: { brand: "#16a34a" } } });
+    const { css } = processDirectives("@newbrush utilities;\n", seeded, ["p-4"]);
+    expect(css).toMatch(/@layer nb\.tokens \{\s*:root:root,\s*:root ::backdrop \{/);
+    expect(css).toMatch(/--nb-color-brand-600: oklch\([^)]+\);/);
+    expect(css.indexOf("@layer nb.tokens {")).toBeLessThan(css.indexOf("@layer nb.utilities {"));
+    expect(processDirectives("@newbrush utilities;\n", engine, ["p-4"]).css).not.toContain(
+      "nb.tokens {",
+    );
+  });
+
+  it("reports contrast and emits fixes for contrast.onFail: fix (T062)", async () => {
+    const { processDirectives, Engine } = await import("../src/index.ts");
+    const plain = new Engine({ content: ["**/*"], contrast: { level: "AAA", onFail: "warn" } });
+    expect(plain.contrast.failures.length).toBeGreaterThan(0);
+    expect(plain.contrastVerdict().fail).toBe(false);
+    expect(plain.themeCss).toBe("");
+    const strict = new Engine({ content: ["**/*"], contrast: { level: "AAA", onFail: "error" } });
+    expect(strict.contrastVerdict().fail).toBe(true);
+    const fixing = new Engine({ content: ["**/*"], contrast: { level: "AAA", onFail: "fix" } });
+    expect(fixing.contrast.failures).toEqual([]);
+    expect(fixing.contrastVerdict().messages[0]).toMatch(/^fixed light: /);
+    expect(processDirectives("@newbrush utilities;\n", fixing, []).css).toContain(
+      "/* newBrush contrast fixes",
+    );
+    expect(new Engine({ content: ["**/*"] }).contrastVerdict()).toEqual({
+      messages: [],
+      fail: false,
+    });
+  });
+
+  it("rejects invalid seeds when the engine is created", async () => {
+    const { Engine } = await import("../src/index.ts");
+    expect(() => new Engine({ content: ["**/*"], theme: { seeds: { brand: "nope" } } })).toThrow(
+      /theme\.seeds\.brand: "nope" is not a valid CSS colour/,
+    );
+  });
 });

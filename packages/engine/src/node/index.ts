@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join, relative, resolve, sep } from "node:path";
 import { Config, type ResolvedConfig } from "@newbrush/schema";
+import { checkSeeds } from "@newbrush/tokens/seeds";
 import browserslist from "browserslist";
 import chokidar from "chokidar";
 import fg from "fast-glob";
@@ -52,6 +53,9 @@ export async function loadConfig(
     throw new ConfigError(
       `Invalid ${path}:\n${parsed.error.issues.map((i) => `  ${i.path.join(".") || "(root)"}: ${i.message}`).join("\n")}`,
     );
+  const seeds = checkSeeds(parsed.data.theme?.seeds);
+  if (seeds.length)
+    throw new ConfigError(`Invalid ${path}:\n${seeds.map((s) => `  ${s}`).join("\n")}`);
   return { config: parsed.data, path };
 }
 

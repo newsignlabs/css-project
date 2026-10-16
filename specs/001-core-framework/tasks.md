@@ -100,8 +100,16 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
   — `packages/tokens/test/scale.test.ts` against the pure generator `packages/tokens/lib/scale.ts` (fixed lightness
   curve + chroma easing, sRGB/P3 mapping by chroma, contrast guard); every semantic pair holds for any brand or
   neutral seed (fast-check). Step 600 lightness 54 % → 53.5 % so the sRGB-mapped default passes AA with margin.
-- [ ] T061 [US3] Scale generator (culori) + SD transform for `theme.seeds`
-- [ ] T062 [US3] Contrast checker (WCAG 2 + APCA) with `error|warn|fix`; `nb contrast` command
+- [x] T061 [US3] Scale generator (culori) + SD transform for `theme.seeds`
+  — palettes in `src/primitive/color.json` are seeds (`$extensions["nb.seed"]`), expanded by the `nb/seeds`
+  Style Dictionary preprocessor (sRGB values, Display P3 under `@media (color-gamut: p3)`). Config `theme.seeds`
+  (brand, accent, neutral) is validated by `loadConfig`/`Engine` and emitted as an `nb.tokens` override with the
+  utilities (CLI, PostCSS, Vite) via `@newbrush/tokens/seeds`.
+- [x] T062 [US3] Contrast checker (WCAG 2 + APCA) with `error|warn|fix`; `nb contrast` command
+  — `@newbrush/tokens/contrast`: every semantic pair × theme for the project's palettes (incl. `theme.seeds`);
+  WCAG 2 decides pass/fail at `contrast.level`, APCA Lc reported. `fix` swaps the failing foreground (else the
+  background) for the nearest passing palette colour without breaking other pairs, emitted as theme-scoped overrides.
+  `nb build`, PostCSS and Vite warn, fail (`error`, CLI exit 3) or apply fixes; `nb contrast [--level] [--all] [--json]`.
 - [ ] T063 [US3] Runtime re-tint via relative color syntax with `@supports` fallback
 - [ ] T064 [US3] Scoped themes (`[data-nb-theme]` any scope) + high-contrast theme + `forced-colors` pass
 - [ ] T065 [US3] `nb theme create` scaffold; brand theme example

@@ -38,6 +38,7 @@
     "@newbrush/schema": "workspace:*",
     "browserslist": "^4.25.0",
     "chokidar": "^4.0.3",
+    "culori": "^4.0.2",
     "fast-glob": "^3.3.3",
     "jiti": "^2.7.0",
     "lightningcss": "^1.33.0",

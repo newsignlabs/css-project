@@ -26,6 +26,13 @@ const newbrush: PluginCreator<NewBrushPostcssOptions> = (options = {}) => ({
 
     const cwd = resolve(options.cwd ?? process.cwd());
     const { engine, config, configPath } = await createProjectEngine(cwd, options.config);
+    const contrast = engine.contrastVerdict();
+    for (const message of contrast.messages)
+      result.warn(`contrast: ${message}`, { plugin: "@newbrush/postcss" });
+    if (contrast.fail)
+      throw root.error(
+        `@newbrush/postcss: semantic colours fail ${engine.contrast.level} contrast (contrast.onFail: "error")`,
+      );
     const candidates = await new Scanner(config.content, cwd).scanAll();
     const parent = result.opts.from;
 
@@ -69,7 +76,7 @@ const newbrush: PluginCreator<NewBrushPostcssOptions> = (options = {}) => ({
     });
     root.walkAtRules("newbrush", (at) => {
       if (at.params.trim() !== "utilities") return;
-      const css = engine.generate(candidates, { reportUnknown: false }).css;
+      const css = engine.themeCss + engine.generate(candidates, { reportUnknown: false }).css;
       at.replaceWith(
         postcss.parse(css, { from: parent ? relative(cwd, parent) : undefined }).nodes,
       );

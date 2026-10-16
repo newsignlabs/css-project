@@ -10,7 +10,7 @@ import {
   targetScale,
 } from "../lib/scale.ts";
 import { PAIRS, THEMES } from "./pairs.ts";
-import { type Palettes, primitivePalette, semanticColor } from "./semantic.ts";
+import { type Palettes, semanticColor } from "./semantic.ts";
 
 /** specs/001 T060: seed → 11-step OKLCH scale (golden values, gamut mapping, contrast pairs). */
 
@@ -30,21 +30,40 @@ const seedArb = fc
   .map(({ l, c, h }) => `oklch(${(l * 100).toFixed(2)}% ${c.toFixed(4)} ${h.toFixed(2)})`);
 
 describe("golden values", () => {
-  it.each([
-    ["neutral", "neutral"],
-    ["brand", "chromatic"],
-    ["accent", "chromatic"],
-    ["success", "chromatic"],
-    ["warning", "chromatic"],
-    ["danger", "chromatic"],
-    ["info", "chromatic"],
-  ] as const)(
-    "the target curve reproduces the default %s palette from its 500 step",
-    (palette, kind) => {
-      const steps = primitivePalette(palette);
-      expect(targetScale(steps[5] ?? "", { kind })).toEqual(steps);
-    },
-  );
+  // The hand-written palettes newBrush shipped before T061 (step 600 at 53.5 %): the target curve reproduces them.
+  const HANDWRITTEN = {
+    brand: [
+      "oklch(97.8% 0.019 255)",
+      "oklch(95.4% 0.038 255)",
+      "oklch(90.6% 0.072 255)",
+      "oklch(83.4% 0.114 255)",
+      "oklch(72.6% 0.16 255)",
+      "oklch(62.4% 0.19 255)",
+      "oklch(53.5% 0.186 255)",
+      "oklch(46% 0.167 255)",
+      "oklch(38.4% 0.137 255)",
+      "oklch(31% 0.106 255)",
+      "oklch(22.8% 0.08 255)",
+    ],
+    neutral: [
+      "oklch(97.8% 0.002 260)",
+      "oklch(95.4% 0.003 260)",
+      "oklch(90.6% 0.006 260)",
+      "oklch(83.4% 0.01 260)",
+      "oklch(72.6% 0.013 260)",
+      "oklch(62.4% 0.016 260)",
+      "oklch(53.5% 0.016 260)",
+      "oklch(46% 0.014 260)",
+      "oklch(38.4% 0.012 260)",
+      "oklch(31% 0.009 260)",
+      "oklch(22.8% 0.007 260)",
+    ],
+  };
+
+  it("the target curve reproduces the hand-written brand and neutral palettes", () => {
+    expect(targetScale(REFERENCE_SEEDS.chromatic)).toEqual(HANDWRITTEN.brand);
+    expect(targetScale(REFERENCE_SEEDS.neutral, { kind: "neutral" })).toEqual(HANDWRITTEN.neutral);
+  });
 
   it("generates the default brand scale (sRGB value, P3 value)", () => {
     expect(generateScale(REFERENCE_SEEDS.chromatic).map((s) => [s.step, s.value, s.p3])).toEqual([
@@ -80,7 +99,7 @@ describe("golden values", () => {
 
   it("keeps the default neutral palette as is (it already fits sRGB)", () => {
     expect(generateScale(REFERENCE_SEEDS.neutral, { kind: "neutral" }).map((s) => s.value)).toEqual(
-      primitivePalette("neutral"),
+      HANDWRITTEN.neutral,
     );
   });
 });
