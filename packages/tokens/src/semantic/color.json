@@ -342,7 +342,7 @@
       "$extensions": {
         "nb.themes": {
           "dark": "{color.neutral.950}",
-          "contrast": "{color.neutral.950}"
+          "contrast": "{color.black}"
         }
       },
       "$description": "Text on warning fill"

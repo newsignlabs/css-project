@@ -167,6 +167,20 @@
     .nb-btn {
       border-color: ButtonText;
     }
+
+    /* Keep the toggle state: opt out of forcing for this state only, painting with the user's system colours. */
+    .nb-btn[aria-pressed="true"] {
+      forced-color-adjust: none;
+      border-color: Highlight;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+
+    .nb-btn:disabled,
+    .nb-btn[aria-disabled="true"] {
+      border-color: GrayText;
+      color: GrayText;
+    }
   }
 }
 

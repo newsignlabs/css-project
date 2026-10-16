@@ -115,7 +115,11 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
   is `oklch(from var(--nb-color-<p>-seed) L calc(min(c, .37) * k) h)` behind `@supports (color: oklch(from red l c h))`.
   Unset seed → invalid tint → shipped static colour. Islands need `data-nb-theme` (semantic tokens recompute there);
   runtime tints skip gamut mapping and the contrast guard (use `theme.seeds` for guaranteed AA).
-- [ ] T064 [US3] Scoped themes (`[data-nb-theme]` any scope) + high-contrast theme + `forced-colors` pass
+- [x] T064 [US3] Scoped themes (`[data-nb-theme]` any scope) + high-contrast theme + `forced-colors` pass
+  — islands of any theme repaint (incl. a contrast island in a dark page); the contrast theme is held to AAA (7:1
+  text, `on-warning` → black); forced-colors spec over every manifest example × theme: boundaries on boxed controls,
+  visible focus outline at every Tab stop, distinguishable selected/current/pressed states, GrayText disabled,
+  visible switch thumb. Fixes: pressed `.nb-btn` and the custom switch paint with system colours.
 - [ ] T065 [US3] `nb theme create` scaffold; brand theme example
 - [ ] T091 [P] [US3] `packages/fonts` (`@newbrush/fonts`): subsetted variable WOFF2 + `@font-face` CSS per family, mapped to `font.family.*` tokens; docs page (FR-022)
 

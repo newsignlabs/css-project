@@ -507,7 +507,7 @@
     --nb-color-focus-ring: var(--nb-color-black);
     --nb-color-on-accent: var(--nb-color-white);
     --nb-color-on-success: var(--nb-color-white);
-    --nb-color-on-warning: var(--nb-color-neutral-950);
+    --nb-color-on-warning: var(--nb-color-black);
     --nb-color-on-danger: var(--nb-color-white);
     --nb-color-on-info: var(--nb-color-white);
     --nb-color-selection: var(--nb-color-brand-300);
@@ -559,7 +559,7 @@
       --nb-color-focus-ring: var(--nb-color-black);
       --nb-color-on-accent: var(--nb-color-white);
       --nb-color-on-success: var(--nb-color-white);
-      --nb-color-on-warning: var(--nb-color-neutral-950);
+      --nb-color-on-warning: var(--nb-color-black);
       --nb-color-on-danger: var(--nb-color-white);
       --nb-color-on-info: var(--nb-color-white);
       --nb-color-selection: var(--nb-color-brand-300);
