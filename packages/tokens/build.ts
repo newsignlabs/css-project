@@ -8,7 +8,14 @@ import { ResolvedToken, type Theme } from "@newbrush/schema";
 import StyleDictionary from "style-dictionary";
 import type { TransformedToken } from "style-dictionary/types";
 import { aliasPath, cssVarName } from "./lib/names.ts";
-import { expandSeeds } from "./lib/seeds.ts";
+import {
+  expandSeeds,
+  palettes,
+  SEEDABLE,
+  type SeedName,
+  TINT_SELECTORS,
+  tintableCss,
+} from "./lib/seeds.ts";
 import { themeBlocks } from "./lib/themes.ts";
 
 const THEMES: Theme[] = [
@@ -82,15 +89,18 @@ const marker = (scheme: string, extra: string[] = []) => [
   ...extra,
 ];
 
+/** Seedable palettes (brand, accent, neutral) are declared separately so they can be re-tinted at runtime (T063). */
+const tintable = (t: TransformedToken) =>
+  Boolean(generated(t)) && (SEEDABLE as readonly string[]).includes(t.path[1] ?? "");
 const primitives = allTokens
-  .filter((t) => tierOf(t) === "primitive")
+  .filter((t) => tierOf(t) === "primitive" && !tintable(t))
   .map((t) => decl(t, cssValue(t.original.$value, t.$value)));
 const base = allTokens
   .filter((t) => tierOf(t) !== "primitive")
   .map((t) => decl(t, cssValue(t.original.$value, t.$value)));
 /** Display P3 values of generated palette steps, where they differ from the sRGB value. */
 const p3 = allTokens
-  .filter((t) => tierOf(t) === "primitive")
+  .filter((t) => tierOf(t) === "primitive" && !tintable(t))
   .flatMap((t) => {
     const wide = generated(t);
     return wide && wide !== t.$value ? [decl(t, wide)] : [];
@@ -104,6 +114,14 @@ const blocks = {
   primitives: [
     block(":root,\n  ::backdrop", primitives),
     `  @media (color-gamut: p3) {\n${indent(block(":root,\n  ::backdrop", p3))}\n  }`,
+    tintableCss(
+      Object.fromEntries(
+        Object.entries(palettes({}, { all: true })).filter(([name]) =>
+          (SEEDABLE as readonly string[]).includes(name),
+        ),
+      ) as Partial<Record<SeedName, ReturnType<typeof palettes>[string]>>,
+      TINT_SELECTORS,
+    ),
   ].join("\n\n"),
   light: themeBlocks("light", [...marker("light"), ...base].map(unindent)).join("\n\n"),
   dark: themeBlocks("dark", dark.map(unindent)).join("\n\n"),

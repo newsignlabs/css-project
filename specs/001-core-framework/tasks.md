@@ -110,7 +110,11 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
   WCAG 2 decides pass/fail at `contrast.level`, APCA Lc reported. `fix` swaps the failing foreground (else the
   background) for the nearest passing palette colour without breaking other pairs, emitted as theme-scoped overrides.
   `nb build`, PostCSS and Vite warn, fail (`error`, CLI exit 3) or apply fixes; `nb contrast [--level] [--all] [--json]`.
-- [ ] T063 [US3] Runtime re-tint via relative color syntax with `@supports` fallback
+- [x] T063 [US3] Runtime re-tint via relative color syntax with `@supports` fallback
+  — brand, accent and neutral steps are `var(--nb-tint-<p>-<step>, <static>)` on `:root`/`[data-nb-theme]`; the tint
+  is `oklch(from var(--nb-color-<p>-seed) L calc(min(c, .37) * k) h)` behind `@supports (color: oklch(from red l c h))`.
+  Unset seed → invalid tint → shipped static colour. Islands need `data-nb-theme` (semantic tokens recompute there);
+  runtime tints skip gamut mapping and the contrast guard (use `theme.seeds` for guaranteed AA).
 - [ ] T064 [US3] Scoped themes (`[data-nb-theme]` any scope) + high-contrast theme + `forced-colors` pass
 - [ ] T065 [US3] `nb theme create` scaffold; brand theme example
 - [ ] T091 [P] [US3] `packages/fonts` (`@newbrush/fonts`): subsetted variable WOFF2 + `@font-face` CSS per family, mapped to `font.family.*` tokens; docs page (FR-022)

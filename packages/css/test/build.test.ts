@@ -109,7 +109,8 @@ describe("editor support (T058)", () => {
       .map((d) => ts.flattenDiagnosticMessageText(d.messageText, "\n"));
   };
 
-  it("classes.d.ts accepts real classes and rejects typos", () => {
+  // Runs the TypeScript compiler, which can take several seconds on a loaded CI runner.
+  it("classes.d.ts accepts real classes and rejects typos", { timeout: 20_000 }, () => {
     expect(
       diagnosticsFor(
         'import type { NewBrushClass } from "./classes";\nconst ok: NewBrushClass[] = ["nb-btn", "nb-btn--primary", "p-4", "md:grid-cols-3", "hover:bg-accent"];\nexport { ok };\n',

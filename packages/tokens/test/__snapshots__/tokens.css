@@ -10,39 +10,6 @@
     --nb-breakpoint-lg: 64rem;
     --nb-breakpoint-xl: 80rem;
     --nb-breakpoint-2xl: 96rem;
-    --nb-color-neutral-50: oklch(97.8% 0.002 260);
-    --nb-color-neutral-100: oklch(95.4% 0.003 260);
-    --nb-color-neutral-200: oklch(90.6% 0.006 260);
-    --nb-color-neutral-300: oklch(83.4% 0.01 260);
-    --nb-color-neutral-400: oklch(72.6% 0.013 260);
-    --nb-color-neutral-500: oklch(62.4% 0.016 260);
-    --nb-color-neutral-600: oklch(53.5% 0.016 260);
-    --nb-color-neutral-700: oklch(46% 0.014 260);
-    --nb-color-neutral-800: oklch(38.4% 0.012 260);
-    --nb-color-neutral-900: oklch(31% 0.009 260);
-    --nb-color-neutral-950: oklch(22.8% 0.007 260);
-    --nb-color-brand-50: oklch(97.8% 0.01 255);
-    --nb-color-brand-100: oklch(95.4% 0.022 255);
-    --nb-color-brand-200: oklch(90.6% 0.046 255);
-    --nb-color-brand-300: oklch(83.4% 0.083 255);
-    --nb-color-brand-400: oklch(72.6% 0.144 255);
-    --nb-color-brand-500: oklch(62.4% 0.19 255);
-    --nb-color-brand-600: oklch(53.5% 0.176 255);
-    --nb-color-brand-700: oklch(46% 0.151 255);
-    --nb-color-brand-800: oklch(38.4% 0.126 255);
-    --nb-color-brand-900: oklch(31% 0.102 255);
-    --nb-color-brand-950: oklch(22.8% 0.075 255);
-    --nb-color-accent-50: oklch(98% 0.015 320);
-    --nb-color-accent-100: oklch(95.8% 0.032 320);
-    --nb-color-accent-200: oklch(91.5% 0.066 320);
-    --nb-color-accent-300: oklch(84.9% 0.12 320);
-    --nb-color-accent-400: oklch(74.6% 0.168 320);
-    --nb-color-accent-500: oklch(62.4% 0.2 320);
-    --nb-color-accent-600: oklch(53.5% 0.196 320);
-    --nb-color-accent-700: oklch(46% 0.176 320);
-    --nb-color-accent-800: oklch(38.4% 0.144 320);
-    --nb-color-accent-900: oklch(31% 0.112 320);
-    --nb-color-accent-950: oklch(22.8% 0.084 320);
     --nb-color-success-50: oklch(97.8% 0.015 150);
     --nb-color-success-100: oklch(95.4% 0.03 150);
     --nb-color-success-200: oklch(90.6% 0.057 150);
@@ -192,19 +159,6 @@
   @media (color-gamut: p3) {
     :root,
     ::backdrop {
-      --nb-color-brand-50: oklch(97.8% 0.011 255);
-      --nb-color-brand-100: oklch(95.4% 0.024 255);
-      --nb-color-brand-200: oklch(90.6% 0.05 255);
-      --nb-color-brand-300: oklch(83.5% 0.091 255);
-      --nb-color-brand-400: oklch(72.7% 0.155 255);
-      --nb-color-brand-600: oklch(53.5% 0.186 255);
-      --nb-color-brand-700: oklch(46% 0.167 255);
-      --nb-color-brand-800: oklch(38.4% 0.137 255);
-      --nb-color-brand-900: oklch(31% 0.106 255);
-      --nb-color-brand-950: oklch(22.8% 0.08 255);
-      --nb-color-accent-50: oklch(98% 0.016 320);
-      --nb-color-accent-100: oklch(95.9% 0.035 320);
-      --nb-color-accent-200: oklch(91.5% 0.074 320);
       --nb-color-success-600: oklch(51.5% 0.147 150);
       --nb-color-success-700: oklch(44.2% 0.132 150);
       --nb-color-success-800: oklch(36.9% 0.108 150);
@@ -228,6 +182,104 @@
       --nb-color-info-800: oklch(37.6% 0.094 230);
       --nb-color-info-900: oklch(30.3% 0.073 230);
       --nb-color-info-950: oklch(22.3% 0.055 230);
+    }
+  }
+
+  :root,
+  ::backdrop,
+  [data-nb-theme] {
+    --nb-color-neutral-50: var(--nb-tint-neutral-50, oklch(97.8% 0.002 260));
+    --nb-color-neutral-100: var(--nb-tint-neutral-100, oklch(95.4% 0.003 260));
+    --nb-color-neutral-200: var(--nb-tint-neutral-200, oklch(90.6% 0.006 260));
+    --nb-color-neutral-300: var(--nb-tint-neutral-300, oklch(83.4% 0.01 260));
+    --nb-color-neutral-400: var(--nb-tint-neutral-400, oklch(72.6% 0.013 260));
+    --nb-color-neutral-500: var(--nb-tint-neutral-500, oklch(62.4% 0.016 260));
+    --nb-color-neutral-600: var(--nb-tint-neutral-600, oklch(53.5% 0.016 260));
+    --nb-color-neutral-700: var(--nb-tint-neutral-700, oklch(46% 0.014 260));
+    --nb-color-neutral-800: var(--nb-tint-neutral-800, oklch(38.4% 0.012 260));
+    --nb-color-neutral-900: var(--nb-tint-neutral-900, oklch(31% 0.009 260));
+    --nb-color-neutral-950: var(--nb-tint-neutral-950, oklch(22.8% 0.007 260));
+    --nb-color-brand-50: var(--nb-tint-brand-50, oklch(97.8% 0.01 255));
+    --nb-color-brand-100: var(--nb-tint-brand-100, oklch(95.4% 0.022 255));
+    --nb-color-brand-200: var(--nb-tint-brand-200, oklch(90.6% 0.046 255));
+    --nb-color-brand-300: var(--nb-tint-brand-300, oklch(83.4% 0.083 255));
+    --nb-color-brand-400: var(--nb-tint-brand-400, oklch(72.6% 0.144 255));
+    --nb-color-brand-500: var(--nb-tint-brand-500, oklch(62.4% 0.19 255));
+    --nb-color-brand-600: var(--nb-tint-brand-600, oklch(53.5% 0.176 255));
+    --nb-color-brand-700: var(--nb-tint-brand-700, oklch(46% 0.151 255));
+    --nb-color-brand-800: var(--nb-tint-brand-800, oklch(38.4% 0.126 255));
+    --nb-color-brand-900: var(--nb-tint-brand-900, oklch(31% 0.102 255));
+    --nb-color-brand-950: var(--nb-tint-brand-950, oklch(22.8% 0.075 255));
+    --nb-color-accent-50: var(--nb-tint-accent-50, oklch(98% 0.015 320));
+    --nb-color-accent-100: var(--nb-tint-accent-100, oklch(95.8% 0.032 320));
+    --nb-color-accent-200: var(--nb-tint-accent-200, oklch(91.5% 0.066 320));
+    --nb-color-accent-300: var(--nb-tint-accent-300, oklch(84.9% 0.12 320));
+    --nb-color-accent-400: var(--nb-tint-accent-400, oklch(74.6% 0.168 320));
+    --nb-color-accent-500: var(--nb-tint-accent-500, oklch(62.4% 0.2 320));
+    --nb-color-accent-600: var(--nb-tint-accent-600, oklch(53.5% 0.196 320));
+    --nb-color-accent-700: var(--nb-tint-accent-700, oklch(46% 0.176 320));
+    --nb-color-accent-800: var(--nb-tint-accent-800, oklch(38.4% 0.144 320));
+    --nb-color-accent-900: var(--nb-tint-accent-900, oklch(31% 0.112 320));
+    --nb-color-accent-950: var(--nb-tint-accent-950, oklch(22.8% 0.084 320));
+  }
+
+  @media (color-gamut: p3) {
+    :root,
+    ::backdrop,
+    [data-nb-theme] {
+      --nb-color-brand-50: var(--nb-tint-brand-50, oklch(97.8% 0.011 255));
+      --nb-color-brand-100: var(--nb-tint-brand-100, oklch(95.4% 0.024 255));
+      --nb-color-brand-200: var(--nb-tint-brand-200, oklch(90.6% 0.05 255));
+      --nb-color-brand-300: var(--nb-tint-brand-300, oklch(83.5% 0.091 255));
+      --nb-color-brand-400: var(--nb-tint-brand-400, oklch(72.7% 0.155 255));
+      --nb-color-brand-600: var(--nb-tint-brand-600, oklch(53.5% 0.186 255));
+      --nb-color-brand-700: var(--nb-tint-brand-700, oklch(46% 0.167 255));
+      --nb-color-brand-800: var(--nb-tint-brand-800, oklch(38.4% 0.137 255));
+      --nb-color-brand-900: var(--nb-tint-brand-900, oklch(31% 0.106 255));
+      --nb-color-brand-950: var(--nb-tint-brand-950, oklch(22.8% 0.08 255));
+      --nb-color-accent-50: var(--nb-tint-accent-50, oklch(98% 0.016 320));
+      --nb-color-accent-100: var(--nb-tint-accent-100, oklch(95.9% 0.035 320));
+      --nb-color-accent-200: var(--nb-tint-accent-200, oklch(91.5% 0.074 320));
+    }
+  }
+
+  @supports (color: oklch(from red l c h)) {
+    :root,
+    ::backdrop,
+    [data-nb-theme] {
+      --nb-tint-neutral-50: oklch(from var(--nb-color-neutral-seed) 97.8% calc(min(c, 0.37) * 0.125) h);
+      --nb-tint-neutral-100: oklch(from var(--nb-color-neutral-seed) 95.4% calc(min(c, 0.37) * 0.1875) h);
+      --nb-tint-neutral-200: oklch(from var(--nb-color-neutral-seed) 90.6% calc(min(c, 0.37) * 0.375) h);
+      --nb-tint-neutral-300: oklch(from var(--nb-color-neutral-seed) 83.4% calc(min(c, 0.37) * 0.625) h);
+      --nb-tint-neutral-400: oklch(from var(--nb-color-neutral-seed) 72.6% calc(min(c, 0.37) * 0.8125) h);
+      --nb-tint-neutral-500: oklch(from var(--nb-color-neutral-seed) 62.4% calc(min(c, 0.37) * 1) h);
+      --nb-tint-neutral-600: oklch(from var(--nb-color-neutral-seed) 53.5% calc(min(c, 0.37) * 1) h);
+      --nb-tint-neutral-700: oklch(from var(--nb-color-neutral-seed) 46% calc(min(c, 0.37) * 0.875) h);
+      --nb-tint-neutral-800: oklch(from var(--nb-color-neutral-seed) 38.4% calc(min(c, 0.37) * 0.75) h);
+      --nb-tint-neutral-900: oklch(from var(--nb-color-neutral-seed) 31% calc(min(c, 0.37) * 0.5625) h);
+      --nb-tint-neutral-950: oklch(from var(--nb-color-neutral-seed) 22.8% calc(min(c, 0.37) * 0.4375) h);
+      --nb-tint-brand-50: oklch(from var(--nb-color-brand-seed) 97.8% calc(min(c, 0.37) * 0.1) h);
+      --nb-tint-brand-100: oklch(from var(--nb-color-brand-seed) 95.4% calc(min(c, 0.37) * 0.2) h);
+      --nb-tint-brand-200: oklch(from var(--nb-color-brand-seed) 90.6% calc(min(c, 0.37) * 0.38) h);
+      --nb-tint-brand-300: oklch(from var(--nb-color-brand-seed) 83.4% calc(min(c, 0.37) * 0.6) h);
+      --nb-tint-brand-400: oklch(from var(--nb-color-brand-seed) 72.6% calc(min(c, 0.37) * 0.84) h);
+      --nb-tint-brand-500: oklch(from var(--nb-color-brand-seed) 62.4% calc(min(c, 0.37) * 1) h);
+      --nb-tint-brand-600: oklch(from var(--nb-color-brand-seed) 53.5% calc(min(c, 0.37) * 0.98) h);
+      --nb-tint-brand-700: oklch(from var(--nb-color-brand-seed) 46% calc(min(c, 0.37) * 0.88) h);
+      --nb-tint-brand-800: oklch(from var(--nb-color-brand-seed) 38.4% calc(min(c, 0.37) * 0.72) h);
+      --nb-tint-brand-900: oklch(from var(--nb-color-brand-seed) 31% calc(min(c, 0.37) * 0.56) h);
+      --nb-tint-brand-950: oklch(from var(--nb-color-brand-seed) 22.8% calc(min(c, 0.37) * 0.42) h);
+      --nb-tint-accent-50: oklch(from var(--nb-color-accent-seed) 97.8% calc(min(c, 0.37) * 0.1) h);
+      --nb-tint-accent-100: oklch(from var(--nb-color-accent-seed) 95.4% calc(min(c, 0.37) * 0.2) h);
+      --nb-tint-accent-200: oklch(from var(--nb-color-accent-seed) 90.6% calc(min(c, 0.37) * 0.38) h);
+      --nb-tint-accent-300: oklch(from var(--nb-color-accent-seed) 83.4% calc(min(c, 0.37) * 0.6) h);
+      --nb-tint-accent-400: oklch(from var(--nb-color-accent-seed) 72.6% calc(min(c, 0.37) * 0.84) h);
+      --nb-tint-accent-500: oklch(from var(--nb-color-accent-seed) 62.4% calc(min(c, 0.37) * 1) h);
+      --nb-tint-accent-600: oklch(from var(--nb-color-accent-seed) 53.5% calc(min(c, 0.37) * 0.98) h);
+      --nb-tint-accent-700: oklch(from var(--nb-color-accent-seed) 46% calc(min(c, 0.37) * 0.88) h);
+      --nb-tint-accent-800: oklch(from var(--nb-color-accent-seed) 38.4% calc(min(c, 0.37) * 0.72) h);
+      --nb-tint-accent-900: oklch(from var(--nb-color-accent-seed) 31% calc(min(c, 0.37) * 0.56) h);
+      --nb-tint-accent-950: oklch(from var(--nb-color-accent-seed) 22.8% calc(min(c, 0.37) * 0.42) h);
     }
   }
 

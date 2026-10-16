@@ -10,6 +10,7 @@ import {
   palettes,
   SEEDABLE,
   seedTokensCss,
+  tintFormula,
 } from "../lib/seeds.ts";
 
 /** specs/001 T061: palettes declared by seeds, expanded by the token build and by config `theme.seeds`. */
@@ -59,14 +60,41 @@ describe("token build", () => {
   });
 
   it("adds the Display P3 values under @media (color-gamut: p3), only where they differ", () => {
-    const block = /@media \(color-gamut: p3\) \{([\s\S]*?)\n {2}\}/.exec(css)?.[1] ?? "";
+    const blocks = [...css.matchAll(/@media \(color-gamut: p3\) \{([\s\S]*?)\n {2}\}/g)]
+      .map((m) => m[1] ?? "")
+      .join("\n");
     const wide = palettes({}, { all: true });
     const differing = Object.entries(wide).flatMap(([name, steps]) =>
-      steps.filter((s) => s.p3 !== s.value).map((s) => `--nb-color-${name}-${s.step}: ${s.p3};`),
+      steps
+        .filter((s) => s.p3 !== s.value)
+        .map((s) =>
+          (SEEDABLE as readonly string[]).includes(name)
+            ? `--nb-color-${name}-${s.step}: var(--nb-tint-${name}-${s.step}, ${s.p3});`
+            : `--nb-color-${name}-${s.step}: ${s.p3};`,
+        ),
     );
     expect(differing.length).toBeGreaterThan(0);
-    for (const line of differing) expect(block).toContain(line);
-    expect(block.match(/--nb-/g)?.length).toBe(differing.length);
+    for (const line of differing) expect(blocks).toContain(line);
+    expect(blocks.match(/--nb-color-/g)?.length).toBe(differing.length);
+  });
+
+  it("declares brand, accent and neutral re-tintable on the root and theme islands (T063)", () => {
+    const steps = palettes({}, { all: true });
+    expect(css).toContain(
+      ":root,\n  ::backdrop,\n  [data-nb-theme] {\n    --nb-color-neutral-50: var(",
+    );
+    for (const name of SEEDABLE)
+      for (const s of steps[name] ?? []) {
+        expect(css).toContain(
+          `--nb-color-${name}-${s.step}: var(--nb-tint-${name}-${s.step}, ${s.value});`,
+        );
+        expect(css).toContain(`--nb-tint-${name}-${s.step}: ${tintFormula(name, s.step)};`);
+      }
+    // status palettes stay static
+    expect(css).not.toContain("--nb-tint-danger-");
+    const supports = css.indexOf("@supports (color: oklch(from red l c h)) {");
+    expect(supports).toBeGreaterThan(0);
+    expect(css.indexOf("--nb-tint-brand-50: oklch(from")).toBeGreaterThan(supports);
   });
 });
 
@@ -103,13 +131,16 @@ describe("theme.seeds → CSS", () => {
     const out = seedTokensCss({ brand: "#16a34a" });
     const green = generateScale("#16a34a");
     expect(out).toMatch(/^\/\* newBrush theme\.seeds[\s\S]*@layer nb\.tokens \{/);
-    expect(out).toContain(":root:root,\n  :root ::backdrop {");
+    expect(out).toContain(":root:root,\n  :root ::backdrop,\n  [data-nb-theme][data-nb-theme] {");
     for (const s of green) {
-      expect(out).toContain(`--nb-color-brand-${s.step}: ${s.value};`);
-      expect(out).toContain(`--nb-color-brand-${s.step}: ${s.p3};`);
+      expect(out).toContain(
+        `--nb-color-brand-${s.step}: var(--nb-tint-brand-${s.step}, ${s.value});`,
+      );
+      expect(out).toContain(`--nb-color-brand-${s.step}: var(--nb-tint-brand-${s.step}, ${s.p3});`);
     }
+    expect(out).not.toContain("@supports"); // the framework already declares the tint formulas
     expect(out.indexOf("@media (color-gamut: p3)")).toBeGreaterThan(
-      out.indexOf(`--nb-color-brand-950: ${green[10]?.value}`),
+      out.indexOf(`--nb-color-brand-950: var(--nb-tint-brand-950, ${green[10]?.value})`),
     );
     expect(out).not.toContain("--nb-color-accent-");
     expect(out).not.toContain("--nb-color-neutral-");
@@ -118,7 +149,9 @@ describe("theme.seeds → CSS", () => {
   it("generates neutral seeds with the neutral curve", () => {
     const out = seedTokensCss({ neutral: "oklch(60% 0.02 60)" });
     const steps = generateScale("oklch(60% 0.02 60)", { kind: "neutral" });
-    expect(out).toContain(`--nb-color-neutral-600: ${steps[6]?.value};`);
+    expect(out).toContain(
+      `--nb-color-neutral-600: var(--nb-tint-neutral-600, ${steps[6]?.value});`,
+    );
   });
 
   it("rejects unknown seed names and invalid colours with config paths", () => {

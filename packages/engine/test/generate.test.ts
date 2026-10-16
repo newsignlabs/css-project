@@ -156,8 +156,10 @@ describe("processDirectives()", () => {
     const { processDirectives, Engine } = await import("../src/index.ts");
     const seeded = new Engine({ content: ["**/*"], theme: { seeds: { brand: "#16a34a" } } });
     const { css } = processDirectives("@newbrush utilities;\n", seeded, ["p-4"]);
-    expect(css).toMatch(/@layer nb\.tokens \{\s*:root:root,\s*:root ::backdrop \{/);
-    expect(css).toMatch(/--nb-color-brand-600: oklch\([^)]+\);/);
+    expect(css).toMatch(
+      /@layer nb\.tokens \{\s*:root:root,\s*:root ::backdrop,\s*\[data-nb-theme\]\[data-nb-theme\] \{/,
+    );
+    expect(css).toMatch(/--nb-color-brand-600: var\(--nb-tint-brand-600, oklch\([^)]+\)\);/);
     expect(css.indexOf("@layer nb.tokens {")).toBeLessThan(css.indexOf("@layer nb.utilities {"));
     expect(processDirectives("@newbrush utilities;\n", engine, ["p-4"]).css).not.toContain(
       "nb.tokens {",
