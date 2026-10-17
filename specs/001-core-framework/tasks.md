@@ -125,7 +125,11 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
   `themes/<name>.css` (`@newbrush/tokens/theme`): seeded palettes + every semantic declaration of the base theme read
   from the built tokens.css, scoped to `[data-nb-theme="<name>"]` at (0,3,0); prints the AA report (exit 3 on
   failures). `examples/brand-theme`: `acme` + `acme-dark` from one seed, drift-checked against the generator.
-- [ ] T091 [P] [US3] `packages/fonts` (`@newbrush/fonts`): subsetted variable WOFF2 + `@font-face` CSS per family, mapped to `font.family.*` tokens; docs page (FR-022)
+- [x] T091 [P] [US3] `packages/fonts` (`@newbrush/fonts`): subsetted variable WOFF2 + `@font-face` CSS per family, mapped to `font.family.*` tokens; docs page (FR-022)
+  — Inter (sans), Fraunces (serif), JetBrains Mono (mono) from the Fontsource variable packages (OFL-1.1, licences
+  shipped); per-unicode-range WOFF2, `font-display: swap`, Capsize metric-matched local fallbacks, token overrides
+  in `nb.tokens` with the system stack kept after the font. Docs page: `packages/fonts/README.md` until the docs site
+  (US6) exists. Playwright: fonts load, only latin subsets fetched; without the package no fonts are downloaded.
 
 ## Phase 6: User Story 4 – Full component catalogue (P2) (M4)
 
