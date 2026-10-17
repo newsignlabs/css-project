@@ -58,6 +58,13 @@ describe("checkContrast", () => {
     );
   });
 
+  it("holds the high-contrast theme to AAA (7:1 text) as shipped (T064)", () => {
+    const contrast = checkContrast({ level: "AAA" }).failures.filter((p) => p.theme === "contrast");
+    expect(
+      formatContrast({ level: "AAA", results: contrast, failures: contrast, fixes: [] }),
+    ).toEqual([]);
+  });
+
   it("reports AAA failures with the theme, pair, ratio and APCA Lc", () => {
     const report = checkContrast({ level: "AAA" });
     expect(report.failures.length).toBeGreaterThan(0);

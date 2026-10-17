@@ -122,7 +122,9 @@ describe("nb build", () => {
       const css = await read(f.dir, "out.css");
       // framework defaults stay, followed by the seeded override that outranks them
       expect(css.match(/--nb-color-brand-600:/g)?.length).toBeGreaterThanOrEqual(3);
-      expect(css).toMatch(/:root:root,\s*:root ::backdrop\s*\{[^}]*--nb-color-brand-600:/);
+      expect(css).toMatch(
+        /:root:root,\s*:root ::backdrop,\s*\[data-nb-theme\]\[data-nb-theme\]\s*\{[^}]*--nb-color-brand-600:/,
+      );
     }
     expect((await nb(f.dir, "build", "-o", "u.css")).code).toBe(0);
     expect(await read(f.dir, "u.css")).toMatch(/:root:root[^{]*\{[^}]*--nb-color-brand-50:/);

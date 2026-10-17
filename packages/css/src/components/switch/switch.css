@@ -55,9 +55,17 @@
     cursor: pointer;
   }
 
+  /* Custom-drawn control: opt out of forcing and paint every part with the user's system colours. */
   @media (forced-colors: active) {
     .nb-switch {
+      forced-color-adjust: none;
       border: var(--nb-border-width-thin) solid CanvasText;
+      background-color: Canvas;
+    }
+
+    .nb-switch:checked {
+      border-color: Highlight;
+      background-color: Canvas;
     }
 
     .nb-switch::before {
@@ -66,6 +74,15 @@
 
     .nb-switch:checked::before {
       background-color: Highlight;
+    }
+
+    .nb-switch:disabled {
+      border-color: GrayText;
+      color: GrayText;
+    }
+
+    .nb-switch:disabled::before {
+      background-color: GrayText;
     }
   }
 }

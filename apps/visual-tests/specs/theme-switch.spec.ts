@@ -53,3 +53,28 @@ test("contrast theme raises the contrast marker", async ({ page }) => {
   expect(await customProperty(page, "html", "--nb-contrast")).toBe("more");
   expect(await customProperty(page, "html", "--nb-scheme")).toBe("light");
 });
+
+test("a contrast island inside a dark page is light, high-contrast and repaints itself (T064)", async ({
+  page,
+}) => {
+  await renderFixture(page, {
+    theme: "dark",
+    html: `<p id="outer">dark</p><section id="hc" data-nb-theme="contrast"><p id="inner">contrast</p>
+             <div id="back" data-nb-theme="dark"><p>dark again</p></div></section>`,
+  });
+  expect(await customProperty(page, "#hc", "--nb-contrast")).toBe("more");
+  expect(await customProperty(page, "#hc", "--nb-scheme")).toBe("light");
+  expect(await customProperty(page, "#back", "--nb-scheme")).toBe("dark");
+  // the contrast island paints its own surface and uses the contrast theme's black text
+  expect(await surface(page, "#hc")).not.toBe(await surface(page, "html"));
+  const color = (sel: string) => page.locator(sel).evaluate((el) => getComputedStyle(el).color);
+  expect(await color("#inner")).toBe(
+    await page.evaluate(() => {
+      const probe = document.createElement("i");
+      probe.style.color = "oklch(0% 0 0)";
+      document.body.append(probe);
+      return getComputedStyle(probe).color;
+    }),
+  );
+  expect(await color("#back > p")).toBe(await color("#outer"));
+});
