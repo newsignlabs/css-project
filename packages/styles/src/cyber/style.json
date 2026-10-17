@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schema/schemas/style-source.v1.json",
+  "name": "cyber",
+  "aliases": [],
+  "title": "Cyber",
+  "description": "Cyberpunk HUD: notched corners, monospace labels and scanlines.",
+  "keywords": ["cyberpunk", "cyber", "hud", "sci-fi", "futuristic", "terminal"],
+  "preferredScheme": "dark",
+  "density": "compact",
+  "tokens": {},
+  "status": "beta",
+  "since": "0.4.0"
+}

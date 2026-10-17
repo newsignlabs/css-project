@@ -3,8 +3,8 @@
  * Kept dependency-free; test/config.types.ts fails typecheck if it drifts from @newbrush/schema.
  */
 export interface NewBrushConfig {
-  /** Class prefixes. Defaults: components "nb-", utilities "" (FR-009). */
-  prefix?: { components?: string; utilities?: string };
+  /** Class prefixes. Defaults: components "nb-", utilities "" (FR-009), styles "" (specs/004). */
+  prefix?: { components?: string; utilities?: string; styles?: string };
   /** Globs scanned for class names. */
   content: string[];
   theme?: {
@@ -23,6 +23,10 @@ export interface NewBrushConfig {
   themeVariants?: "auto" | "style-query" | "selector";
   components?: "all" | false | string[];
   utilities?: "all" | false | string[];
+  /** Built-in design styles to include (specs/004): "all" (default), none, or a list of names. */
+  styles?: "all" | false | string[];
+  /** Paths to custom style folders (style.json + recipes.css). */
+  customStyles?: string[];
   safelist?: string[];
   blocklist?: string[];
   contrast?: { level?: "AA" | "AAA"; onFail?: "error" | "warn" | "fix" };

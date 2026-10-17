@@ -1,7 +1,15 @@
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { Component, Config, defineConfig, LAYERS, Manifest } from "../src/index.ts";
+import {
+  Component,
+  Config,
+  defineConfig,
+  LAYERS,
+  Manifest,
+  Style,
+  StyleSource,
+} from "../src/index.ts";
 
 const fixture = async (name: string) =>
   JSON.parse(await readFile(new URL(`./fixtures/${name}`, import.meta.url), "utf8"));
@@ -89,5 +97,67 @@ describe("Manifest", () => {
       components: [],
     };
     expect(Manifest.parse(manifest).layers).toEqual(LAYERS);
+    expect(Manifest.parse(manifest).styles).toEqual([]);
+  });
+
+  it("puts nb.styles between components and utilities (constitution 1.1.0)", () => {
+    expect(LAYERS.slice(-3)).toEqual(["nb.components", "nb.styles", "nb.utilities"]);
+  });
+});
+
+describe("Config styles", () => {
+  it("defaults to every built-in style and an empty style prefix", () => {
+    const resolved = Config.parse({ content: ["x"], prefix: {} });
+    expect(resolved.styles).toBe("all");
+    expect(resolved.prefix?.styles).toBe("");
+    expect(resolved.customStyles).toBeUndefined();
+  });
+
+  it("accepts a style list, false and custom style folders", () => {
+    expect(Config.parse({ content: ["x"], styles: ["neon"] }).styles).toEqual(["neon"]);
+    expect(Config.parse({ content: ["x"], styles: false }).styles).toBe(false);
+    expect(Config.parse({ content: ["x"], customStyles: ["./styles/brand"] }).customStyles).toEqual(
+      ["./styles/brand"],
+    );
+    expect(() => Config.parse({ content: ["x"], prefix: { styles: "Bad" } })).toThrow();
+  });
+});
+
+describe("Style", () => {
+  const source = {
+    name: "g-morph",
+    aliases: ["glass"],
+    title: "G-morph",
+    description: "Glassmorphism.",
+    since: "0.4.0",
+  };
+
+  it("fills style.json defaults", () => {
+    const parsed = StyleSource.parse(source);
+    expect(parsed).toMatchObject({
+      preferredScheme: "auto",
+      density: "default",
+      tokens: {},
+      schemes: {},
+      status: "beta",
+    });
+  });
+
+  it("rejects unknown keys, bad names and unknown schemes", () => {
+    expect(() => StyleSource.parse({ ...source, colour: "red" })).toThrow();
+    expect(() => StyleSource.parse({ ...source, name: "G-Morph" })).toThrow();
+    expect(() => StyleSource.parse({ ...source, schemes: { dim: {} } })).toThrow();
+  });
+
+  it("describes a manifest entry", () => {
+    const entry = {
+      ...StyleSource.parse(source),
+      keywords: [],
+      tokens: [{ path: "radius.md", cssVar: "--nb-radius-md", value: "var(--nb-radius-lg)" }],
+      examples: [],
+    };
+    const { schemes: _schemes, ...rest } = entry;
+    expect(() => Style.parse(rest)).not.toThrow();
+    expect(() => Style.parse({ ...rest, preferredScheme: "dim" })).toThrow();
   });
 });

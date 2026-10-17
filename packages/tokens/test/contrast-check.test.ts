@@ -132,6 +132,8 @@ describe("fix", () => {
     expect(darkMedia).toBeGreaterThan(dark);
     expect(contrast).toBeGreaterThan(darkMedia);
     expect(css).toContain(":root:root:not([data-nb-theme])");
-    expect(css).toContain("--nb-color-text-link: var(--nb-color-brand-800);");
+    // text.link has a -base alias: the fix lands there, so styles deriving from it follow (specs/004 T005).
+    expect(css).toContain("--nb-color-text-link-base: var(--nb-color-brand-800);");
+    expect(css).not.toContain("--nb-color-text-link:");
   });
 });

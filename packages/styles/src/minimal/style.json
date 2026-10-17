@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schema/schemas/style-source.v1.json",
+  "name": "minimal",
+  "aliases": [],
+  "title": "Minimal",
+  "description": "Quiet and editorial: hairline borders, no shadows, reduced chroma and airy spacing.",
+  "keywords": ["minimal", "clean", "editorial", "flat", "quiet", "whitespace"],
+  "preferredScheme": "auto",
+  "density": "airy",
+  "tokens": {},
+  "status": "beta",
+  "since": "0.4.0"
+}

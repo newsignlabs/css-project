@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schema/schemas/style-source.v1.json",
+  "name": "g-morph",
+  "aliases": ["glass"],
+  "title": "G-morph",
+  "description": "Glassmorphism: translucent surfaces, backdrop blur and soft light edges.",
+  "keywords": ["glassmorphism", "glass", "frosted", "translucent", "modern", "depth"],
+  "preferredScheme": "auto",
+  "density": "default",
+  "tokens": {},
+  "status": "beta",
+  "since": "0.4.0"
+}

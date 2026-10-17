@@ -296,7 +296,7 @@ describe("nb contrast (T062)", () => {
     expect(x.code).toBe(0);
     expect(x.err).toMatch(/nb: contrast: fixed light: color\.text\.link/);
     expect(await read(fix.dir, "out.css")).toMatch(
-      /\[data-nb-theme="light"\]\[data-nb-theme="light"\][^{]*\{[^}]*--nb-color-text-link: var\(--nb-color-brand-800\)/,
+      /\[data-nb-theme="light"\]\[data-nb-theme="light"\][^{]*\{[^}]*--nb-color-text-link-base: var\(--nb-color-brand-800\)/,
     );
   });
 

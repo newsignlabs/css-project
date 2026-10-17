@@ -1,0 +1,41 @@
+{
+  "name": "@newbrush/styles",
+  "version": "0.0.0",
+  "description": "newBrush design styles: one class (g-morph, neon, cyber …) re-skins every component through token overrides and scoped recipes.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/newsignlabs/css-project",
+    "directory": "packages/styles"
+  },
+  "exports": {
+    ".": "./dist/styles.css",
+    "./styles.css": "./dist/styles.css",
+    "./*.css": "./dist/*.css",
+    "./manifest.json": "./dist/manifest.json",
+    "./package.json": "./package.json"
+  },
+  "style": "./dist/styles.css",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsx build.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@newbrush/schema": "workspace:*",
+    "@newbrush/tokens": "workspace:*",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  }
+}

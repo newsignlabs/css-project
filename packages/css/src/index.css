@@ -1,3 +1,4 @@
-/* newbrush.css — core + all components. */
+/* newbrush.css — core + all components + design styles (specs/004). */
 @import "./core.css";
 @import "./components/index.css";
+@import "@newbrush/styles/styles.css";
