@@ -27,7 +27,8 @@ describe("themeDeclarations", () => {
     expect(light.get("color-scheme")).toBe("light");
     expect(light.get("--nb-scheme")).toBe("light");
     expect(light.get("--nb-color-accent")).toBe("var(--nb-color-brand-600)");
-    expect(light.get("--nb-color-surface")).toBe("var(--nb-color-neutral-50)");
+    expect(light.get("--nb-color-surface-base")).toBe("var(--nb-color-neutral-50)");
+    expect(light.get("--nb-color-surface")).toBe("var(--nb-color-surface-base)");
     expect(light.has("--nb-color-brand-600")).toBe(false); // palettes are primitives, not theme declarations
   });
 
@@ -35,7 +36,7 @@ describe("themeDeclarations", () => {
     const dark = themeDeclarations(tokensCss, "dark");
     expect(dark.get("color-scheme")).toBe("dark");
     expect(dark.get("--nb-color-accent")).toBe("var(--nb-color-brand-400)");
-    expect(dark.get("--nb-color-surface")).toBe("var(--nb-color-neutral-950)");
+    expect(dark.get("--nb-color-surface-base")).toBe("var(--nb-color-neutral-950)");
     const contrast = themeDeclarations(tokensCss, "contrast");
     expect(contrast.get("--nb-contrast")).toBe("more");
     expect(contrast.get("color-scheme")).toBe("light");

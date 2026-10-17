@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schema/schemas/style-source.v1.json",
+  "name": "neon",
+  "aliases": [],
+  "title": "Neon",
+  "description": "Glowing accents and outlines on deep, near-black surfaces.",
+  "keywords": ["neon", "glow", "synthwave", "night", "vibrant"],
+  "preferredScheme": "dark",
+  "density": "default",
+  "tokens": {},
+  "status": "beta",
+  "since": "0.4.0"
+}

@@ -34,7 +34,7 @@ Each decision lists the choice, rationale, and alternatives considered.
 
 ## R-04 Cascade layering
 
-- **Decision**: `@layer nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities;` declared first in every bundle.
+- **Decision**: `@layer nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.styles, nb.utilities;` declared first in every bundle.
   Unlayered consumer CSS always wins. Components use `:where()` for zero-specificity base selectors so modifiers override cleanly.
 - **Alternatives**: BEM specificity discipline only (fragile), `!important` utilities (Tailwind v3 `important` option — rejected as default).
 

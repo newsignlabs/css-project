@@ -100,7 +100,6 @@ const hero = `
 const flow = (title: string, body: string) =>
   `<div class="nb-card p-4"><p class="font-semibold">${title}</p><p class="text-sm text-muted mt-1">${body}</p></div>`;
 const arrow = `<p class="text-2xl text-muted text-center" aria-hidden="true">↓</p>`;
-const layers = [...manifest.layers.slice(0, 5), "nb.styles", manifest.layers[5] ?? "nb.utilities"];
 const architecture = `
 <section class="nb-stack" id="architecture" aria-labelledby="arch-title">
   <h2 id="arch-title">Architecture</h2>
@@ -122,11 +121,18 @@ const architecture = `
       <h3 class="text-xl">Cascade layers</h3>
       <p class="text-sm text-muted">Every rule lives in an ordered layer, so your own CSS always wins without <code>!important</code>.</p>
       <ol class="nb-stack nb-stack--xs" role="list">
-        ${layers
-          .map((l, i) => {
-            const planned = l === "nb.styles";
-            return `<li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border ${planned ? "border-dashed" : "bg-surface-raised"}">
-            <code>${l}</code><span class="text-sm text-muted">${planned ? "planned · design styles" : i === 0 ? "lowest priority" : i === layers.length - 1 ? "highest priority" : ""}</span></li>`;
+        ${manifest.layers
+          .map((l, i, layers) => {
+            const note =
+              l === "nb.styles"
+                ? "design styles"
+                : i === 0
+                  ? "lowest priority"
+                  : i === layers.length - 1
+                    ? "highest priority"
+                    : "";
+            return `<li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
+            <code>${l}</code><span class="text-sm text-muted">${note}</span></li>`;
           })
           .join("")}
       </ol>

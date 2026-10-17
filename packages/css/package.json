@@ -41,6 +41,7 @@
     "./vscode.html-data.json": "./dist/vscode.html-data.json",
     "./components/*": "./dist/components/*",
     "./themes/*": "./dist/themes/*",
+    "./styles/*": "./dist/styles/*",
     "./manifest.json": "./dist/manifest.json",
     "./package.json": "./package.json"
   },
@@ -68,6 +69,7 @@
     "@newbrush/engine": "workspace:*",
     "@newbrush/schema": "workspace:*",
     "@newbrush/stylelint-config": "workspace:*",
+    "@newbrush/styles": "workspace:*",
     "@newbrush/tokens": "workspace:*",
     "@size-limit/file": "^12.1.0",
     "browserslist": "^4.25.0",

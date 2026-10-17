@@ -95,6 +95,7 @@ async function loadComponents(names: string[]): Promise<Component[]> {
 await rm(path("dist"), { recursive: true, force: true });
 await mkdir(path("dist/components"), { recursive: true });
 await mkdir(path("dist/themes"), { recursive: true });
+await mkdir(path("dist/styles"), { recursive: true });
 
 await bundle("src/core.css", "newbrush-core.css");
 await bundle("src/index.css", "newbrush.css");
@@ -111,6 +112,16 @@ for (const theme of ["light", "dark", "contrast"]) {
   );
 }
 
+// Design styles (specs/004): one file per style next to the themes; newbrush.css already includes them all.
+const stylesManifest = JSON.parse(
+  await readFile(fileURLToPath(import.meta.resolve("@newbrush/styles/manifest.json")), "utf8"),
+) as { styles: unknown[] };
+for (const file of ["styles", ...stylesManifest.styles.map((s) => (s as { name: string }).name)])
+  await copyFile(
+    fileURLToPath(import.meta.resolve(`@newbrush/styles/${file}.css`)),
+    path(`dist/styles/${file}.css`),
+  );
+
 const utilityEngine = createEngine({ content: ["**/*"] });
 const tokens = JSON.parse(
   await readFile(fileURLToPath(import.meta.resolve("@newbrush/tokens/tokens.json")), "utf8"),
@@ -125,6 +136,7 @@ const manifest = Manifest.parse({
   variants: utilityEngine.variants(),
   utilities: utilityEngine.utilityFamilies(),
   components: await loadComponents(names),
+  styles: stylesManifest.styles,
 });
 await writeFile(path("dist/manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 // ── Editor support (T058): TypeScript class-name types and VS Code custom data ─────────────────────────────

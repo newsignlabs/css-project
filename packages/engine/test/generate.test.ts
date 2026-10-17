@@ -148,7 +148,9 @@ describe("processDirectives()", () => {
       "p-4",
     ]);
     expect(
-      css.indexOf("@layer nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities;"),
+      css.indexOf(
+        "@layer nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.styles, nb.utilities;",
+      ),
     ).toBe(0);
     expect(css.indexOf('@import "newbrush"')).toBeGreaterThan(0);
   });

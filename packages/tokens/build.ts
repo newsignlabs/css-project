@@ -7,7 +7,7 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import { ResolvedToken, type Theme } from "@newbrush/schema";
 import StyleDictionary from "style-dictionary";
 import type { TransformedToken } from "style-dictionary/types";
-import { aliasPath, cssVarName } from "./lib/names.ts";
+import { aliasPath, baseVarName, cssVarName, hasBaseAlias } from "./lib/names.ts";
 import {
   expandSeeds,
   palettes,
@@ -78,11 +78,16 @@ function resolvedThemeValue(alias: string): string {
 }
 
 const decl = (t: TransformedToken, value: string) => `    --${t.name}: ${value};`;
+/** Like decl, but tokens with a `-base` alias (specs/004 T005) store the value in the alias and point at it. */
+const semanticDecl = (t: TransformedToken, value: string) =>
+  hasBaseAlias(t.path)
+    ? [`    ${baseVarName(t.path)}: ${value};`, `    --${t.name}: var(${baseVarName(t.path)});`]
+    : [decl(t, value)];
 const block = (selector: string, lines: string[]) => `  ${selector} {\n${lines.join("\n")}\n  }`;
 const themed = (name: string) =>
   allTokens
     .filter((t) => themeAliases(t)[name])
-    .map((t) => decl(t, cssValue(themeAliases(t)[name], "")));
+    .flatMap((t) => semanticDecl(t, cssValue(themeAliases(t)[name], "")));
 const marker = (scheme: string, extra: string[] = []) => [
   `    color-scheme: ${scheme};`,
   `    --nb-scheme: ${scheme};`,
@@ -97,7 +102,7 @@ const primitives = allTokens
   .map((t) => decl(t, cssValue(t.original.$value, t.$value)));
 const base = allTokens
   .filter((t) => tierOf(t) !== "primitive")
-  .map((t) => decl(t, cssValue(t.original.$value, t.$value)));
+  .flatMap((t) => semanticDecl(t, cssValue(t.original.$value, t.$value)));
 /** Display P3 values of generated palette steps, where they differ from the sRGB value. */
 const p3 = allTokens
   .filter((t) => tierOf(t) === "primitive" && !tintable(t))
