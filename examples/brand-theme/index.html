@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" data-nb-theme="acme">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acme · newBrush brand theme example</title>
+  <!-- Zero build: newBrush, then the generated brand themes (see README.md). -->
+  <link rel="stylesheet" href="../../packages/css/dist/newbrush.css">
+  <link rel="stylesheet" href="themes/acme.css">
+  <link rel="stylesheet" href="themes/acme-dark.css">
+</head>
+<body>
+  <header class="nb-navbar">
+    <a class="nb-navbar__brand" href="#top">Acme</a>
+    <nav class="nb-navbar__nav" aria-label="Main">
+      <ul class="nb-navbar__links">
+        <li><a class="nb-navbar__link" href="#top" aria-current="page">Home</a></li>
+        <li><a class="nb-navbar__link" href="#pricing">Pricing</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="top" class="nb-container nb-stack" style="padding-block: 2rem">
+    <section class="nb-stack" aria-labelledby="hero">
+      <h1 id="hero">Acme, in one seed colour</h1>
+      <p>The brand colours on this page all come from <code>--seed #e11d48</code>: the whole page uses the
+        <code>acme</code> theme, and the panel below uses <code>acme-dark</code>.</p>
+      <p class="nb-cluster">
+        <button class="nb-btn nb-btn--primary" type="button">Start free trial</button>
+        <button class="nb-btn" type="button">Talk to sales</button>
+        <a href="#pricing">See pricing</a>
+      </p>
+      <div class="nb-alert nb-alert--info" role="status"><span class="nb-alert__icon" aria-hidden="true">ℹ</span>
+        <div class="nb-alert__content"><p class="nb-alert__title">One seed</p><p>Buttons, links, the current nav item and focus rings follow it; status colours like this one stay fixed.</p></div></div>
+    </section>
+
+    <section id="pricing" class="nb-card" data-nb-theme="acme-dark" aria-labelledby="pricing-title" style="padding: 1.5rem">
+      <div class="nb-stack">
+        <h2 id="pricing-title">Pricing <span class="nb-badge nb-badge--accent">Dark island</span></h2>
+        <p>This card sets <code>data-nb-theme="acme-dark"</code>: same brand, dark base, contrast-checked.</p>
+        <div class="nb-field">
+          <label class="nb-field__label" for="email">Work email</label>
+          <input class="nb-input" id="email" type="email" placeholder="you@acme.test" autocomplete="email">
+        </div>
+        <p><button class="nb-btn nb-btn--primary" type="button">Get started</button></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

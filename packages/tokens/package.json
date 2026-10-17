@@ -22,6 +22,10 @@
       "types": "./dist/contrast.d.ts",
       "default": "./dist/contrast.js"
     },
+    "./theme": {
+      "types": "./dist/theme.d.ts",
+      "default": "./dist/theme.js"
+    },
     "./tokens.css": "./dist/css/tokens.css",
     "./css/*": "./dist/css/*",
     "./tokens.json": "./dist/tokens.json",

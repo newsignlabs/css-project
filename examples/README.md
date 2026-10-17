@@ -3,6 +3,7 @@
 | Example | How it uses newBrush | Status |
 | ------- | -------------------- | ------ |
 | [`plain-html`](plain-html/) | One `<link>` to `newbrush.css`, no build (generated from the manifest) | runs from this repo |
+| [`brand-theme`](brand-theme/) | Two named themes from one seed with `nb theme create`, used via `data-nb-theme` | runs from this repo |
 | [`vite-app`](vite-app/) | `@newbrush/vite` — on-demand utilities, `@nb-apply`, HMR | workspace package, built in CI |
 | [`next-app`](next-app/) | `@newbrush/postcss` in `postcss.config.mjs` | template — installs from npm once `0.1.0` is published |
 | [`astro-app`](astro-app/) | `@newbrush/vite` via Astro's Vite config | template — installs from npm once `0.1.0` is published |
