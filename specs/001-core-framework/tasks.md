@@ -120,7 +120,11 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
   text, `on-warning` → black); forced-colors spec over every manifest example × theme: boundaries on boxed controls,
   visible focus outline at every Tab stop, distinguishable selected/current/pressed states, GrayText disabled,
   visible switch thumb. Fixes: pressed `.nb-btn` and the custom switch paint with system colours.
-- [ ] T065 [US3] `nb theme create` scaffold; brand theme example
+- [x] T065 [US3] `nb theme create` scaffold; brand theme example
+  — `nb theme create <name> --seed <c> [--accent c] [--neutral c] [--from light|dark|contrast] [-o] [--force]` writes
+  `themes/<name>.css` (`@newbrush/tokens/theme`): seeded palettes + every semantic declaration of the base theme read
+  from the built tokens.css, scoped to `[data-nb-theme="<name>"]` at (0,3,0); prints the AA report (exit 3 on
+  failures). `examples/brand-theme`: `acme` + `acme-dark` from one seed, drift-checked against the generator.
 - [ ] T091 [P] [US3] `packages/fonts` (`@newbrush/fonts`): subsetted variable WOFF2 + `@font-face` CSS per family, mapped to `font.family.*` tokens; docs page (FR-022)
 
 ## Phase 6: User Story 4 – Full component catalogue (P2) (M4)

@@ -10,6 +10,7 @@ import { parseArgs } from "node:util";
 import { DirectiveError, type Engine, hasDirectives, processDirectives } from "@newbrush/engine";
 import { ConfigError, createProjectEngine, optimize, Scanner, watch } from "@newbrush/engine/node";
 import { checkContrast, formatContrast, type PairResult } from "@newbrush/tokens/contrast";
+import { checkThemeName, customThemeCss } from "@newbrush/tokens/theme";
 import { bundleAsync } from "lightningcss";
 
 export interface IO {
@@ -29,6 +30,7 @@ Commands:
   explain   Show how classes parse and the CSS they generate     <class...>
   doctor    Check config, content globs, browserslist and class collisions
   contrast  Report semantic colour contrast (WCAG 2 + APCA)       [--level AA|AAA] [--all] [--json] [-c config]
+  theme     Scaffold a named theme: theme create <name>           --seed <color> [--accent c] [--neutral c] [--from light|dark|contrast] [-o file] [--force]
   tokens    Export design tokens                                 [--format css|json|ts|figma] [-o dir]
 
 Options:
@@ -68,6 +70,8 @@ export async function run(argv: string[], io: IO): Promise<number> {
         return await tokens(rest, io);
       case "contrast":
         return await contrast(rest, io);
+      case "theme":
+        return await theme(rest, io);
       default:
         io.stderr(`nb: Unknown command "${command}"\n\n${USAGE}`);
         return EXIT.error;
@@ -394,6 +398,82 @@ async function doctor(_argv: string[], io: IO): Promise<number> {
 }
 
 // ── tokens ───────────────────────────────────────────────────────────────────
+
+// ── theme ────────────────────────────────────────────────────────────────────
+
+async function theme(argv: string[], io: IO): Promise<number> {
+  const { values, positionals } = parseArgs({
+    args: argv,
+    allowPositionals: true,
+    options: {
+      seed: { type: "string" },
+      accent: { type: "string" },
+      neutral: { type: "string" },
+      from: { type: "string", default: "light" },
+      output: { type: "string", short: "o" },
+      force: { type: "boolean", default: false },
+    },
+  });
+  const [action, name] = positionals;
+  if (action !== "create" || !name)
+    throw new UsageError(
+      "Usage: nb theme create <name> --seed <color> [--from light|dark|contrast]",
+    );
+  const nameProblem = checkThemeName(name);
+  if (nameProblem) throw new UsageError(nameProblem);
+  const from = values.from as string;
+  if (from !== "light" && from !== "dark" && from !== "contrast")
+    throw new UsageError(`--from must be light, dark or contrast (got "${from}")`);
+  const seeds = Object.fromEntries(
+    (
+      [
+        ["brand", values.seed],
+        ["accent", values.accent],
+        ["neutral", values.neutral],
+      ] as const
+    ).filter(([, color]) => color),
+  ) as { brand?: string; accent?: string; neutral?: string };
+  if (!Object.keys(seeds).length)
+    throw new UsageError(
+      "Give at least one seed: --seed <brand colour> (and optionally --accent, --neutral)",
+    );
+
+  const output = resolve(io.cwd, values.output ?? join("themes", `${name}.css`));
+  if (existsSync(output) && !values.force)
+    throw new UsageError(`${relative(io.cwd, output)} exists (use --force to overwrite)`);
+  const require = createRequire(import.meta.url);
+  const tokensCss = await readFile(require.resolve("@newbrush/tokens/tokens.css"), "utf8");
+  const command = ["nb theme create", name, ...argv.slice(2).filter((a) => a !== "--force")].join(
+    " ",
+  );
+  let css: string;
+  try {
+    css = customThemeCss({ name, from, seeds, tokensCss, command });
+  } catch (error) {
+    throw new UsageError((error as Error).message);
+  }
+  await mkdir(dirname(output), { recursive: true });
+  await writeFile(output, css);
+
+  // Same palettes, same base theme: the built-in checker's results for `from` are this theme's results.
+  const report = checkContrast({ seeds });
+  const rows = report.results.filter((p) => p.theme === from);
+  const failures = rows.filter((p) => !p.pass);
+  const file = relative(io.cwd, output);
+  io.stdout(
+    [
+      `Created ${file} (theme "${name}", based on ${from})`,
+      `Contrast (${report.level}): ${failures.length ? `✗ ${failures.length} of ${rows.length} pairs fail` : `✓ all ${rows.length} pairs pass`}`,
+      ...formatContrast({ ...report, results: rows, failures, fixes: [] }).map((l) => `  ${l}`),
+      "",
+      "Use it:",
+      `  <link rel="stylesheet" href="${file}">   <!-- after newbrush.css -->`,
+      `  <html data-nb-theme="${name}">   or   <section data-nb-theme="${name}">`,
+      "",
+    ].join("\n"),
+  );
+  return failures.length ? EXIT.budget : EXIT.ok;
+}
 
 async function tokens(argv: string[], io: IO): Promise<number> {
   const { values } = parseArgs({

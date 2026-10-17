@@ -38,7 +38,7 @@ The `newbrush` package has no `bin` and no runtime dependencies.
 nb init [--template plain|vite|next|astro] [--prefix nb-]    create newbrush.config.ts + entry css
 nb build [-i src/app.css] [-o dist/app.css] [--minify] [--watch]
 nb tokens [--format css|ts|json|figma] [-o dir]               export resolved tokens
-nb theme create <name> --seed <color> [--from dark]           scaffold a theme
+nb theme create <name> --seed <color> [--accent c] [--neutral c] [--from light|dark|contrast] [-o file] [--force]   scaffold a theme
 nb contrast [--level AA|AAA]                                  report semantic contrast pairs
 nb explain <class...>                                         show parse + generated CSS
 nb doctor                                                     check config, browserslist, duplicates, prefix collisions
