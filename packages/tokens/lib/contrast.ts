@@ -10,7 +10,7 @@
 import { converter, differenceCiede2000, parse, wcagLuminance } from "culori";
 import colorSource from "../src/primitive/color.json" with { type: "json" };
 import semanticSource from "../src/semantic/color.json" with { type: "json" };
-import { aliasPath, cssVarName } from "./names.ts";
+import { aliasPath, baseVarName, cssVarName, hasBaseAlias } from "./names.ts";
 import { palettes, type Seeds } from "./seeds.ts";
 import { THEME_NAMES, type ThemeName, themeBlocks } from "./themes.ts";
 
@@ -307,6 +307,8 @@ export function contrastFixCss(report: Pick<ContrastReport, "fixes">): string {
   const overrides: Overrides = {};
   for (const f of report.fixes) overrides[f.theme] = { ...overrides[f.theme], [f.token]: f.to };
   const tokens = [...new Set(report.fixes.map((f) => f.token))];
+  // A token with a `-base` alias is fixed in the alias, so design styles deriving from it see the fixed colour too.
+  const fixedVar = (path: string[]) => (hasBaseAlias(path) ? baseVarName(path) : cssVarName(path));
   const value = (alias: string) => {
     const path = aliasPath(alias);
     return path ? `var(${cssVarName(path)})` : alias;
@@ -317,7 +319,7 @@ export function contrastFixCss(report: Pick<ContrastReport, "fixes">): string {
       const declared =
         theme === "light" || overrides[theme]?.[token] || semantic.get(token)?.[theme];
       return declared
-        ? [`${cssVarName(token.split("."))}: ${value(r.alias(token, theme, overrides))};`]
+        ? [`${fixedVar(token.split("."))}: ${value(r.alias(token, theme, overrides))};`]
         : [];
     });
     return lines.length ? themeBlocks(theme, lines, { double: true }) : [];

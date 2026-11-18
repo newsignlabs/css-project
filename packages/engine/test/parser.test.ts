@@ -36,7 +36,7 @@ describe("class grammar contract", () => {
 
   it("declares the full layer order, then wraps utilities in nb.utilities", () => {
     expect(cssFor(["p-4"])).toMatch(
-      /^@layer nb\.reset,nb\.tokens,nb\.base,nb\.layout,nb\.components,nb\.utilities;@layer nb\.utilities\{/,
+      /^@layer nb\.reset,nb\.tokens,nb\.base,nb\.layout,nb\.components,nb\.styles,nb\.utilities;@layer nb\.utilities\{/,
     );
   });
 });

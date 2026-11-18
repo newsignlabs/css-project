@@ -171,7 +171,7 @@ live examples, theme switcher, and an in-browser playground.
 - **FR-005**: Framework MUST verify contrast of all semantic fg/bg pairs at build time and fail/warn per config.
 
 **Architecture**
-- **FR-006**: All CSS MUST be placed in ordered cascade layers: `nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities`. *(Feature 004 plans an `nb.styles` layer between components and utilities, pending a constitution amendment.)*
+- **FR-006**: All CSS MUST be placed in ordered cascade layers: `nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.styles, nb.utilities`. *(`nb.styles` added by constitution 1.1.0 for feature 004 design styles.)*
 - **FR-007**: Framework MUST use logical properties exclusively for direction-sensitive styling.
 - **FR-008**: Components MUST be responsive to container size via container queries where layout depends on width.
 - **FR-009**: A configurable class prefix MUST be supported. Defaults: components `nb-`, utilities unprefixed; `nb doctor` MUST warn when Tailwind/Bootstrap are detected alongside unprefixed utilities.

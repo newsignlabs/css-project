@@ -3,7 +3,7 @@
 > The non-negotiable principles that govern how newBrush is specified, designed, built, tested, and shipped.
 > Every spec, plan, and task MUST pass a "Constitution Check" against this document before work starts.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-01 | **Last Amended**: 2026-10-01
+**Version**: 1.1.0 | **Ratified**: 2026-10-01 | **Last Amended**: 2026-10-17
 
 ---
 
@@ -19,6 +19,8 @@ newBrush is built on the modern CSS platform, not on preprocessor workarounds.
 - Preprocessors (Sass/Less) MUST NOT be required by consumers. Build-time tooling (Lightning CSS)
   may lower syntax for the support matrix, never invent new syntax.
 - Every rule MUST live inside a named cascade layer so consumer CSS always wins without `!important`.
+  The layer order is fixed: `nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.styles, nb.utilities`.
+  Design-style recipes (`nb.styles`) beat component defaults and lose to utilities, so author intent always wins.
 
 ### II. Tokens Are the Single Source of Truth
 
@@ -119,3 +121,12 @@ Exceeding a budget fails CI. Raising a budget requires a constitution amendment.
   (MAJOR = principle removed/redefined, MINOR = principle added, PATCH = clarification).
 - Every `plan.md` contains a **Constitution Check** section; violations must be listed in
   **Complexity Tracking** with justification or the plan is rejected.
+
+## Amendments
+
+- **1.1.0** (2026-10-17, specs/004-design-styles T002): Principle I now states the layer order and adds `nb.styles`
+  between `nb.components` and `nb.utilities` for design-style recipes. *Rationale*: style recipes (glass blur, glows,
+  notched corners) must override component defaults yet stay below utilities. *Migration*: none for pages that load
+  newBrush alone. Stylesheets that declare their own `@layer nb.…` order statement before newBrush should add
+  `nb.styles` after `nb.components`; a layer missing from an earlier statement is appended last, above
+  `nb.utilities`, which would let style recipes beat utilities.

@@ -11,7 +11,13 @@
       "additionalProperties": false,
       "properties": {
         "components": { "type": "string", "pattern": "^[a-z][a-z0-9-]*-?$", "default": "nb-" },
-        "utilities": { "type": "string", "pattern": "^([a-z][a-z0-9-]*-?)?$", "default": "" }
+        "utilities": { "type": "string", "pattern": "^([a-z][a-z0-9-]*-?)?$", "default": "" },
+        "styles": {
+          "type": "string",
+          "pattern": "^([a-z][a-z0-9-]*-?)?$",
+          "default": "",
+          "description": "Prefix of bare style classes (specs/004); the nb- form always works"
+        }
       }
     },
     "content": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
@@ -56,6 +62,16 @@
     "utilities": {
       "oneOf": [{ "const": "all" }, { "const": false }, { "type": "array", "items": { "type": "string" } }],
       "default": "all"
+    },
+    "styles": {
+      "oneOf": [{ "const": "all" }, { "const": false }, { "type": "array", "items": { "type": "string" } }],
+      "default": "all",
+      "description": "Built-in design styles to include (specs/004-design-styles)"
+    },
+    "customStyles": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Paths to custom style folders (style.json + recipes.css)"
     },
     "safelist": { "type": "array", "items": { "type": "string" } },
     "blocklist": { "type": "array", "items": { "type": "string" } },

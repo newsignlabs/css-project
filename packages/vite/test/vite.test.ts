@@ -84,6 +84,7 @@ describe("@newbrush/vite", () => {
       "nb.base",
       "nb.layout",
       "nb.components",
+      "nb.styles",
       "nb.utilities",
     ]);
   }, 30_000);

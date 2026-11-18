@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schema/schemas/style-source.v1.json",
+  "name": "pixelate",
+  "aliases": ["pixel"],
+  "title": "Pixelate",
+  "description": "8-bit: square corners, stepped borders, a 4 px grid and pixel type.",
+  "keywords": ["pixel", "8-bit", "retro", "arcade", "game"],
+  "preferredScheme": "auto",
+  "density": "grid-4",
+  "tokens": {},
+  "status": "beta",
+  "since": "0.4.0"
+}

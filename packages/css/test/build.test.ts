@@ -137,6 +137,35 @@ describe("editor support (T058)", () => {
   });
 });
 
+describe("design styles (specs/004 S0)", () => {
+  it("newbrush.css and newbrush-full.css include every style marker and the reset; core does not", async () => {
+    for (const file of ["newbrush.css", "newbrush-full.css", "newbrush.min.css"]) {
+      const css = await dist(file);
+      for (const name of ["minimal", "g-morph", "n-morph", "neon", "cyber", "pixelate"])
+        expect(css).toMatch(new RegExp(`--nb-style:\\s*${name}`));
+      expect(css).toContain(".style-default");
+      expect(css).toContain(".glass");
+    }
+    expect(await dist("newbrush-core.css")).not.toContain("--nb-style");
+  });
+
+  it("publishes each style as dist/styles/<name>.css and lists it in the manifest", async () => {
+    const manifest = Manifest.parse(JSON.parse(await dist("manifest.json")));
+    expect(manifest.styles.map((s) => s.name).sort()).toEqual([
+      "cyber",
+      "g-morph",
+      "minimal",
+      "n-morph",
+      "neon",
+      "pixelate",
+    ]);
+    const files = await readdir(new URL("../dist/styles/", import.meta.url));
+    expect(files.sort()).toEqual(
+      [...manifest.styles.map((s) => `${s.name}.css`), "styles.css"].sort(),
+    );
+  });
+});
+
 describe("manifest.json", () => {
   it("validates against @newbrush/schema", async () => {
     const manifest = Manifest.parse(JSON.parse(await dist("manifest.json")));

@@ -7,16 +7,16 @@ Format: `[ID] [P?] [Story] Description` — tests precede implementation (consti
 ## Phase 1: Setup & foundations (S0)
 
 - [x] T001 Clarify Q1–Q4 — resolved 2026-10-04 (bare + `nb-` names, g-morph/n-morph/pixelate, skin + density, single file behind a performance gate)
-- [ ] T002 Constitution amendment PR: add `nb.styles` to the layer list (v1.1.0) with migration note
-- [ ] T003 [P] `@newbrush/schema`: `Style` model, `Manifest.styles`, config `styles`/`customStyles`/`prefix.styles`, `LAYERS` + `nb.styles`; update drift checks (`newbrush/config` types)
-- [ ] T004 [P] Update layer-order everywhere: engine hoisted statement, `newbrush` bundle prefix, layer tests in css/engine/vite
-- [ ] T005 [P] `@newbrush/tokens`: emit `*-base` aliases for semantic tokens that styles derive from; snapshot update
-- [ ] T006 Scaffold `packages/styles` (style.json schema validation, build.ts → `dist/<name>.css` + manifest entries)
-- [ ] T007 Style marker + islands: `.<style>, .nb-<style>, [data-nb-style]` set `--nb-style`; `.style-default` reset; aliases (glass, neumorph, pixel)
+- [x] T002 Constitution amendment PR: add `nb.styles` to the layer list (v1.1.0) with migration note
+- [x] T003 [P] `@newbrush/schema`: `Style` model, `Manifest.styles`, config `styles`/`customStyles`/`prefix.styles`, `LAYERS` + `nb.styles`; update drift checks (`newbrush/config` types)
+- [x] T004 [P] Update layer-order everywhere: engine hoisted statement, `newbrush` bundle prefix, layer tests in css/engine/vite
+- [x] T005 [P] `@newbrush/tokens`: emit `*-base` aliases for semantic tokens that styles derive from; snapshot update
+- [x] T006 Scaffold `packages/styles` (style.json schema validation, build.ts → `dist/<name>.css` + manifest entries)
+- [x] T007 Style marker + islands: `.<style>, .nb-<style>, [data-nb-style]` set `--nb-style`; `.style-default` reset; aliases (glass, neumorph, pixel)
 
 ### Tests first (foundations)
-- [ ] T008 [P] Visual regression guard: default-style snapshots must stay identical after S0
-- [ ] T009 [P] Islands test: nearest style wins (minimal > neon > style-default nesting), attribute ≡ class, aliases work
+- [x] T008 [P] Visual regression guard: default-style snapshots must stay identical after S0
+- [x] T009 [P] Islands test: nearest style wins (minimal > neon > style-default nesting), attribute ≡ class, aliases work
 
 ## Phase 2: User Stories 1–3 — minimal & g-morph (S1) 🎯 MVP
 

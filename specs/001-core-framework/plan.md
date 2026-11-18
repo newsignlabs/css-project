@@ -104,7 +104,7 @@ newbrush/
 ### Layer order (FR-006)
 
 ```css
-@layer nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.utilities;
+@layer nb.reset, nb.tokens, nb.base, nb.layout, nb.components, nb.styles, nb.utilities;
 ```
 
 ### Output sort (Principle VII)

@@ -515,6 +515,172 @@
           "since"
         ]
       }
+    },
+    "styles": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "description": "Class name, e.g. g-morph"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Search and MCP intent matching (cyberpunk → cyber)"
+          },
+          "preferredScheme": {
+            "type": "string",
+            "enum": [
+              "light",
+              "dark",
+              "auto"
+            ]
+          },
+          "density": {
+            "type": "string",
+            "enum": [
+              "compact",
+              "default",
+              "airy",
+              "grid-4"
+            ]
+          },
+          "fonts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "effects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "cssVar": {
+                  "type": "string",
+                  "pattern": "^--nb-[a-z0-9-]+$"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "scheme": {
+                  "type": "string",
+                  "enum": [
+                    "light",
+                    "dark"
+                  ]
+                }
+              },
+              "required": [
+                "path",
+                "cssVar",
+                "value"
+              ]
+            },
+            "description": "Resolved token overrides"
+          },
+          "recipes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "target",
+                "description"
+              ]
+            }
+          },
+          "a11y": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "html": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "title",
+                "html"
+              ]
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "stable",
+              "beta",
+              "deprecated"
+            ]
+          },
+          "since": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+"
+          }
+        },
+        "required": [
+          "name",
+          "aliases",
+          "title",
+          "description",
+          "keywords",
+          "preferredScheme",
+          "density",
+          "fonts",
+          "effects",
+          "tokens",
+          "recipes",
+          "a11y",
+          "examples",
+          "status",
+          "since"
+        ]
+      }
     }
   },
   "required": [

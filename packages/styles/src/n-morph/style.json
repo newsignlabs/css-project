@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schema/schemas/style-source.v1.json",
+  "name": "n-morph",
+  "aliases": ["neumorph"],
+  "title": "N-morph",
+  "description": "Neumorphism: soft, extruded surfaces lit by paired light and dark shadows.",
+  "keywords": ["neumorphism", "soft ui", "extruded", "tactile", "skeuomorphic"],
+  "preferredScheme": "light",
+  "density": "default",
+  "tokens": {},
+  "status": "beta",
+  "since": "0.4.0"
+}

@@ -101,7 +101,23 @@ describe("tokens.css", () => {
   });
 
   it("keeps references live through var()", () => {
-    expect(css).toContain("--nb-color-surface: var(--nb-color-neutral-50);");
+    expect(css).toContain("--nb-color-accent: var(--nb-color-brand-600);");
+  });
+
+  it("gives surface, text, border and focus tokens a -base alias in every theme block (specs/004 T005)", () => {
+    expect(css).toContain(
+      "--nb-color-surface-base: var(--nb-color-neutral-50);\n    --nb-color-surface: var(--nb-color-surface-base);",
+    );
+    expect(css).toContain("--nb-color-surface-base: var(--nb-color-neutral-950);");
+    for (const name of ["surface-raised", "text-muted", "border-strong", "focus-ring"]) {
+      const bases = css.split(`--nb-color-${name}-base:`).length - 1;
+      const uses = css.split(`--nb-color-${name}: var(--nb-color-${name}-base);`).length - 1;
+      expect(bases).toBeGreaterThan(1);
+      expect(uses).toBe(bases);
+    }
+    // Only the chosen groups: accent and on-* colours keep a single declaration.
+    expect(css).not.toContain("--nb-color-accent-base");
+    expect(css).not.toContain("--nb-color-on-accent-base");
   });
 
   it("matches the snapshot", async () => {

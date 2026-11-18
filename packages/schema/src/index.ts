@@ -159,6 +159,70 @@ export const Component = z.object({
   since: z.string().regex(/^\d+\.\d+\.\d+/),
 });
 
+// ── Design styles (specs/004-design-styles data-model.md) ──────────────────
+
+export const StyleScheme = z.enum(["light", "dark", "auto"]);
+export const StyleDensity = z.enum(["compact", "default", "airy", "grid-4"]);
+const status = z.enum(["stable", "beta", "deprecated"]);
+const since = z.string().regex(/^\d+\.\d+\.\d+/);
+
+/** A design style as listed in the manifest. */
+export const Style = z.object({
+  name: z.string().regex(kebab).describe("Class name, e.g. g-morph"),
+  aliases: z.array(z.string().regex(kebab)),
+  title: z.string(),
+  description: z.string(),
+  keywords: z.array(z.string()).describe("Search and MCP intent matching (cyberpunk → cyber)"),
+  preferredScheme: StyleScheme,
+  density: StyleDensity,
+  fonts: z.array(z.string()),
+  effects: z.array(z.string()),
+  tokens: z
+    .array(
+      z.object({
+        path: z.string(),
+        cssVar: z.string().regex(/^--nb-[a-z0-9-]+$/),
+        value: z.string(),
+        scheme: z.enum(["light", "dark"]).optional(),
+      }),
+    )
+    .describe("Resolved token overrides"),
+  recipes: z.array(z.object({ target: z.string(), description: z.string() })),
+  a11y: z.array(z.string()),
+  examples: z.array(z.object({ title: z.string(), html: z.string().min(1) })),
+  status,
+  since,
+});
+
+/** DTCG override tree: groups of `{ $value }` tokens. */
+const TokenTree: z.ZodType<Record<string, unknown>> = z.record(z.string(), z.unknown());
+
+/** packages/styles/src/<name>/style.json (and custom style folders). */
+export const StyleSource = z
+  .object({
+    $schema: z.string().optional(),
+    name: z.string().regex(kebab),
+    aliases: z.array(z.string().regex(kebab)).default([]),
+    title: z.string(),
+    description: z.string(),
+    keywords: z.array(z.string()).default([]),
+    preferredScheme: StyleScheme.default("auto"),
+    density: StyleDensity.default("default"),
+    fonts: z.array(z.string()).default([]),
+    effects: z.array(z.string()).default([]),
+    tokens: TokenTree.default({}).describe("DTCG overrides applied in every scheme"),
+    schemes: z
+      .object({ light: TokenTree.optional(), dark: TokenTree.optional() })
+      .strict()
+      .default({})
+      .describe("Extra overrides for one scheme only"),
+    recipes: z.array(z.object({ target: z.string(), description: z.string() })).default([]),
+    a11y: z.array(z.string()).default([]),
+    status: status.default("beta"),
+    since,
+  })
+  .strict();
+
 // ── Config ──────────────────────────────────────────────────────────────────
 
 const selection = z.union([z.literal("all"), z.literal(false), z.array(z.string())]);
@@ -175,6 +239,11 @@ export const Config = z
           .string()
           .regex(/^([a-z][a-z0-9-]*-?)?$/)
           .default(""),
+        styles: z
+          .string()
+          .regex(/^([a-z][a-z0-9-]*-?)?$/)
+          .default("")
+          .describe("Prefix of bare style classes; the nb- form (nb-g-morph) always works"),
       })
       .strict()
       .optional(),
@@ -203,6 +272,11 @@ export const Config = z
       .describe("How dark:/light:/contrast: variants resolve the nearest theme"),
     components: selection.default("all"),
     utilities: selection.default("all"),
+    styles: selection.default("all").describe("Built-in design styles to include (specs/004)"),
+    customStyles: z
+      .array(z.string())
+      .optional()
+      .describe("Paths to custom style folders (style.json + recipes.css)"),
     safelist: z.array(z.string()).optional(),
     blocklist: z.array(z.string()).optional(),
     contrast: z
@@ -229,6 +303,7 @@ export const LAYERS = [
   "nb.base",
   "nb.layout",
   "nb.components",
+  "nb.styles",
   "nb.utilities",
 ] as const;
 
@@ -242,6 +317,7 @@ export const Manifest = z.object({
   variants: z.array(Variant),
   utilities: z.array(UtilityFamily),
   components: z.array(Component),
+  styles: z.array(Style).default([]),
 });
 
 export type TokenTier = z.infer<typeof TokenTier>;
@@ -252,6 +328,8 @@ export type Variant = z.infer<typeof Variant>;
 export type UtilityFamily = z.infer<typeof UtilityFamily>;
 export type ParsedClass = z.infer<typeof ParsedClass>;
 export type Component = z.infer<typeof Component>;
+export type Style = z.infer<typeof Style>;
+export type StyleSource = z.input<typeof StyleSource>;
 export type Config = z.input<typeof Config>;
 export type ResolvedConfig = z.output<typeof Config>;
 export type Manifest = z.infer<typeof Manifest>;
@@ -266,5 +344,7 @@ export const jsonSchemas = {
   "config.v1.json": Config,
   "manifest.v1.json": Manifest,
   "component.v1.json": Component,
+  "style.v1.json": Style,
+  "style-source.v1.json": StyleSource,
   "token.v1.json": ResolvedToken,
 } as const;
