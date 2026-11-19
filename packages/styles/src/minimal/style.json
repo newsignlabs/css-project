@@ -3,11 +3,67 @@
   "name": "minimal",
   "aliases": [],
   "title": "Minimal",
-  "description": "Quiet and editorial: hairline borders, no shadows, reduced chroma and airy spacing.",
+  "description": "Quiet and editorial: hairline borders, no shadows, small radii and airy spacing.",
   "keywords": ["minimal", "clean", "editorial", "flat", "quiet", "whitespace"],
   "preferredScheme": "auto",
   "density": "airy",
-  "tokens": {},
+  "effects": ["no-shadows", "hairline-borders", "small-radius", "airy-spacing"],
+  "tokens": {
+    "radius": {
+      "md": {
+        "$value": "{radius.sm}"
+      },
+      "lg": {
+        "$value": "{radius.sm}"
+      },
+      "xl": {
+        "$value": "{radius.md}"
+      },
+      "2xl": {
+        "$value": "{radius.md}"
+      }
+    },
+    "control": {
+      "radius": {
+        "$value": "{radius.sm}"
+      }
+    },
+    "elevation": {
+      "1": {
+        "$value": "{shadow.0}"
+      },
+      "2": {
+        "$value": "{shadow.0}"
+      },
+      "3": {
+        "$value": "{shadow.0}"
+      },
+      "4": {
+        "$value": "{shadow.0}"
+      },
+      "5": {
+        "$value": "{shadow.3}"
+      }
+    }
+  },
+  "recipes": [
+    {
+      "target": "nb-card",
+      "description": "More inner space; elevated cards keep a hairline border instead of a shadow"
+    },
+    {
+      "target": "nb-table",
+      "description": "Header row without a fill"
+    },
+    {
+      "target": "h1-h3",
+      "description": "Tighter tracking for an editorial feel"
+    }
+  ],
+  "a11y": [
+    "Changes no colours: every contrast pair is the default theme's",
+    "Surfaces without shadows keep a visible border"
+  ],
   "status": "beta",
   "since": "0.4.0"
 }

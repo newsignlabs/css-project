@@ -9,7 +9,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { createEngine } from "@newbrush/engine";
 import { Component, LAYERS, Manifest } from "@newbrush/schema";
 import browserslist from "browserslist";
-import { browserslistToTargets, bundleAsync } from "lightningcss";
+import { browserslistToTargets, bundleAsync, transform } from "lightningcss";
 import { presetClasses } from "./preset.ts";
 
 const root = new URL("../", import.meta.url);
@@ -116,11 +116,12 @@ for (const theme of ["light", "dark", "contrast"]) {
 const stylesManifest = JSON.parse(
   await readFile(fileURLToPath(import.meta.resolve("@newbrush/styles/manifest.json")), "utf8"),
 ) as { styles: unknown[] };
-for (const file of ["styles", ...stylesManifest.styles.map((s) => (s as { name: string }).name)])
-  await copyFile(
-    fileURLToPath(import.meta.resolve(`@newbrush/styles/${file}.css`)),
-    path(`dist/styles/${file}.css`),
-  );
+// Lowered for .browserslistrc like the bundles (e.g. -webkit-backdrop-filter for Safari 17).
+for (const file of ["styles", ...stylesManifest.styles.map((s) => (s as { name: string }).name)]) {
+  const source = fileURLToPath(import.meta.resolve(`@newbrush/styles/${file}.css`));
+  const { code } = transform({ filename: source, code: await readFile(source), targets });
+  await writeFile(path(`dist/styles/${file}.css`), code);
+}
 
 const utilityEngine = createEngine({ content: ["**/*"] });
 const tokens = JSON.parse(

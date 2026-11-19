@@ -3,6 +3,7 @@ import { createRequire } from "node:module";
 import { Style } from "@newbrush/schema";
 import { describe, expect, it } from "vitest";
 import {
+  authorityCss,
   checkRecipes,
   checkUnique,
   type LoadedStyle,
@@ -56,6 +57,15 @@ describe("built-in styles", () => {
     for (const s of manifest.styles) expect(() => Style.parse(s)).not.toThrow();
   });
 
+  it("minimal and g-morph have a look of their own (S1)", () => {
+    for (const name of ["minimal", "g-morph"]) {
+      const s = manifest.styles.find((x) => x.name === name);
+      expect(s?.tokens.length, name).toBeGreaterThan(0);
+      expect(s?.recipes.length, name).toBeGreaterThan(0);
+    }
+    expect(dist("g-morph.css")).toContain("backdrop-filter");
+  });
+
   it("has one folder per style whose name matches", () => {
     const dirs = readdirSync(new URL("../src/", import.meta.url));
     expect(dirs.sort()).toEqual(names.sort());
@@ -78,11 +88,24 @@ describe("built-in styles", () => {
       .map((m) => (m[1] ?? "").trim())
       .filter((s) => !s.startsWith("@"));
     expect(selectors.length).toBeGreaterThan(0);
+    // Split each list at top-level commas only (`:where(a, b)` stays whole).
+    const split = (list: string) => {
+      const out = [""];
+      let depth = 0;
+      for (const ch of list) {
+        if (ch === "(") depth++;
+        if (ch === ")") depth--;
+        if (ch === "," && depth === 0) out.push("");
+        else out[out.length - 1] += ch;
+      }
+      return out.map((x) => x.replace(/\s+/g, " ").trim());
+    };
+    // A bare marker (.g-morph, .style-default, [data-nb-style=…]) or a selector that requires one: the guard in
+    // apps/visual-tests/specs/styles-default.spec.ts relies on every rule mentioning data-nb-style.
     for (const list of selectors)
-      for (const sel of list.split(",").map((s) => s.trim()))
-        expect(sel).toMatch(
-          /^(\.[a-z0-9-]+|\[data-nb-style="[a-z0-9-]+"\]|:where\(.*\[data-nb-style=.*)/,
-        );
+      for (const sel of split(list))
+        expect(sel).toMatch(/^\.[a-z0-9-]+$|\[data-nb-style="[a-z0-9-]+"\]/);
+    for (const list of selectors) expect(list).toContain("data-nb-style");
   });
 });
 
@@ -155,6 +178,42 @@ describe("token overrides", () => {
     ]);
   });
 
+  it("a reference to another token the style overrides means that token's default value", () => {
+    const overrides = resolveOverrides(
+      style({
+        tokens: {
+          radius: { md: { $value: "{radius.lg}" }, lg: { $value: "{radius.xl}" } },
+          color: {
+            border: { default: { $value: "{color.border.strong}" }, strong: { $value: "red" } },
+          },
+        },
+      }).source,
+      tokens,
+    );
+    const lg = tokens.get("radius.lg")?.declared;
+    expect(lg).toMatch(/rem$/);
+    expect(overrides.find((o) => o.path === "radius.md")?.value).toBe(lg);
+    expect(overrides.find((o) => o.path === "color.border.default")?.value).toBe(
+      "var(--nb-color-border-strong-base)",
+    );
+  });
+
+  it("refuses to derive from a themed token without a -base alias that it also overrides", () => {
+    expect(() =>
+      resolveOverrides(
+        style({
+          tokens: {
+            color: {
+              accent: { default: { $value: "red" } },
+              "on-accent": { $value: "{color.accent}" },
+            },
+          },
+        }).source,
+        tokens,
+      ),
+    ).toThrow(/derives from \{color.accent\}/);
+  });
+
   it("rejects unknown tokens, unknown references and values that would break out of the rule", () => {
     const bad = (tokensTree: Record<string, unknown>) => () =>
       resolveOverrides(style({ tokens: tokensTree }).source, tokens);
@@ -193,6 +252,37 @@ describe("recipes", () => {
     expect(() => checkRecipes("@layer nb.utilities { a { b: c } }", "x")).toThrow();
     expect(() => checkRecipes("@import url(x.css);", "x")).toThrow();
     expect(() => checkRecipes("@layer nb.styles { a { b: c }", "x")).toThrow(/unbalanced/);
+  });
+});
+
+describe("contrast theme and forced colors outrank the style", () => {
+  it("restores every overridden colour under the contrast theme, prefers-contrast and forced colors", () => {
+    const css = authorityCss(
+      style({
+        tokens: {
+          radius: { md: { $value: "0" } },
+          color: { surface: { raised: { $value: "red" } } },
+        },
+      }),
+      tokens,
+      styleSelectors(style().source),
+    );
+    expect(css).toContain("@layer nb.styles {");
+    expect(css).toContain(
+      '[data-nb-theme="contrast"]:is(.g-morph, .nb-g-morph, .glass, [data-nb-style="g-morph"])',
+    );
+    expect(css).toContain("@media (prefers-contrast: more) and (prefers-color-scheme: light)");
+    expect(css).toContain("@media (forced-colors: active)");
+    expect(
+      css.split("--nb-color-surface-raised: var(--nb-color-surface-raised-base);"),
+    ).toHaveLength(4);
+    expect(css).not.toContain("--nb-radius-md"); // only colours: radius and density stay styled
+  });
+
+  it("is empty when the style changes no colour", () => {
+    expect(
+      authorityCss(style({ tokens: { radius: { md: { $value: "0" } } } }), tokens, [".x"]),
+    ).toBe("");
   });
 });
 

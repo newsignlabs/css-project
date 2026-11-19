@@ -127,7 +127,11 @@ export interface Override {
 
 /**
  * Resolves a style's overrides to CSS values. `{a.b}` references become `var(--nb-a-b)`; a reference to a token the
- * same style overrides becomes its `-base` alias (`var(--nb-a-b-base)`), since `--nb-a-b` would refer to itself.
+ * same style overrides means that token's default (see restoreValue): its `-base` alias (`var(--nb-a-b-base)`), or
+ * for a token that is the same in every theme its tokens.css declaration — never the overridden value.
+ *
+ * Overrides apply to the token itself only: tokens defined from it (e.g. `control.radius` = `{radius.md}`) were
+ * computed where the theme declared them, so a style overrides the tokens components actually consume.
  */
 export function resolveOverrides(
   source: LoadedStyle["source"],
@@ -142,11 +146,14 @@ export function resolveOverrides(
       const target = lookup(tokens, ref);
       if (!target) throw new Error(`${source.name}: ${path} references unknown token {${ref}}`);
       if (!overridden.has(target.name)) return `var(${target.cssVar})`;
-      if (!target.hasBase)
+      // The style overrides it too: `{ref}` means its default value, never the overridden one (which could be cyclic).
+      try {
+        return restoreValue(target);
+      } catch (error) {
         throw new Error(
-          `${source.name}: ${path} derives from {${ref}}, which it also overrides; that needs a -base alias (BASE_ALIAS_GROUPS in @newbrush/tokens)`,
+          `${source.name}: ${path} derives from {${ref}}, which it also overrides: ${(error as Error).message}`,
         );
-      return `var(${target.cssVar}-base)`;
+      }
     });
     if (!value.trim() || /[;{}]/.test(value))
       throw new Error(`${source.name}: ${path} has an invalid value "${value}"`);
@@ -195,7 +202,39 @@ export function expandRecipes(css: string, selectors: string[]): string {
   return css.replaceAll(STYLE_PLACEHOLDER, `:where(${selectors.join(", ")})`);
 }
 
-/** CSS for one style: its marker and token overrides in nb.tokens, then its recipes. */
+/**
+ * Contrast theme and forced colors outrank styles (contract: "forced-colors / contrast theme > style"): every colour
+ * a style overrides is restored there. In nb.styles, so it beats the overrides in nb.tokens whatever the specificity.
+ */
+export function authorityCss(
+  style: LoadedStyle,
+  tokens: Map<string, TokenInfo>,
+  selectors: string[],
+): string {
+  const colors = resolveOverrides(style.source, tokens).filter((o) => o.path.startsWith("color."));
+  if (!colors.length) return "";
+  const lines = colors.map((o) => {
+    const token = tokens.get(o.path);
+    return `${o.cssVar}: ${token ? restoreValue(token) : ""};`;
+  });
+  const is = `:is(${selectors.join(", ")})`;
+  const block = (pad: string, sel: string[]) =>
+    `${pad}${sel.join(`,\n${pad}`)} {\n${lines.map((l) => `${pad}  ${l}`).join("\n")}\n${pad}}`;
+  return [
+    "/* Contrast theme and forced colors outrank the style: its colours are restored. */",
+    "@layer nb.styles {",
+    block("  ", [`[data-nb-theme="contrast"]${is}`, `[data-nb-theme="contrast"] ${is}`]),
+    "  @media (prefers-contrast: more) and (prefers-color-scheme: light) {",
+    block("    ", [`:root:not([data-nb-theme])${is}`, `:root:not([data-nb-theme]) ${is}`]),
+    "  }",
+    "  @media (forced-colors: active) {",
+    block("    ", [is]),
+    "  }",
+    "}",
+  ].join("\n");
+}
+
+/** CSS for one style: its marker and token overrides in nb.tokens, its recipes, then the contrast authority block. */
 export function styleCss(
   style: LoadedStyle,
   tokens: Map<string, TokenInfo>,
@@ -215,6 +254,8 @@ export function styleCss(
     checkRecipes(style.recipes, `${style.source.name}/recipes.css`);
     parts.push(expandRecipes(style.recipes.trim(), selectors));
   }
+  const authority = authorityCss(style, tokens, selectors);
+  if (authority) parts.push(authority);
   return `${parts.join("\n")}\n`;
 }
 

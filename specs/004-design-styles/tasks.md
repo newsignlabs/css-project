@@ -21,17 +21,17 @@ Format: `[ID] [P?] [Story] Description` — tests precede implementation (consti
 ## Phase 2: User Stories 1–3 — minimal & g-morph (S1) 🎯 MVP
 
 ### Tests first
-- [ ] T010 [P] [US1] Matrix spec `apps/visual-tests/specs/styles.spec.ts`: every manifest example × style × light/dark × 3 widths: axe (wcag22aa), target size, screenshot
-- [ ] T011 [P] [US2] Contrast suite per style × scheme × brand seed (reuse tokens contrast test + 001 T062 checker)
-- [ ] T012 [P] [US1] Runtime switch test: change body class → computed styles update, no layout shift (CLS = 0 bar density)
+- [x] T010 [P] [US1] Matrix spec `apps/visual-tests/specs/styles.spec.ts`: every manifest example × style × light/dark × 3 widths: axe (wcag22aa), target size, screenshot
+- [x] T011 [P] [US2] Contrast suite per style × scheme × brand seed (reuse tokens contrast test + 001 T062 checker)
+- [x] T012 [P] [US1] Runtime switch test: change body class → computed styles update, no layout shift (CLS = 0 bar density)
 
 ### Implementation
-- [ ] T013 [US1] `minimal`: tokens (no elevation, hairline borders, small radius, reduced chroma, airy density) + recipes for navbar/card/button/input/table
-- [ ] T014 [US1] `g-morph`: translucent surface tokens, backdrop-filter recipes for card/navbar/modal/alert/input, ambient body backdrop, light-edge borders
-- [ ] T015 [US2] G-morph fallbacks: `@supports not (backdrop-filter)`, `prefers-reduced-transparency`, forced-colors, print
-- [ ] T016 [US1] Bundle styles into `newbrush.css`; publish `dist/styles/<name>.css`; size-limit entries (≤ 6 kB each, ≤ 25 kB total)
-- [ ] T043 [P] [US1] Performance gate (FR-021, SC-006): Lighthouse CI on the showcase with vs. without styles on a throttled mobile profile; fail if FCP +50 ms or CLS > 0, then switch to on-demand per-style files
-- [ ] T017 [US1] Showcase: style switcher on `examples/plain-html` (generated) for manual review
+- [x] T013 [US1] `minimal`: tokens (no elevation, hairline borders, small radius, reduced chroma, airy density) + recipes for navbar/card/button/input/table — *reduced chroma deferred: it would change the accent contrast pairs; minimal changes no colours*
+- [x] T014 [US1] `g-morph`: translucent surface tokens, backdrop-filter recipes for card/navbar/modal/alert/input, ambient body backdrop, light-edge borders
+- [x] T015 [US2] G-morph fallbacks: `@supports not (backdrop-filter)`, `prefers-reduced-transparency`, forced-colors, print
+- [x] T016 [US1] Bundle styles into `newbrush.css`; publish `dist/styles/<name>.css`; size-limit entries (≤ 6 kB each, ≤ 25 kB total)
+- [x] T043 [P] [US1] Performance gate (FR-021, SC-006): Lighthouse CI on the showcase with vs. without styles on a throttled mobile profile; fail if FCP +50 ms or CLS > 0, then switch to on-demand per-style files — *implemented with Playwright + CDP throttling (4× CPU, slow 4G, median of 5) instead of Lighthouse CI: `apps/visual-tests/specs/styles-performance.spec.ts`*
+- [x] T017 [US1] Showcase: style switcher on `examples/plain-html` (generated) for manual review
 
 ## Phase 3: Expressive styles — neon, cyber, pixelate (S2)
 
