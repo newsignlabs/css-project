@@ -7,13 +7,22 @@ import { manifest, renderFixture } from "../harness/fixtures.ts";
 
 const html = manifest.components.flatMap((c) => c.examples.map((e) => e.html)).join("\n");
 
-/** Switches the style, then waits for the (reduced-motion, near-instant) transitions it starts to settle. */
+/**
+ * Switches the style, then waits for the (reduced-motion, near-instant) transitions it starts to settle and for two
+ * frames, so text is re-measured after they end (WebKit can report a box before re-measuring transitioned
+ * letter-spacing).
+ */
 const setStyle = (page: Page, style: string) =>
   page.evaluate(async (s) => {
     document.body.className = s;
     getComputedStyle(document.body).color; // flush style so the transitions start now
     await Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined)));
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   }, style);
+
+/** Boxes must come back to `expected`; a late layout passes, a real leftover still fails after 2 s. */
+const expectBoxes = (page: Page, expected: string[]) =>
+  expect.poll(() => boxes(page), { timeout: 2000 }).toEqual(expected);
 
 /** Border box of every element, rounded to the device pixel. */
 const boxes = (page: Page) =>
@@ -49,7 +58,7 @@ test("default → g-morph → minimal → default: instant, no layout shift from
   expect(glass.cardBlur).toContain("blur");
   expect(glass.ambient).toContain("radial-gradient");
   expect(glass.cardRadius).not.toBe(start.look.cardRadius);
-  expect(await boxes(page)).toEqual(start.boxes);
+  await expectBoxes(page, start.boxes);
 
   await setStyle(page, "minimal");
   const minimal = await look(page);
@@ -58,5 +67,5 @@ test("default → g-morph → minimal → default: instant, no layout shift from
 
   await setStyle(page, "");
   expect(await look(page)).toEqual(start.look);
-  expect(await boxes(page)).toEqual(start.boxes);
+  await expectBoxes(page, start.boxes);
 });
