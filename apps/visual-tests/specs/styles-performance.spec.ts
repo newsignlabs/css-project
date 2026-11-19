@@ -39,7 +39,7 @@ async function withoutStyles(page: Page): Promise<string> {
   });
 }
 
-let server: Server;
+let server: Server | undefined;
 let origin = "";
 const variants: Record<string, { css: string; bodyClass: string }> = {};
 
@@ -49,7 +49,7 @@ test.beforeAll(async ({ browser }) => {
   await page.close();
   variants["with styles"] = { css, bodyClass: "" };
   variants["with styles, g-morph applied"] = { css, bodyClass: "g-morph" };
-  server = createServer((req, res) => {
+  const s = createServer((req, res) => {
     const [path, query] = (req.url ?? "/").split("?");
     const variant = variants[decodeURIComponent(query ?? "")];
     if (!variant) return res.writeHead(404).end();
@@ -60,11 +60,15 @@ test.beforeAll(async ({ browser }) => {
       .replace("<body>", `<body class="${variant.bodyClass}">`);
     res.writeHead(200, { "content-type": "text/html" }).end(html);
   });
-  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
-  origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  server = s;
+  await new Promise<void>((resolve) => s.listen(0, "127.0.0.1", resolve));
+  origin = `http://127.0.0.1:${(s.address() as AddressInfo).port}`;
 });
 
-test.afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
+// afterAll still runs where the skip above skipped beforeAll (Firefox, WebKit): no server to close there.
+test.afterAll(
+  () => new Promise<void>((resolve) => (server ? server.close(() => resolve()) : resolve())),
+);
 
 /** First contentful paint and cumulative layout shift of one cold, throttled load. */
 async function measure(page: Page, variant: string): Promise<{ fcp: number; cls: number }> {
