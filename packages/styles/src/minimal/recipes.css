@@ -1,0 +1,19 @@
+@layer nb.styles {
+  /* Airy: a little more room inside cards. */
+  :--style .nb-card {
+    --_pad: var(--nb-space-6);
+  }
+
+  /* No shadows, so elevated cards keep a hairline border to stay visible. */
+  :--style .nb-card--elevated {
+    border-color: var(--nb-color-border);
+  }
+
+  :--style .nb-table thead th {
+    background-color: transparent;
+  }
+
+  :--style :is(h1, h2, h3) {
+    letter-spacing: var(--nb-font-tracking-tight);
+  }
+}

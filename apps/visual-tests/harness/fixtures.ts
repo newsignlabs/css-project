@@ -24,11 +24,13 @@ export interface FixtureOptions {
   width?: number;
   /** Extra CSS appended after newBrush (unlayered, like consumer CSS). */
   extraCss?: string;
+  /** Design style class on <body> (specs/004), e.g. "g-morph". */
+  style?: string;
 }
 
 /** Renders HTML with the built newbrush.css inlined (no server needed). */
 export async function renderFixture(page: Page, opts: FixtureOptions): Promise<void> {
-  const { html, theme = "light", dir = "ltr", width = 1280, extraCss = "" } = opts;
+  const { html, theme = "light", dir = "ltr", width = 1280, extraCss = "", style } = opts;
   await page.setViewportSize({ width, height: 800 });
   // Assert the settled state: newBrush disables transitions (e.g. the modal fade-in) under reduced motion, so axe never
   // measures half-transparent mid-transition colors. Motion itself is covered by dedicated tests.
@@ -37,7 +39,7 @@ export async function renderFixture(page: Page, opts: FixtureOptions): Promise<v
   await page.setContent(
     `<!doctype html><html lang="en" dir="${dir}"${themeAttr}><head><meta charset="utf-8">` +
       `<meta name="viewport" content="width=device-width, initial-scale=1"><title>newBrush fixture</title>` +
-      `<style>${css}</style><style>${extraCss}</style></head><body><main>${html}</main></body></html>`,
+      `<style>${css}</style><style>${extraCss}</style></head><body${style ? ` class="${style}"` : ""}><main>${html}</main></body></html>`,
   );
 }
 

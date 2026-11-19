@@ -17,6 +17,8 @@ const order = [
   "data",
 ];
 const byCategory = Object.groupBy(manifest.components, (c) => c.category);
+// Design styles with a look of their own (token overrides or recipes); the others are still placeholders.
+const styles = manifest.styles.filter((s) => s.tokens.length || s.recipes.length);
 
 const sections = order
   .filter((cat) => byCategory[cat])
@@ -65,6 +67,11 @@ const html = `<!doctype html>
       </ul>
     </nav>
     <div class="nb-navbar__actions">
+      <label for="style">Style</label>
+      <div class="nb-select"><select id="style">
+        <option value="">Default</option>
+        ${styles.map((s) => `<option value="${s.name}">${esc(s.title)}</option>`).join("\n        ")}
+      </select></div>
       <label class="nb-switch-label"><input class="nb-switch" type="checkbox" role="switch" id="dark"> Dark</label>
     </div>
   </header>
@@ -80,6 +87,9 @@ const html = `<!doctype html>
     const toggle = document.getElementById("dark");
     toggle.checked = matchMedia("(prefers-color-scheme: dark)").matches;
     toggle.addEventListener("change", () => document.documentElement.dataset.nbTheme = toggle.checked ? "dark" : "light");
+    // Design styles (specs/004): one class on <body> re-skins the whole page; no other markup changes.
+    const style = document.getElementById("style");
+    style.addEventListener("change", () => document.body.className = style.value);
   </script>
 </body>
 </html>

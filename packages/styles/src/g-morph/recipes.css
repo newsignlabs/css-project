@@ -1,0 +1,93 @@
+@layer nb.styles {
+  /* Glass knobs (contract: --nb-glass-opacity, --nb-glass-blur). Set them on the styled element to tune the glass. */
+  :--style,
+  :root:has(> body:--style) {
+    --nb-glass-opacity: 62%;
+    --nb-glass-blur: var(--nb-blur-lg);
+    --nb-glass-saturate: 1.6;
+    --nb-glass-edge: light-dark(
+      color-mix(in oklch, oklch(100% 0 0) 60%, transparent),
+      color-mix(in oklch, oklch(100% 0 0) 14%, transparent)
+    );
+    /* Ambient tints stay close to the page's lightness, so text on the page keeps its contrast (T011 checks it). */
+    --nb-glass-tint-1: light-dark(
+      color-mix(in oklch, var(--nb-color-brand-100) 85%, transparent),
+      color-mix(in oklch, var(--nb-color-brand-950) 70%, transparent)
+    );
+    --nb-glass-tint-2: light-dark(
+      color-mix(in oklch, var(--nb-color-accent-100) 75%, transparent),
+      color-mix(in oklch, var(--nb-color-accent-950) 60%, transparent)
+    );
+  }
+
+  /* Ambient background for the glass to blur: brand and accent light, when the style is on <html> or <body>. */
+  :root:--style,
+  :root:has(> body:--style) {
+    background-image:
+      radial-gradient(60rem 40rem at 10% -10%, var(--nb-glass-tint-1), transparent 70%),
+      radial-gradient(50rem 40rem at 100% 10%, var(--nb-glass-tint-2), transparent 70%);
+    background-attachment: fixed;
+  }
+
+  :--style :is(.nb-card, .nb-navbar, .nb-modal, .nb-table-wrap) {
+    border-color: var(--nb-glass-edge);
+    backdrop-filter: blur(var(--nb-glass-blur)) saturate(var(--nb-glass-saturate));
+  }
+
+  :--style .nb-navbar {
+    background-color: color-mix(in oklch, var(--nb-color-surface) var(--nb-glass-opacity), transparent);
+  }
+
+  /* Fallbacks: opaque surfaces wherever glass is unsupported, unwanted or unreadable. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    :--style,
+    :root:has(> body:--style) {
+      --nb-glass-opacity: 100%;
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce), print {
+    :--style,
+    :root:has(> body:--style) {
+      --nb-glass-opacity: 100%;
+      --nb-glass-blur: 0px;
+    }
+  }
+
+  @media print {
+    :root:--style,
+    :root:has(> body:--style) {
+      background-image: none;
+    }
+  }
+
+  [data-nb-theme="contrast"]:--style,
+  [data-nb-theme="contrast"] :--style,
+  :root[data-nb-theme="contrast"]:has(> body:--style) {
+    --nb-glass-opacity: 100%;
+    --nb-glass-blur: 0px;
+  }
+
+  :root[data-nb-theme="contrast"]:--style,
+  :root[data-nb-theme="contrast"]:has(> body:--style) {
+    background-image: none;
+  }
+
+  @media (forced-colors: active), (prefers-contrast: more) {
+    :--style,
+    :root:has(> body:--style) {
+      --nb-glass-opacity: 100%;
+      --nb-glass-blur: 0px;
+    }
+
+    :root:--style,
+    :root:has(> body:--style) {
+      background-image: none;
+    }
+
+    :--style :is(.nb-card, .nb-navbar, .nb-modal, .nb-table-wrap) {
+      border-color: revert-layer;
+      backdrop-filter: none;
+    }
+  }
+}

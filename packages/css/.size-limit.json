@@ -16,5 +16,47 @@
     "path": "dist/newbrush-full.min.css",
     "limit": "70 kB",
     "brotli": true
+  },
+  {
+    "name": "styles/minimal.css (design style, specs/004 FR-018)",
+    "path": "dist/styles/minimal.css",
+    "limit": "6 kB",
+    "brotli": true
+  },
+  {
+    "name": "styles/g-morph.css (design style, specs/004 FR-018)",
+    "path": "dist/styles/g-morph.css",
+    "limit": "6 kB",
+    "brotli": true
+  },
+  {
+    "name": "styles/n-morph.css (design style, specs/004 FR-018)",
+    "path": "dist/styles/n-morph.css",
+    "limit": "6 kB",
+    "brotli": true
+  },
+  {
+    "name": "styles/neon.css (design style, specs/004 FR-018)",
+    "path": "dist/styles/neon.css",
+    "limit": "6 kB",
+    "brotli": true
+  },
+  {
+    "name": "styles/cyber.css (design style, specs/004 FR-018)",
+    "path": "dist/styles/cyber.css",
+    "limit": "6 kB",
+    "brotli": true
+  },
+  {
+    "name": "styles/pixelate.css (design style, specs/004 FR-018)",
+    "path": "dist/styles/pixelate.css",
+    "limit": "6 kB",
+    "brotli": true
+  },
+  {
+    "name": "styles/styles.css (all design styles, specs/004 FR-018)",
+    "path": "dist/styles/styles.css",
+    "limit": "25 kB",
+    "brotli": true
   }
 ]

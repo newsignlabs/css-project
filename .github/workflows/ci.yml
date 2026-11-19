@@ -44,7 +44,8 @@ jobs:
 
   visual:
     name: Visual + a11y (${{ matrix.browser }})
-    runs-on: ubuntu-latest
+    # Pinned: Playwright 1.56 cannot install browsers on ubuntu-latest (26.04). Move with a Playwright upgrade.
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:

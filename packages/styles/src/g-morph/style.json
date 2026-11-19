@@ -7,7 +7,73 @@
   "keywords": ["glassmorphism", "glass", "frosted", "translucent", "modern", "depth"],
   "preferredScheme": "auto",
   "density": "default",
-  "tokens": {},
+  "effects": ["backdrop-blur", "translucent-surfaces", "ambient-background", "light-edge"],
+  "tokens": {
+    "color": {
+      "surface": {
+        "raised": {
+          "$value": "color-mix(in oklch, {color.surface.raised} var(--nb-glass-opacity), transparent)"
+        },
+        "subtle": {
+          "$value": "color-mix(in oklch, {color.surface.subtle} var(--nb-glass-opacity), transparent)"
+        },
+        "overlay": {
+          "$value": "color-mix(in oklch, {color.surface.overlay} min(100%, calc(var(--nb-glass-opacity) + 20%)), transparent)"
+        }
+      }
+    },
+    "radius": {
+      "md": {
+        "$value": "{radius.lg}"
+      },
+      "lg": {
+        "$value": "{radius.xl}"
+      },
+      "xl": {
+        "$value": "{radius.2xl}"
+      }
+    },
+    "control": {
+      "radius": {
+        "$value": "{radius.lg}"
+      }
+    },
+    "elevation": {
+      "1": {
+        "$value": "0 0.5rem 1.5rem -0.75rem oklch(22% 0.02 260 / 0.25)"
+      },
+      "3": {
+        "$value": "0 1.25rem 2.5rem -1rem oklch(22% 0.02 260 / 0.3)"
+      }
+    }
+  },
+  "recipes": [
+    {
+      "target": "nb-card",
+      "description": "Frosted glass: backdrop blur and a light edge"
+    },
+    {
+      "target": "nb-navbar",
+      "description": "Frosted bar over the page"
+    },
+    {
+      "target": "nb-modal",
+      "description": "Frosted dialog"
+    },
+    {
+      "target": "nb-table-wrap",
+      "description": "Frosted table container"
+    },
+    {
+      "target": "page",
+      "description": "Ambient brand/accent background when the style is on <html> or <body>"
+    }
+  ],
+  "a11y": [
+    "Opaque surfaces when backdrop-filter is unsupported, reduced transparency is requested, in print and in the contrast theme",
+    "No blur or ambient background under forced colors or prefers-contrast: more",
+    "Glass opacity keeps every text pair at WCAG AA over the ambient background (verified per theme and brand seed)"
+  ],
   "status": "beta",
   "since": "0.4.0"
 }

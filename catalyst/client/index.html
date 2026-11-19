@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>How newBrush is made</title>
 <meta name="description" content="Live overview of the newBrush CSS framework: architecture, tokens, components, utility engine and status.">
-<link rel="stylesheet" href="overview.css?v=1b12a88412">
+<link rel="stylesheet" href="overview.css?v=42c56ce4d2">
 </head>
 <body>
 
@@ -28,7 +28,7 @@
 <main class="nb-container nb-stack nb-stack--xl py-12" id="top">
 
 <section class="nb-stack" aria-labelledby="top-title">
-  <p class="nb-badge nb-badge--accent nb-badge--dot self-start">Status · v0.0.0 · 2026-10-16</p>
+  <p class="nb-badge nb-badge--accent nb-badge--dot self-start">Status · v0.0.0 · 2026-11-19</p>
   <h1 id="top-title" class="text-5xl font-bold tracking-tight">How newBrush is made</h1>
   <p class="text-lg text-muted max-w-prose">A live look at the framework as it exists today. This page is styled entirely by newBrush:
   every component below is the real component, and the utility CSS for this page was generated on demand by the newBrush engine.</p>
@@ -37,9 +37,9 @@
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">16</p><p class="text-sm text-muted mt-1">components + 9 layout primitives</p></div>
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">137</p><p class="text-sm text-muted mt-1">utility families · 3,823 utilities</p></div>
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">77</p><p class="text-sm text-muted mt-1">variants (md:, hover:, dark:, @md: …)</p></div>
-    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">5.1 kB</p><p class="text-sm text-muted mt-1">core CSS, brotli (budget 8 kB)</p></div>
-    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">8.5 kB</p><p class="text-sm text-muted mt-1">framework CSS, brotli (budget 35 kB)</p></div>
-    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">44.2 kB</p><p class="text-sm text-muted mt-1">with utility preset, brotli (budget 70 kB)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">5.2 kB</p><p class="text-sm text-muted mt-1">core CSS, brotli (budget 8 kB)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">9.3 kB</p><p class="text-sm text-muted mt-1">framework CSS, brotli (budget 35 kB)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">45.2 kB</p><p class="text-sm text-muted mt-1">with utility preset, brotli (budget 70 kB)</p></div>
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">0</p><p class="text-sm text-muted mt-1">JavaScript required</p></div>
   </div>
 </section>
@@ -69,8 +69,8 @@
             <code>nb.tokens</code><span class="text-sm text-muted"></span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
             <code>nb.base</code><span class="text-sm text-muted"></span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
             <code>nb.layout</code><span class="text-sm text-muted"></span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
-            <code>nb.components</code><span class="text-sm text-muted"></span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border border-dashed">
-            <code>nb.styles</code><span class="text-sm text-muted">planned · design styles</span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
+            <code>nb.components</code><span class="text-sm text-muted"></span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
+            <code>nb.styles</code><span class="text-sm text-muted">design styles</span></li><li class="nb-cluster nb-cluster--between rounded-md px-4 py-2 border bg-surface-raised">
             <code>nb.utilities</code><span class="text-sm text-muted">highest priority</span></li>
       </ol>
       <h3 class="text-xl mt-4">Packages</h3>
@@ -781,22 +781,22 @@
 </section>
 
 <section class="nb-stack" id="styles" aria-labelledby="styles-title">
-  <h2 id="styles-title">Coming next: design styles</h2>
-  <p class="text-muted max-w-prose">newBrush's signature feature (planned in spec 004): one class re-skins the whole project —
+  <h2 id="styles-title">Design styles</h2>
+  <p class="text-muted max-w-prose">newBrush's signature feature (spec 004): one class re-skins the whole project —
   <code>&lt;body class="g-morph"&gt;</code> or <code>&lt;body class="nb-g-morph"&gt;</code>. Styles change the skin and density, never the layout,
   and ship as pure CSS in the same file.</p>
   <div class="grid gap-4 md:grid-cols-3">
-    <div class="nb-card p-5"><p class="font-semibold"><code>g-morph</code></p><p class="text-sm text-muted mt-1">Glassmorphism — translucent surfaces and backdrop blur</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>n-morph</code></p><p class="text-sm text-muted mt-1">Neumorphism — soft, extruded, tactile</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>neon</code></p><p class="text-sm text-muted mt-1">Glowing accents on deep, dark surfaces</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>cyber</code></p><p class="text-sm text-muted mt-1">Cyberpunk HUD — notched corners, scanlines</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>pixelate</code></p><p class="text-sm text-muted mt-1">8-bit — stepped borders and pixel type</p><p class="nb-badge mt-3">planned</p></div><div class="nb-card p-5"><p class="font-semibold"><code>minimal</code></p><p class="text-sm text-muted mt-1">Quiet and editorial — hairlines, no shadows</p><p class="nb-badge mt-3">planned</p></div>
+    <div class="nb-card p-5"><p class="font-semibold">Cyber <code>cyber</code></p><p class="text-sm text-muted mt-1">Cyberpunk HUD: notched corners, monospace labels and scanlines.</p><p class="nb-badge mt-3 self-start">planned</p></div><div class="g-morph"><div class="nb-card p-5"><p class="font-semibold">G-morph <code>g-morph</code></p><p class="text-sm text-muted mt-1">Glassmorphism: translucent surfaces, backdrop blur and soft light edges.</p><p class="nb-badge nb-badge--success mt-3 self-start">available</p></div></div><div class="minimal"><div class="nb-card p-5"><p class="font-semibold">Minimal <code>minimal</code></p><p class="text-sm text-muted mt-1">Quiet and editorial: hairline borders, no shadows, small radii and airy spacing.</p><p class="nb-badge nb-badge--success mt-3 self-start">available</p></div></div><div class="nb-card p-5"><p class="font-semibold">N-morph <code>n-morph</code></p><p class="text-sm text-muted mt-1">Neumorphism: soft, extruded surfaces lit by paired light and dark shadows.</p><p class="nb-badge mt-3 self-start">planned</p></div><div class="nb-card p-5"><p class="font-semibold">Neon <code>neon</code></p><p class="text-sm text-muted mt-1">Glowing accents and outlines on deep, near-black surfaces.</p><p class="nb-badge mt-3 self-start">planned</p></div><div class="nb-card p-5"><p class="font-semibold">Pixelate <code>pixelate</code></p><p class="text-sm text-muted mt-1">8-bit: square corners, stepped borders, a 4 px grid and pixel type.</p><p class="nb-badge mt-3 self-start">planned</p></div>
   </div>
 </section>
 
 <section class="nb-stack" id="status" aria-labelledby="status-title">
   <h2 id="status-title">Build status</h2>
   <div class="grid gap-4 md:grid-cols-2">
-    <div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Core framework</p><p class="text-sm text-muted">66/94 tasks</p></div>
-        <div class="progress" role="progressbar" aria-label="Core framework progress" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"><span data-nb-s="97"></span></div>
-        <p class="text-sm text-muted">Tokens, components, utility engine, tooling</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Design styles</p><p class="text-sm text-muted">1/43 tasks</p></div>
-        <div class="progress" role="progressbar" aria-label="Design styles progress" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"><span data-nb-s="98"></span></div>
+    <div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Core framework</p><p class="text-sm text-muted">68/94 tasks</p></div>
+        <div class="progress" role="progressbar" aria-label="Core framework progress" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"><span data-nb-s="97"></span></div>
+        <p class="text-sm text-muted">Tokens, components, utility engine, tooling</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Design styles</p><p class="text-sm text-muted">9/43 tasks</p></div>
+        <div class="progress" role="progressbar" aria-label="Design styles progress" aria-valuenow="21" aria-valuemin="0" aria-valuemax="100"><span data-nb-s="98"></span></div>
         <p class="text-sm text-muted">g-morph, n-morph, neon, cyber, pixelate, minimal</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">MCP server</p><p class="text-sm text-muted">0/38 tasks</p></div>
         <div class="progress" role="progressbar" aria-label="MCP server progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><span data-nb-s="99"></span></div>
         <p class="text-sm text-muted">CSS & page generation for AI agents</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Distribution</p><p class="text-sm text-muted">0/30 tasks</p></div>
@@ -810,7 +810,7 @@
 <footer class="text-sm text-muted border-t pt-6"><p>newBrush · MIT · generated by <code>apps/overview</code> from the build outputs.
 Source: github.com/newsignlabs/css-project</p></footer>
 </main>
-<script src="overview.js?v=1b12a88412" defer></script>
-<!-- utilities generated for this page: 62 classes, 3.3 kB -->
+<script src="overview.js?v=42c56ce4d2" defer></script>
+<!-- utilities generated for this page: 61 classes, 3.3 kB -->
 </body>
 </html>

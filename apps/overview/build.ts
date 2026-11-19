@@ -310,22 +310,21 @@ const themesSection = `
   </div>
 </section>`;
 
-const styleNames = [
-  ["g-morph", "Glassmorphism — translucent surfaces and backdrop blur"],
-  ["n-morph", "Neumorphism — soft, extruded, tactile"],
-  ["neon", "Glowing accents on deep, dark surfaces"],
-  ["cyber", "Cyberpunk HUD — notched corners, scanlines"],
-  ["pixelate", "8-bit — stepped borders and pixel type"],
-  ["minimal", "Quiet and editorial — hairlines, no shadows"],
-];
+// A style is available once it has a look of its own (token overrides or recipes); available ones preview live as
+// style islands, so each card below is rendered by its own style.
+const styleCard = (s: Manifest["styles"][number]) => {
+  const available = s.tokens.length > 0 || s.recipes.length > 0;
+  const card = `<div class="nb-card p-5"><p class="font-semibold">${s.title} <code>${s.name}</code></p><p class="text-sm text-muted mt-1">${s.description}</p><p class="nb-badge${available ? " nb-badge--success" : ""} mt-3 self-start">${available ? "available" : "planned"}</p></div>`;
+  return available ? `<div class="${s.name}">${card}</div>` : card;
+};
 const stylesSection = `
 <section class="nb-stack" id="styles" aria-labelledby="styles-title">
-  <h2 id="styles-title">Coming next: design styles</h2>
-  <p class="text-muted max-w-prose">newBrush's signature feature (planned in spec 004): one class re-skins the whole project —
+  <h2 id="styles-title">Design styles</h2>
+  <p class="text-muted max-w-prose">newBrush's signature feature (spec 004): one class re-skins the whole project —
   <code>&lt;body class="g-morph"&gt;</code> or <code>&lt;body class="nb-g-morph"&gt;</code>. Styles change the skin and density, never the layout,
   and ship as pure CSS in the same file.</p>
   <div class="grid gap-4 md:grid-cols-3">
-    ${styleNames.map(([n, d]) => `<div class="nb-card p-5"><p class="font-semibold"><code>${n}</code></p><p class="text-sm text-muted mt-1">${d}</p><p class="nb-badge mt-3">planned</p></div>`).join("")}
+    ${manifest.styles.map(styleCard).join("")}
   </div>
 </section>`;
 
