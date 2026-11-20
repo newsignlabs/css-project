@@ -8,6 +8,10 @@ fonts (FR-022); add this package when you want a consistent typeface everywhere.
 | `--nb-font-family-sans` | **Inter** (variable, 100–900, italic) | Arial |
 | `--nb-font-family-serif` | **Fraunces** (variable, 100–900, italic) | Georgia |
 | `--nb-font-family-mono` | **JetBrains Mono** (variable, 100–800, italic) | Courier New |
+| `--nb-font-family-pixel` | **Pixelify Sans** (variable, 400–700; opt-in only, not in `fonts.css`) | Courier New |
+
+The pixel face is for the `pixelate` design style (specs/004): its headings use `--nb-font-family-pixel`, which is the
+monospace stack until you load `@newbrush/fonts/pixelify-sans.css`.
 
 ## Use
 
@@ -18,6 +22,7 @@ npm i @newbrush/fonts
 @import "newbrush";
 @import "@newbrush/fonts";            /* all three, or one: */
 @import "@newbrush/fonts/inter.css";  /* inter.css · fraunces.css · jetbrains-mono.css */
+@import "@newbrush/fonts/pixelify-sans.css";  /* opt-in pixel face for the pixelate style */
 ```
 ```html
 <link rel="stylesheet" href="node_modules/newbrush/dist/newbrush.css">

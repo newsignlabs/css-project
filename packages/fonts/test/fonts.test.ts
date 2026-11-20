@@ -13,6 +13,7 @@ const manifest = JSON.parse(read("manifest.json")) as {
     fallback: string;
     files: { file: string; bytes: number }[];
     license: string;
+    inBundle: boolean;
   }[];
 };
 const tokens = JSON.parse(
@@ -39,8 +40,9 @@ describe.each(manifest.families)("$name", (family) => {
           .toString("latin1"),
       ).toBe("wOF2");
     }
+    // Text faces ship upright and italic; the pixel display face (opt-in) is upright only.
     expect(new Set(webFaces.map((f) => /font-style: (\w+)/.exec(f)?.[1]))).toEqual(
-      new Set(["normal", "italic"]),
+      new Set(family.inBundle ? ["normal", "italic"] : ["normal"]),
     );
     expect(family.files).toHaveLength(webFaces.length);
   });
@@ -65,14 +67,28 @@ describe.each(manifest.families)("$name", (family) => {
 });
 
 describe("fonts.css", () => {
-  it("bundles all three families for the three font tokens", () => {
+  it("bundles the three text families for the three text tokens; the pixel face is opt-in only", () => {
     const css = read("fonts.css");
-    expect(manifest.families.map((f) => f.token)).toEqual([
+    const bundled = manifest.families.filter((f) => f.inBundle);
+    expect(bundled.map((f) => f.token)).toEqual([
       "font.family.sans",
       "font.family.serif",
       "font.family.mono",
     ]);
-    for (const f of manifest.families) expect(css).toContain(`font-family: "${f.name}";`);
+    for (const f of bundled) expect(css).toContain(`font-family: "${f.name}";`);
     expect(css.match(/@layer nb\.tokens/g)).toHaveLength(3);
+    expect(css).not.toContain("Pixelify");
+  });
+});
+
+describe("pixelify-sans.css (specs/004 T024)", () => {
+  it("fills --nb-font-family-pixel, keeping the mono stack after it", () => {
+    const pixel = manifest.families.find((f) => f.id === "pixelify-sans");
+    expect(pixel?.token).toBe("font.family.pixel");
+    expect(pixel?.inBundle).toBe(false);
+    const css = read("pixelify-sans.css");
+    expect(css).toMatch(
+      /--nb-font-family-pixel: "Pixelify Sans Variable", "[^"]+ Fallback", ui-monospace/,
+    );
   });
 });

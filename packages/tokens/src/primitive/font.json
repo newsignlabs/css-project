@@ -38,6 +38,18 @@
           "Liberation Mono",
           "monospace"
         ]
+      },
+      "pixel": {
+        "$value": [
+          "ui-monospace",
+          "SFMono-Regular",
+          "SF Mono",
+          "Menlo",
+          "Consolas",
+          "Liberation Mono",
+          "monospace"
+        ],
+        "$description": "Pixel display face for the pixelate style; the mono stack until @newbrush/fonts/pixelify-sans.css is loaded (specs/004 T024)"
       }
     },
     "weight": {
@@ -57,7 +69,7 @@
     },
     "size": {
       "$type": "dimension",
-      "$description": "Fluid type scale (Utopia, 360→1280px viewport, ratio 1.2→1.25)",
+      "$description": "Fluid type scale (Utopia, 360\u21921280px viewport, ratio 1.2\u21921.25)",
       "xs": {
         "$value": "clamp(0.6944rem, 0.6844rem + 0.0444vi, 0.72rem)"
       },

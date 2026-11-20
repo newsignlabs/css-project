@@ -1,0 +1,56 @@
+@layer nb.styles {
+  /* Stepped pixel frame: four 4 px shadows leave the corners notched. Shadows never change layout. */
+  :--style :is(.nb-card, .nb-btn:not(:where(.nb-btn--link, .nb-btn--ghost))) {
+    --_pc: var(--nb-color-border-strong);
+
+    border-color: transparent;
+    box-shadow:
+      0 -4px 0 0 var(--_pc),
+      0 4px 0 0 var(--_pc),
+      -4px 0 0 0 var(--_pc),
+      4px 0 0 0 var(--_pc);
+  }
+
+  :--style .nb-btn--primary {
+    --_pc: var(--nb-color-accent);
+  }
+
+  :--style .nb-btn--danger {
+    --_pc: var(--nb-color-danger);
+  }
+
+  /* The ring goes outside the frame, so the frame never hides it. */
+  :--style .nb-btn:focus-visible {
+    outline-offset: calc(4px + var(--nb-control-focus-ring-offset));
+  }
+
+  :--style :is(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--nb-font-family-pixel);
+    letter-spacing: 0;
+  }
+
+  :--style img {
+    image-rendering: pixelated;
+  }
+
+  /* Decoration off where it would hurt: real borders instead of the pixel frame. */
+  :--contrast :is(.nb-card, .nb-btn) {
+    border-color: revert-layer;
+    box-shadow: revert-layer;
+  }
+
+  :--contrast .nb-btn:focus-visible {
+    outline-offset: revert-layer;
+  }
+
+  @media (forced-colors: active), (prefers-contrast: more) {
+    :--style :is(.nb-card, .nb-btn) {
+      border-color: revert-layer;
+      box-shadow: revert-layer;
+    }
+
+    :--style .nb-btn:focus-visible {
+      outline-offset: revert-layer;
+    }
+  }
+}
