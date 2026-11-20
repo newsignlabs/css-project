@@ -7,7 +7,85 @@
   "keywords": ["cyberpunk", "cyber", "hud", "sci-fi", "futuristic", "terminal"],
   "preferredScheme": "dark",
   "density": "compact",
-  "tokens": {},
+  "effects": ["notched-corners", "mono-type", "uppercase-labels", "scanlines", "glitch-hover"],
+  "tokens": {
+    "radius": {
+      "xs": {
+        "$value": "{radius.none}"
+      },
+      "sm": {
+        "$value": "{radius.none}"
+      },
+      "md": {
+        "$value": "{radius.none}"
+      },
+      "lg": {
+        "$value": "{radius.none}"
+      },
+      "xl": {
+        "$value": "{radius.none}"
+      },
+      "2xl": {
+        "$value": "{radius.none}"
+      }
+    },
+    "control": {
+      "radius": {
+        "$value": "{radius.none}"
+      }
+    },
+    "color": {
+      "border": {
+        "default": {
+          "$value": "color-mix(in oklch, {color.accent} 45%, {color.border.default})"
+        }
+      }
+    }
+  },
+  "schemes": {
+    "dark": {
+      "color": {
+        "surface": {
+          "default": {
+            "$value": "color-mix(in oklch, {color.surface.default} 60%, oklch(0% 0 0))"
+          },
+          "subtle": {
+            "$value": "color-mix(in oklch, {color.surface.subtle} 65%, oklch(0% 0 0))"
+          },
+          "raised": {
+            "$value": "color-mix(in oklch, {color.surface.raised} 65%, oklch(0% 0 0))"
+          },
+          "overlay": {
+            "$value": "color-mix(in oklch, {color.surface.overlay} 70%, oklch(0% 0 0))"
+          }
+        }
+      }
+    }
+  },
+  "recipes": [
+    {
+      "target": "nb-card, nb-btn",
+      "description": "Notched corners (clip-path, --nb-cut); focus ring drawn inside the notch"
+    },
+    {
+      "target": "headings, labels, buttons, badges, table headers",
+      "description": "Monospace, uppercase labels"
+    },
+    {
+      "target": "page",
+      "description": "Static scanlines over the page when the style is on <html> or <body>"
+    },
+    {
+      "target": "nb-btn:hover",
+      "description": "One-shot glitch (movement only), when motion is allowed"
+    }
+  ],
+  "a11y": [
+    "Dark unless a theme is set explicitly; data-nb-theme=\"light\" gives the light variant",
+    "Notched elements draw the focus ring inside the clip, so it is never cut off",
+    "The glitch only moves (no colour or brightness change) and runs once, only without prefers-reduced-motion",
+    "Notches and scanlines are removed under forced colors, the contrast theme, prefers-contrast: more and in print"
+  ],
   "status": "beta",
   "since": "0.4.0"
 }

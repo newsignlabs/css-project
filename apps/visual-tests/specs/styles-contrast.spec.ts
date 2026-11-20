@@ -5,14 +5,15 @@ import { manifest, renderFixture } from "../harness/fixtures.ts";
 
 // specs/004 T011 — every semantic pair (001 T062's PAIRS) meets WCAG AA in every implemented style × theme × brand seed,
 // measured on what the browser paints: translucent surfaces are composited over the page, both plain and under the
-// strongest ambient tint (g-morph's two glass tints stacked at full strength). Text placed straight on the page is
-// checked against the page itself too.
+// strongest ambient tint (g-morph's two glass tints stacked at full strength), and under the style's overlay (cyber's
+// scanlines) over both text and background. Text placed straight on the page is checked against the page itself too.
+// "auto" sets no data-nb-theme with a light OS: dark-first styles (neon, cyber) are dark there.
 
 const STYLES = [
   "",
   ...manifest.styles.filter((s) => s.tokens.length || s.recipes.length).map((s) => s.name),
 ];
-const THEMES = ["light", "dark", "contrast"] as const;
+const THEMES = ["auto", "light", "dark", "contrast"] as const;
 const SEEDS: Record<string, Seeds> = {
   default: {},
   green: { brand: "oklch(70% 0.2 150)" },
@@ -96,17 +97,20 @@ for (const style of STYLES) {
             page: [surface],
             tinted: [surface, tint(1), tint(2)],
           };
+          const overlay = probe(
+            "background-color: var(--nb-style-overlay, transparent)",
+          ).backgroundColor;
           const out: Result[] = [];
           for (const p of list) {
             const s = probe(`color: var(${p.fgVar}); background-color: var(${p.bgVar})`);
             for (const [name, layers] of Object.entries(backdrops)) {
-              const bg = paint([...layers, s.backgroundColor]);
-              const fg = paint([...layers, s.backgroundColor, s.color]);
+              const bg = paint([...layers, s.backgroundColor, overlay]);
+              const fg = paint([...layers, s.backgroundColor, s.color, overlay]);
               out.push({ fg: p.fg, bg: p.bg, backdrop: name, ratio: ratio(fg, bg), min: p.min });
               if (p.bg === "color.surface") {
                 // Text straight on the page, with no surface of its own.
-                const page = paint(layers);
-                const onPage = paint([...layers, s.color]);
+                const page = paint([...layers, overlay]);
+                const onPage = paint([...layers, s.color, overlay]);
                 out.push({
                   fg: p.fg,
                   bg: "page",

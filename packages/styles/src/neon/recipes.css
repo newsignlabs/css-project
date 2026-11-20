@@ -1,0 +1,86 @@
+@layer nb.styles {
+  /* Glow colour (contract: --nb-glow), from the accent so brand seeds tint it. */
+  :--style,
+  :root:has(> body:--style) {
+    --nb-glow: color-mix(in oklch, var(--nb-color-accent) 55%, transparent);
+  }
+
+  :--style .nb-card {
+    border-color: color-mix(in oklch, var(--nb-color-accent) 50%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--nb-glow) 40%, transparent),
+      0 0 1.5rem -0.5rem var(--nb-glow);
+  }
+
+  /* Outlined primary actions: accent text and edge on the surface, glowing. */
+  :--style .nb-btn--primary {
+    --_bg: transparent;
+    --_bg-hover: var(--nb-color-accent-subtle);
+    --_bg-active: var(--nb-color-accent-subtle);
+    --_fg: var(--nb-color-accent-text);
+    --_border: var(--nb-color-accent);
+
+    box-shadow:
+      0 0 0.75rem -0.125rem var(--nb-glow),
+      inset 0 0 0.5rem -0.25rem var(--nb-glow);
+  }
+
+  /*
+   * The outline stays, in the text colour: an accent ring would vanish into the accent glow around it (T020 measures
+   * the change). The glow spreads outside the ring.
+   */
+  :--style :focus-visible {
+    outline-color: var(--nb-color-text);
+    box-shadow: 0 0 0.75rem calc(var(--nb-control-focus-ring-width) + var(--nb-control-focus-ring-offset))
+      var(--nb-glow);
+  }
+
+  :--style :is(h1, h2, h3) {
+    text-shadow: 0 0 0.75rem light-dark(transparent, var(--nb-glow));
+  }
+
+  /* Decoration off where it would hurt: forced colors, the contrast theme, more contrast. */
+  :--contrast :is(.nb-card, .nb-btn--primary, :focus-visible),
+  :--contrast :is(h1, h2, h3) {
+    box-shadow: revert-layer;
+    text-shadow: none;
+  }
+
+  :--contrast :focus-visible {
+    outline-color: revert-layer;
+  }
+
+  :--contrast .nb-btn--primary,
+  :--contrast .nb-card {
+    --_bg: revert-layer;
+    --_bg-hover: revert-layer;
+    --_bg-active: revert-layer;
+    --_fg: revert-layer;
+    --_border: revert-layer;
+
+    border-color: revert-layer;
+  }
+
+  @media (forced-colors: active), (prefers-contrast: more) {
+    :--style :is(.nb-card, .nb-btn--primary, :focus-visible),
+    :--style :is(h1, h2, h3) {
+      box-shadow: revert-layer;
+      text-shadow: none;
+    }
+
+    :--style :focus-visible {
+      outline-color: revert-layer;
+    }
+
+    :--style .nb-btn--primary,
+    :--style .nb-card {
+      --_bg: revert-layer;
+      --_bg-hover: revert-layer;
+      --_bg-active: revert-layer;
+      --_fg: revert-layer;
+      --_border: revert-layer;
+
+      border-color: revert-layer;
+    }
+  }
+}

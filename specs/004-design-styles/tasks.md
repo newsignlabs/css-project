@@ -36,17 +36,17 @@ Format: `[ID] [P?] [Story] Description` — tests precede implementation (consti
 ## Phase 3: Expressive styles — neon, cyber, pixelate (S2)
 
 ### Tests first
-- [ ] T018 [P] [US2] Reduced-motion test: no animation on glitch/flicker/pulse/scanline drift; photosensitivity check (≤ 3 flashes/s)
-- [ ] T019 [P] [US2] Forced-colors + contrast-theme test: decorative effects removed in every style
-- [ ] T020 [P] [US2] Focus visibility test: focus indicator area/contrast ≥ default style under clip-path (cyber) and glow (neon)
+- [x] T018 [P] [US2] Reduced-motion test: no animation on glitch/flicker/pulse/scanline drift; photosensitivity check (≤ 3 flashes/s)
+- [x] T019 [P] [US2] Forced-colors + contrast-theme test: decorative effects removed in every style
+- [x] T020 [P] [US2] Focus visibility test: focus indicator area/contrast ≥ default style under clip-path (cyber) and glow (neon)
 
 ### Implementation
-- [ ] T021 [P] [US1] `neon`: dark-first palette + light variant, glow tokens (`--nb-glow`), outlined controls, glow focus ring, text glow for headings
-- [ ] T022 [P] [US1] `cyber`: notched corners (`--nb-cut`, clip-path) with focus-ring workaround, mono/condensed type, uppercase labels, scanline overlay, glitch hover (motion-safe)
+- [x] T021 [P] [US1] `neon`: dark-first palette + light variant, glow tokens (`--nb-glow`), outlined controls, glow focus ring, text glow for headings
+- [x] T022 [P] [US1] `cyber`: notched corners (`--nb-cut`, clip-path) with focus-ring workaround, mono/condensed type, uppercase labels, scanline overlay, glitch hover (motion-safe)
 - [ ] T042 [P] [US1] `n-morph`: surface-matched backgrounds, soft light/shadow pair, inset pressed/input states, large radius; contrast-theme borders and strengthened focus ring
 - [ ] T023 [P] [US1] `pixelate`: radius 0, stepped borders, 4 px grid density, `steps()` motion tokens, pixelated images
 - [ ] T024 [P] [US1] Pixel font in `@newbrush/fonts` (OFL), opt-in; fallback metrics to avoid layout shift
-- [ ] T025 [US3] Island polish: dark-first style inside light page (and vice versa) renders correctly
+- [x] T025 [US3] Island polish: dark-first style inside light page (and vice versa) renders correctly
 
 ## Phase 4: Utilities, config & tooling (S3)
 

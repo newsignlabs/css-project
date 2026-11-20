@@ -7,7 +7,62 @@
   "keywords": ["neon", "glow", "synthwave", "night", "vibrant"],
   "preferredScheme": "dark",
   "density": "default",
-  "tokens": {},
+  "effects": ["glow", "outlined-controls", "glow-focus-ring", "text-glow", "near-black-surfaces"],
+  "tokens": {
+    "color": {
+      "border": {
+        "default": {
+          "$value": "color-mix(in oklch, {color.accent} 40%, {color.border.default})"
+        }
+      }
+    }
+  },
+  "schemes": {
+    "dark": {
+      "color": {
+        "surface": {
+          "default": {
+            "$value": "color-mix(in oklch, {color.surface.default} 55%, oklch(0% 0 0))"
+          },
+          "subtle": {
+            "$value": "color-mix(in oklch, {color.surface.subtle} 60%, oklch(0% 0 0))"
+          },
+          "raised": {
+            "$value": "color-mix(in oklch, {color.surface.raised} 60%, oklch(0% 0 0))"
+          },
+          "sunken": {
+            "$value": "oklch(0% 0 0)"
+          },
+          "overlay": {
+            "$value": "color-mix(in oklch, {color.surface.overlay} 65%, oklch(0% 0 0))"
+          }
+        }
+      }
+    }
+  },
+  "recipes": [
+    {
+      "target": "nb-card",
+      "description": "Accent edge with a soft outer glow"
+    },
+    {
+      "target": "nb-btn--primary",
+      "description": "Outlined in the accent colour, glowing"
+    },
+    {
+      "target": "focus",
+      "description": "Glow around the focus outline (the outline stays)"
+    },
+    {
+      "target": "h1-h3",
+      "description": "Text glow in the dark scheme"
+    }
+  ],
+  "a11y": [
+    "Dark unless a theme is set explicitly; data-nb-theme=\"light\" gives the light variant",
+    "Glows are decoration only: removed under forced colors, the contrast theme and prefers-contrast: more",
+    "The focus outline is kept; the glow is added around it"
+  ],
   "status": "beta",
   "since": "0.4.0"
 }

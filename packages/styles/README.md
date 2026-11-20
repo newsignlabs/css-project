@@ -16,7 +16,9 @@ Design styles for newBrush (specs/004-design-styles). One class re-skins every c
 | ----- | ------ | ---- |
 | `minimal` | available | Small radii, no shadows below overlays (elevated cards keep a hairline border), airier cards, tight headings. Changes no colours. |
 | `g-morph` (`glass`) | available | Translucent raised, subtle and overlay surfaces with backdrop blur and light edges, larger radii, soft shadows, and an ambient brand/accent background when the class is on `<html>` or `<body>`. |
-| `n-morph` (`neumorph`), `neon`, `cyber`, `pixelate` (`pixel`) | planned | The marker works (`--nb-style`), the look lands in S2. |
+| `neon` | available, dark-first | Near-black surfaces, accent edges and glows, outlined primary buttons, glowing headings, a focus ring in the text colour with a glow around it. `data-nb-theme="light"` gives a light neon. |
+| `cyber` | available, dark-first | Notched corners (`--nb-cut`), square radii, monospace uppercase labels, static scanlines (dark scheme), a one-shot glitch on hover when motion is allowed. Focus rings are drawn inside the notch. |
+| `n-morph` (`neumorph`), `pixelate` (`pixel`) | planned | The marker works (`--nb-style`), the look lands in S2b. |
 
 ### g-morph knobs
 
@@ -34,6 +36,29 @@ in print and in the contrast theme. Under forced colors and `prefers-contrast: m
 ambient background go too. Every text and UI pair stays WCAG AA over the strongest ambient tint, in light and dark
 and with any brand seed (apps/visual-tests `styles-contrast.spec.ts`).
 
+### neon and cyber knobs
+
+| Property | Default | Meaning |
+| -------- | ------- | ------- |
+| `--nb-glow` | accent at 55% | neon's glow colour |
+| `--nb-cut` | `0.75rem` | cyber's corner notch (buttons use 60% of it) |
+| `--nb-style-overlay` | black 10% in dark, none in light | cyber's scanline colour |
+
+### Dark-first styles
+
+A style with `"preferredScheme": "dark"` (neon, cyber) is dark wherever no theme is explicit: on a light page without
+`data-nb-theme` it declares the dark theme for its subtree (and `<html>`, when the class is on `<body>`). Inside an
+explicit theme it follows that theme, so `data-nb-theme="light"` gives its light variant. It never applies over the
+contrast theme or `prefers-contrast: more`. Colours that differ per scheme are written under `"schemes"` in
+style.json and compile to `light-dark()`.
+
+### Nesting
+
+Everything a style emits is in `nb.styles`, so it outranks the token declarations of any theme whatever their
+specificity. The nearest style wins: a style class on an element beats a style inherited from above, a theme island
+(`data-nb-theme`) inside a style keeps that style's overrides in its own scheme, and recipes stop at another style or
+`.style-default` in between (two levels deep, the same selector strategy as theme variants).
+
 ### Contrast theme and forced colors outrank styles
 
 For every colour a style overrides, the build adds a rule in `nb.styles` restoring it under the contrast theme,
@@ -44,7 +69,8 @@ For every colour a style overrides, the build adds a rule in `nb.styles` restori
 ```text
 src/<name>/
 ├── style.json    metadata + DTCG token overrides (validated by @newbrush/schema StyleSource)
-├── recipes.css   optional; every rule inside @layer nb.styles, `:--style` stands for the style's selector
+├── recipes.css   optional; every rule inside @layer nb.styles, `:--style` stands for the style's selector,
+│                 `:--contrast` for the style inside or under the contrast theme (to switch decoration off)
 └── preview.html  optional; gallery fragment, listed as the style's example in the manifest
 ```
 
