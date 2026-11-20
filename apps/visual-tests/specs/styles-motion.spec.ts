@@ -98,11 +98,14 @@ for (const style of STYLES) {
   });
 }
 
-test("cyber's glitch runs on hover when motion is allowed (the checks above are not vacuous)", async ({
+test("cyber's glitch runs on hover when motion is allowed and the device can hover (the checks above are not vacuous)", async ({
   page,
 }) => {
   await renderFixture(page, { html, style: "cyber" });
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  // The glitch is behind @media (hover: hover): touch-only devices (and some headless engines) never run it.
+  const canHover = await page.evaluate(() => matchMedia("(hover: hover)").matches);
   const names = (await exercise(page)).map((a) => a.name);
-  expect(names).toContain("nb-cyber-glitch");
+  if (canHover) expect(names).toContain("nb-cyber-glitch");
+  else expect(names).not.toContain("nb-cyber-glitch");
 });
