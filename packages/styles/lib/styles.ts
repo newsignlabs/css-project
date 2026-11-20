@@ -3,11 +3,15 @@
  * overrides) and an optional `recipes.css` (scoped rules for what tokens cannot express). This module turns a style
  * into CSS and a manifest entry; build.ts runs it over src/ and custom styles will reuse it.
  *
- * Emitted shape (data-model.md):
- *   @layer nb.tokens { .g-morph, .nb-g-morph, .glass, [data-nb-style="g-morph"] { --nb-style: g-morph; …overrides } }
- *   @layer nb.styles { :where(.g-morph, …) .nb-card { … } }   ← recipes.css, `:--style` expanded
- * Overrides are plain inherited custom properties, so the nearest style ancestor wins (style islands), and
- * `.style-default` restores the default tokens for a subtree.
+ * Emitted shape, all in `@layer nb.styles` so it outranks every token declaration whatever its specificity:
+ *   :where(…dark-first…) { …the dark theme… }                    ← preferredScheme "dark", no explicit theme
+ *   .g-morph, .nb-g-morph, .glass, [data-nb-style="g-morph"],
+ *   :where(:root:has(> body:is(…)), …theme islands inside…) { --nb-style: g-morph; …overrides }
+ *   :where(…) { color; background-color }                         ← repaint, when the style changes them
+ *   :where(.g-morph, …) .nb-card { … }                              ← recipes.css, `:--style` expanded
+ *   [data-nb-theme="contrast"] :is(…) { …colours restored… }     ← contrast theme / forced colors outrank styles
+ * Overrides are plain inherited custom properties, so the nearest style ancestor wins (style islands); the
+ * zero-specificity forms lose to any style class on the element itself. `.style-default` restores the defaults.
  */
 import { Style, StyleSource } from "@newbrush/schema";
 
@@ -84,8 +88,12 @@ export function parseStyle(json: unknown, origin: string): LoadedStyle["source"]
     throw new Error(`${origin}: "${RESET_NAME}" is reserved for the default style`);
   if (parsed.data.aliases.some((a) => a.startsWith("nb-")))
     throw new Error(`${origin}: aliases must not start with "nb-" (the nb- form is generated)`);
-  if (Object.keys(parsed.data.schemes).length)
-    throw new Error(`${origin}: per-scheme overrides ("schemes") are not supported yet`);
+  for (const [scheme, tree] of Object.entries(parsed.data.schemes))
+    for (const [path] of flattenTokens(tree ?? {}))
+      if (!path.startsWith("color."))
+        throw new Error(
+          `${origin}: schemes.${scheme}.${path}: only colours can differ per scheme (they compile to light-dark())`,
+        );
   return parsed.data;
 }
 
@@ -123,12 +131,17 @@ export interface Override {
   path: string;
   cssVar: string;
   value: string;
+  /** Per-scheme values, for colours declared under `schemes` (`value` is then their `light-dark()`). */
+  schemes?: { light: string; dark: string };
 }
 
 /**
  * Resolves a style's overrides to CSS values. `{a.b}` references become `var(--nb-a-b)`; a reference to a token the
  * same style overrides means that token's default (see restoreValue): its `-base` alias (`var(--nb-a-b-base)`), or
  * for a token that is the same in every theme its tokens.css declaration — never the overridden value.
+ *
+ * Colours under `schemes.light` / `schemes.dark` compile to `light-dark(light, dark)`, the missing side being the
+ * theme's own value (`-base`); `light-dark()` resolves where the colour is used, from that element's color-scheme.
  *
  * Overrides apply to the token itself only: tokens defined from it (e.g. `control.radius` = `{radius.md}`) were
  * computed where the theme declared them, so a style overrides the tokens components actually consume.
@@ -137,11 +150,17 @@ export function resolveOverrides(
   source: LoadedStyle["source"],
   tokens: Map<string, TokenInfo>,
 ): Override[] {
-  const pairs = flattenTokens(source.tokens);
-  const overridden = new Set(pairs.map(([path]) => lookup(tokens, path)?.name ?? path));
-  return pairs.map(([path, raw]) => {
+  const plain = flattenTokens(source.tokens);
+  const light = new Map(flattenTokens(source.schemes.light ?? {}));
+  const dark = new Map(flattenTokens(source.schemes.dark ?? {}));
+  const all = [...plain.map(([p]) => p), ...light.keys(), ...dark.keys()];
+  const overridden = new Set(all.map((path) => lookup(tokens, path)?.name ?? path));
+  const tokenOf = (path: string) => {
     const token = lookup(tokens, path);
     if (!token) throw new Error(`${source.name}: unknown token "${path}"`);
+    return token;
+  };
+  const resolve = (path: string, raw: unknown) => {
     const value = String(raw).replace(/\{([^{}]+)\}/g, (_, ref: string) => {
       const target = lookup(tokens, ref);
       if (!target) throw new Error(`${source.name}: ${path} references unknown token {${ref}}`);
@@ -157,8 +176,29 @@ export function resolveOverrides(
     });
     if (!value.trim() || /[;{}]/.test(value))
       throw new Error(`${source.name}: ${path} has an invalid value "${value}"`);
-    return { path: token.name, cssVar: token.cssVar, value };
+    return value;
+  };
+  const out: Override[] = plain.map(([path, raw]) => {
+    const token = tokenOf(path);
+    if (light.has(path) || dark.has(path))
+      throw new Error(`${source.name}: ${path} is set both in tokens and in schemes`);
+    return { path: token.name, cssVar: token.cssVar, value: resolve(path, raw) };
   });
+  for (const path of new Set([...light.keys(), ...dark.keys()])) {
+    const token = tokenOf(path);
+    const fallback = restoreValue(token);
+    const schemes = {
+      light: light.has(path) ? resolve(path, light.get(path)) : fallback,
+      dark: dark.has(path) ? resolve(path, dark.get(path)) : fallback,
+    };
+    out.push({
+      path: token.name,
+      cssVar: token.cssVar,
+      value: `light-dark(${schemes.light}, ${schemes.dark})`,
+      schemes,
+    });
+  }
+  return out;
 }
 
 /** Value that restores a token's default inside `.style-default`. */
@@ -198,13 +238,56 @@ export function checkRecipes(css: string, origin: string): void {
 
 /** `:--style` in recipes.css stands for the style's selector list, at zero specificity. */
 export const STYLE_PLACEHOLDER = ":--style";
-export function expandRecipes(css: string, selectors: string[]): string {
-  return css.replaceAll(STYLE_PLACEHOLDER, `:where(${selectors.join(", ")})`);
+/**
+ * `:--contrast` stands for "the style, inside or under the contrast theme" (zero specificity): recipes use it to turn
+ * their decorations off there, next to `@media (forced-colors: active), (prefers-contrast: more)`.
+ */
+export const CONTRAST_PLACEHOLDER = ":--contrast";
+export function expandRecipes(css: string, selectors: string[], others: string[] = []): string {
+  const is = `:is(${selectors.join(", ")})`;
+  const where = `:where(${selectors.join(", ")})`;
+  const contrast = `:where([data-nb-theme="contrast"]${is}, [data-nb-theme="contrast"] ${is}, ${is} [data-nb-theme="contrast"])`;
+  const out = others.length ? nearestOnly(css, where, `:is(${others.join(", ")})`) : css;
+  return out.replaceAll(CONTRAST_PLACEHOLDER, contrast).replaceAll(STYLE_PLACEHOLDER, where);
+}
+
+/** Splits a selector list at top-level commas. */
+function splitList(list: string): string[] {
+  const out = [""];
+  let depth = 0;
+  for (const ch of list) {
+    if (ch === "(") depth++;
+    if (ch === ")") depth--;
+    if (ch === "," && depth === 0) out.push("");
+    else out[out.length - 1] += ch;
+  }
+  return out;
+}
+
+/**
+ * Nearest style wins for recipes too (R-02, selector strategy, depth 2): `:--style X` gets
+ * `:where(:not(<style> <other style or .style-default> X))`, so another style or a reset between the style and X turns
+ * the recipe off. Zero specificity, so recipes and their contrast/forced-colors removals still compare as written.
+ */
+function nearestOnly(css: string, where: string, others: string): string {
+  return css.replace(/([^{};]+)\{/g, (match, prelude: string) => {
+    if (!prelude.includes(`${STYLE_PLACEHOLDER} `)) return match;
+    const rewritten = splitList(prelude).map((part) => {
+      const m =
+        /^(\s*):--style\s+(.+?)(::?(?:before|after|backdrop|placeholder|marker))?(\s*)$/s.exec(
+          part,
+        );
+      if (!m) return part;
+      const [, lead = "", target = "", pseudo = "", trail = ""] = m;
+      return `${lead}${STYLE_PLACEHOLDER} ${target}:where(:not(${where} ${others} ${target}))${pseudo}${trail}`;
+    });
+    return `${rewritten.join(",")}{`;
+  });
 }
 
 /**
  * Contrast theme and forced colors outrank styles (contract: "forced-colors / contrast theme > style"): every colour
- * a style overrides is restored there. In nb.styles, so it beats the overrides in nb.tokens whatever the specificity.
+ * a style overrides is restored there. Emitted after the overrides, at higher or equal specificity, so it wins.
  */
 export function authorityCss(
   style: LoadedStyle,
@@ -218,41 +301,104 @@ export function authorityCss(
     return `${o.cssVar}: ${token ? restoreValue(token) : ""};`;
   });
   const is = `:is(${selectors.join(", ")})`;
+  const viaBody = `:has(> body${is})`;
   const block = (pad: string, sel: string[]) =>
     `${pad}${sel.join(`,\n${pad}`)} {\n${lines.map((l) => `${pad}  ${l}`).join("\n")}\n${pad}}`;
+  const contrast = '[data-nb-theme="contrast"]';
   return [
     "/* Contrast theme and forced colors outrank the style: its colours are restored. */",
     "@layer nb.styles {",
-    block("  ", [`[data-nb-theme="contrast"]${is}`, `[data-nb-theme="contrast"] ${is}`]),
+    block("  ", [
+      `${contrast}${is}`,
+      `${contrast} ${is}`,
+      `${is} ${contrast}`,
+      `:root${contrast}${viaBody}`,
+    ]),
     "  @media (prefers-contrast: more) and (prefers-color-scheme: light) {",
-    block("    ", [`:root:not([data-nb-theme])${is}`, `:root:not([data-nb-theme]) ${is}`]),
+    block("    ", [
+      `:root:not([data-nb-theme])${is}`,
+      `:root:not([data-nb-theme]) ${is}`,
+      `:root:not([data-nb-theme])${viaBody}`,
+    ]),
     "  }",
     "  @media (forced-colors: active) {",
-    block("    ", [is]),
+    block("    ", [is, `:root${viaBody}`, `${is} [data-nb-theme]`]),
     "  }",
     "}",
   ].join("\n");
 }
 
-/** CSS for one style: its marker and token overrides in nb.tokens, its recipes, then the contrast authority block. */
-export function styleCss(
-  style: LoadedStyle,
-  tokens: Map<string, TokenInfo>,
-  { prefix = "" }: { prefix?: string } = {},
-): string {
-  const selectors = styleSelectors(style.source, prefix);
-  const overrides = resolveOverrides(style.source, tokens);
-  const lines = [
-    `--nb-style: ${style.source.name};`,
-    ...overrides.map((o) => `${o.cssVar}: ${o.value};`),
-  ];
-  const parts = [
-    `/* newBrush style: ${style.source.name} */`,
-    `@layer nb.tokens {\n${rule(selectors, lines)}\n}`,
-  ];
+export interface StyleContext {
+  tokens: Map<string, TokenInfo>;
+  /** Selectors of every other style and of `.style-default`: a theme island inside one of them is theirs. */
+  others?: string[];
+  /** The dark theme's declarations (`themeDeclarations(tokensCss, "dark")`), for `preferredScheme: "dark"`. */
+  darkTheme?: Map<string, string>;
+  prefix?: string;
+}
+
+/** Tokens whose change must repaint the styled element itself (inherited values were computed above it). */
+const REPAINT: [RegExp, string][] = [
+  [/^color\.text/, "color: var(--nb-color-text);"],
+  [/^color\.surface\.default$/, "background-color: var(--nb-color-surface);"],
+  [/^font\.family\.sans$/, "font-family: var(--nb-font-family-sans);"],
+];
+
+/**
+ * CSS for one style, all in nb.styles: the dark theme when it is dark-first and no theme is explicit, its marker and
+ * token overrides (also on <html> when the style is on <body>, and on theme islands inside it), a repaint, its
+ * recipes, then the contrast authority block.
+ */
+export function styleCss(style: LoadedStyle, ctx: StyleContext): string {
+  const { tokens, others = [], darkTheme, prefix = "" } = ctx;
+  const { source } = style;
+  const selectors = styleSelectors(source, prefix);
+  const is = `:is(${selectors.join(", ")})`;
+  const overrides = resolveOverrides(source, tokens);
+  const darkFirst = source.preferredScheme === "dark";
+  const parts = [`/* newBrush style: ${source.name} */`, "@layer nb.styles {"];
+  const indent = (block: string) => block.replace(/^/gm, "  ");
+
+  if (darkFirst) {
+    if (!darkTheme?.size)
+      throw new Error(`${source.name}: dark-first style needs the dark theme declarations`);
+    parts.push(
+      "  /* Dark-first: dark unless a theme is explicit (data-nb-theme), and never over the contrast theme. */",
+      "  @media not (prefers-contrast: more) {",
+      indent(
+        rule(
+          [
+            `:where(${is}:not([data-nb-theme], [data-nb-theme] *))`,
+            `:where(:root:not([data-nb-theme]):has(> body${is}))`,
+          ],
+          [...darkTheme].map(([p, v]) => `${p}: ${v};`),
+        ),
+      ),
+      "  }",
+      "",
+    );
+  }
+
+  const island = `${is} [data-nb-theme]`;
+  const notOthers = others.length
+    ? `:not(:is(${others.join(", ")}), ${is} :is(${others.join(", ")}) [data-nb-theme])`
+    : "";
+  parts.push(
+    rule(
+      [...selectors, `:where(:root:has(> body${is}), ${island}${notOthers})`],
+      [`--nb-style: ${source.name};`, ...overrides.map((o) => `${o.cssVar}: ${o.value};`)],
+    ),
+  );
+
+  const repaint = REPAINT.filter(([re]) => darkFirst || overrides.some((o) => re.test(o.path))).map(
+    ([, line]) => line,
+  );
+  if (repaint.length) parts.push("", rule([`:where(${selectors.join(", ")})`], repaint));
+  parts.push("}");
+
   if (style.recipes?.trim()) {
-    checkRecipes(style.recipes, `${style.source.name}/recipes.css`);
-    parts.push(expandRecipes(style.recipes.trim(), selectors));
+    checkRecipes(style.recipes, `${source.name}/recipes.css`);
+    parts.push(expandRecipes(style.recipes.trim(), selectors, others));
   }
   const authority = authorityCss(style, tokens, selectors);
   if (authority) parts.push(authority);
@@ -275,7 +421,7 @@ export function resetCss(
       if (token && !restored.has(token.cssVar)) restored.set(token.cssVar, restoreValue(token));
     }
   const lines = [`--nb-style: ${RESET_NAME};`, ...[...restored].map(([v, x]) => `${v}: ${x};`)];
-  return `/* newBrush style reset: .style-default */\n@layer nb.tokens {\n${rule(resetSelectors(prefix), lines)}\n}\n`;
+  return `/* newBrush style reset: .style-default */\n@layer nb.styles {\n${rule(resetSelectors(prefix), lines)}\n}\n`;
 }
 
 /** Manifest entry (`@newbrush/schema` Style) for a style. */
@@ -291,7 +437,11 @@ export function manifestEntry(style: LoadedStyle, tokens: Map<string, TokenInfo>
     density: source.density,
     fonts: source.fonts,
     effects: source.effects,
-    tokens: resolveOverrides(source, tokens),
+    tokens: resolveOverrides(source, tokens).flatMap(({ schemes, ...o }) =>
+      schemes
+        ? (["light", "dark"] as const).map((scheme) => ({ ...o, value: schemes[scheme], scheme }))
+        : [o],
+    ),
     recipes: source.recipes,
     a11y: source.a11y,
     examples: style.preview?.trim()

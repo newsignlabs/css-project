@@ -73,6 +73,11 @@
     background-image: none;
   }
 
+  :--contrast :is(.nb-card, .nb-navbar, .nb-modal, .nb-table-wrap) {
+    border-color: revert-layer;
+    backdrop-filter: none;
+  }
+
   @media (forced-colors: active), (prefers-contrast: more) {
     :--style,
     :root:has(> body:--style) {

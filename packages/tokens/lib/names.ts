@@ -12,17 +12,12 @@ export function aliasPath(value: unknown): string[] | null {
 }
 
 /**
- * Semantic groups whose tokens get a `-base` alias (specs/004 T005). Each is declared as
+ * Semantic token groups with a `-base` alias (specs/004 T005; every semantic colour since S2). Each is declared as
  * `--nb-x-base: <value>; --nb-x: var(--nb-x-base);` wherever a theme declares it, so a design style can override
  * `--nb-x` with a value derived from itself (`color-mix(in oklch, var(--nb-x-base) 60%, transparent)`) and
  * `.style-default` can restore it, without a reference cycle.
  */
-export const BASE_ALIAS_GROUPS: readonly (readonly string[])[] = [
-  ["color", "surface"],
-  ["color", "text"],
-  ["color", "border"],
-  ["color", "focus"],
-];
+export const BASE_ALIAS_GROUPS: readonly (readonly string[])[] = [["color"]];
 
 /** Whether a token path has a `-base` alias. */
 export const hasBaseAlias = (path: readonly string[]): boolean =>

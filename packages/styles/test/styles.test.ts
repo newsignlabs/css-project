@@ -6,6 +6,7 @@ import {
   authorityCss,
   checkRecipes,
   checkUnique,
+  expandRecipes,
   type LoadedStyle,
   parseStyle,
   resetCss,
@@ -57,8 +58,8 @@ describe("built-in styles", () => {
     for (const s of manifest.styles) expect(() => Style.parse(s)).not.toThrow();
   });
 
-  it("minimal and g-morph have a look of their own (S1)", () => {
-    for (const name of ["minimal", "g-morph"]) {
+  it("minimal, g-morph, neon and cyber have a look of their own (S1, S2a)", () => {
+    for (const name of ["minimal", "g-morph", "neon", "cyber"]) {
       const s = manifest.styles.find((x) => x.name === name);
       expect(s?.tokens.length, name).toBeGreaterThan(0);
       expect(s?.recipes.length, name).toBeGreaterThan(0);
@@ -102,10 +103,13 @@ describe("built-in styles", () => {
     };
     // A bare marker (.g-morph, .style-default, [data-nb-style=…]) or a selector that requires one: the guard in
     // apps/visual-tests/specs/styles-default.spec.ts relies on every rule mentioning data-nb-style.
-    for (const list of selectors)
+    // Keyframe steps (0%, 33%, 100%, from, to) are not selectors.
+    const keyframe = /^(\d+%|from|to)(\s*,\s*(\d+%|from|to))*$/;
+    const rules = selectors.filter((list) => !keyframe.test(list));
+    for (const list of rules)
       for (const sel of split(list))
         expect(sel).toMatch(/^\.[a-z0-9-]+$|\[data-nb-style="[a-z0-9-]+"\]/);
-    for (const list of selectors) expect(list).toContain("data-nb-style");
+    for (const list of rules) expect(list).toContain("data-nb-style");
   });
 });
 
@@ -131,10 +135,13 @@ describe("style.json validation", () => {
     expect(() => style({ aliases: ["nb-glass"] })).toThrow(/nb-/);
   });
 
-  it("rejects per-scheme overrides until they are supported", () => {
+  it("allows per-scheme overrides for colours only (they compile to light-dark())", () => {
     expect(() => style({ schemes: { dark: { radius: { md: { $value: "0" } } } } })).toThrow(
-      /not supported yet/,
+      /only colours can differ per scheme/,
     );
+    expect(() =>
+      style({ schemes: { dark: { color: { surface: { default: { $value: "black" } } } } } }),
+    ).not.toThrow();
   });
 
   it("rejects names or aliases used twice", () => {
@@ -199,6 +206,10 @@ describe("token overrides", () => {
   });
 
   it("refuses to derive from a themed token without a -base alias that it also overrides", () => {
+    // Every semantic colour has an alias now; a themed token without one is synthetic.
+    const without = new Map(tokens);
+    const accent = without.get("color.accent.default");
+    if (accent) without.set(accent.name, { ...accent, hasBase: false });
     expect(() =>
       resolveOverrides(
         style({
@@ -209,9 +220,44 @@ describe("token overrides", () => {
             },
           },
         }).source,
-        tokens,
+        without,
       ),
     ).toThrow(/derives from \{color.accent\}/);
+  });
+
+  it("compiles schemes to light-dark(), the missing side being the theme's own value", () => {
+    const overrides = resolveOverrides(
+      style({
+        schemes: {
+          dark: {
+            color: {
+              surface: {
+                default: { $value: "color-mix(in oklch, {color.surface.default} 50%, black)" },
+              },
+            },
+          },
+          light: { color: { text: { default: { $value: "{color.accent}" } } } },
+        },
+      }).source,
+      tokens,
+    );
+    expect(overrides.find((o) => o.path === "color.surface.default")).toMatchObject({
+      value:
+        "light-dark(var(--nb-color-surface-base), color-mix(in oklch, var(--nb-color-surface-base) 50%, black))",
+      schemes: { light: "var(--nb-color-surface-base)" },
+    });
+    expect(overrides.find((o) => o.path === "color.text.default")?.value).toBe(
+      "light-dark(var(--nb-color-accent), var(--nb-color-text-base))",
+    );
+    expect(() =>
+      resolveOverrides(
+        style({
+          tokens: { color: { text: { default: { $value: "red" } } } },
+          schemes: { dark: { color: { text: { default: { $value: "blue" } } } } },
+        }).source,
+        tokens,
+      ),
+    ).toThrow(/both in tokens and in schemes/);
   });
 
   it("rejects unknown tokens, unknown references and values that would break out of the rule", () => {
@@ -224,10 +270,49 @@ describe("token overrides", () => {
     expect(bad({ radius: { md: { $value: "0} body{color:red" } } })).toThrow(/invalid value/);
   });
 
-  it("emits the marker and overrides on the style selectors in nb.tokens", () => {
-    const css = styleCss(style({ tokens: { radius: { md: { $value: "{radius.lg}" } } } }), tokens);
+  it("emits the marker and overrides in nb.styles, also on <html> via <body> and on theme islands inside", () => {
+    const css = styleCss(style({ tokens: { radius: { md: { $value: "{radius.lg}" } } } }), {
+      tokens,
+      others: [".neon", ".style-default"],
+    });
     expect(css).toContain(
-      '@layer nb.tokens {\n  .g-morph,\n  .nb-g-morph,\n  .glass,\n  [data-nb-style="g-morph"] {\n    --nb-style: g-morph;\n    --nb-radius-md: var(--nb-radius-lg);\n  }\n}',
+      '@layer nb.styles {\n  .g-morph,\n  .nb-g-morph,\n  .glass,\n  [data-nb-style="g-morph"],\n  :where(',
+    );
+    const is = ':is(.g-morph, .nb-g-morph, .glass, [data-nb-style="g-morph"])';
+    expect(css).toContain(
+      `:where(:root:has(> body${is}), ${is} [data-nb-theme]:not(:is(.neon, .style-default), ${is} :is(.neon, .style-default) [data-nb-theme]))`,
+    );
+    expect(css).toContain("--nb-style: g-morph;\n    --nb-radius-md: var(--nb-radius-lg);");
+    expect(css).not.toContain("nb.tokens");
+    expect(css).not.toContain("Dark-first");
+  });
+
+  it("dark-first styles take the dark theme unless a theme is explicit, never over the contrast theme", () => {
+    const dark = new Map([
+      ["color-scheme", "dark"],
+      ["--nb-color-surface-base", "var(--nb-color-neutral-950)"],
+    ]);
+    const css = styleCss(style({ preferredScheme: "dark" }), { tokens, darkTheme: dark });
+    const is = ':is(.g-morph, .nb-g-morph, .glass, [data-nb-style="g-morph"])';
+    expect(css).toContain("@media not (prefers-contrast: more) {");
+    expect(css).toContain(`:where(${is}:not([data-nb-theme], [data-nb-theme] *)),`);
+    expect(css).toContain(`:where(:root:not([data-nb-theme]):has(> body${is}))`);
+    expect(css).toContain("color-scheme: dark;");
+    expect(css.indexOf("Dark-first")).toBeLessThan(css.indexOf("--nb-style: g-morph"));
+    // A dark-first style repaints itself: colours inherited from above were computed in the light scheme.
+    expect(css).toContain("color: var(--nb-color-text);");
+    expect(css).toContain("background-color: var(--nb-color-surface);");
+    expect(() => styleCss(style({ preferredScheme: "dark" }), { tokens })).toThrow(/dark theme/);
+  });
+
+  it("repaints only what the style changes", () => {
+    const css = (tree: Record<string, unknown>) => styleCss(style({ tokens: tree }), { tokens });
+    expect(css({ radius: { md: { $value: "0" } } })).not.toContain("color: var(--nb-color-text)");
+    const text = css({ color: { text: { muted: { $value: "red" } } } });
+    expect(text).toContain("color: var(--nb-color-text);");
+    expect(text).not.toContain("background-color: var(--nb-color-surface)");
+    expect(css({ font: { family: { sans: { $value: "serif" } } } })).toContain(
+      "font-family: var(--nb-font-family-sans);",
     );
   });
 });
@@ -239,10 +324,29 @@ describe("recipes", () => {
         {},
         { recipes: "@layer nb.styles {\n  :--style .nb-card { backdrop-filter: blur(8px); }\n}\n" },
       ),
-      tokens,
+      { tokens },
     );
     expect(css).toContain(
       '@layer nb.styles {\n  :where(.g-morph, .nb-g-morph, .glass, [data-nb-style="g-morph"]) .nb-card',
+    );
+  });
+
+  it("keeps recipes to the nearest style: another style or a reset in between turns them off", () => {
+    expect(expandRecipes("@layer nb.styles { :--style .x, .y { a: b } }", [".s"], [".o"])).toBe(
+      "@layer nb.styles { :where(.s) .x:where(:not(:where(.s) :is(.o) .x)), .y { a: b } }",
+    );
+    // Pseudo-elements stay last; rules without a descendant (body:--style::after) are left alone.
+    expect(expandRecipes(":--style .x::after {}", [".s"], [".o"])).toBe(
+      ":where(.s) .x:where(:not(:where(.s) :is(.o) .x))::after {}",
+    );
+    expect(expandRecipes("body:--style::after {}", [".s"], [".o"])).toBe(
+      "body:where(.s)::after {}",
+    );
+  });
+
+  it("expands :--contrast to the style inside, on or around the contrast theme", () => {
+    expect(expandRecipes(":--contrast .x {}", [".s"])).toBe(
+      ':where([data-nb-theme="contrast"]:is(.s), [data-nb-theme="contrast"] :is(.s), :is(.s) [data-nb-theme="contrast"]) .x {}',
     );
   });
 
@@ -273,6 +377,11 @@ describe("contrast theme and forced colors outrank the style", () => {
     );
     expect(css).toContain("@media (prefers-contrast: more) and (prefers-color-scheme: light)");
     expect(css).toContain("@media (forced-colors: active)");
+    // Theme islands inside the style and <html> styled through <body> are covered too.
+    expect(css).toContain(
+      ':is(.g-morph, .nb-g-morph, .glass, [data-nb-style="g-morph"]) [data-nb-theme="contrast"]',
+    );
+    expect(css).toContain(':root[data-nb-theme="contrast"]:has(> body:is(');
     expect(
       css.split("--nb-color-surface-raised: var(--nb-color-surface-raised-base);"),
     ).toHaveLength(4);
@@ -306,10 +415,21 @@ describe(".style-default", () => {
     expect(css).toContain("--nb-color-surface-raised: var(--nb-color-surface-raised-base);");
   });
 
+  it("restores in nb.styles, after the styles", () => {
+    expect(resetCss([style()], tokens)).toContain("@layer nb.styles {");
+  });
+
   it("refuses to override a themed token it could not restore", () => {
-    const accent = tokens.get("color.on-accent");
-    expect(accent?.themed).toBe(true);
-    expect(accent?.hasBase).toBe(false);
-    expect(() => restoreValue(accent as NonNullable<typeof accent>)).toThrow(/BASE_ALIAS_GROUPS/);
+    // Every semantic colour has a -base alias; a themed token without one is synthetic.
+    expect(tokens.get("color.on-accent")?.hasBase).toBe(true);
+    expect(() =>
+      restoreValue({
+        name: "x.y",
+        cssVar: "--nb-x-y",
+        themed: true,
+        declared: "red",
+        hasBase: false,
+      }),
+    ).toThrow(/BASE_ALIAS_GROUPS/);
   });
 });

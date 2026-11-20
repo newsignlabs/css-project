@@ -1,0 +1,124 @@
+@layer nb.styles {
+  /* Knobs (contract: --nb-cut). --nb-style-overlay is the scanline colour; the contrast suite composites it. */
+  :--style,
+  :root:has(> body:--style) {
+    --nb-cut: 0.75rem;
+    /* Scanlines in the dark scheme only: on a light page they would cost text contrast (T011 checks it). */
+    --nb-style-overlay: light-dark(transparent, color-mix(in oklch, oklch(0% 0 0) 10%, transparent));
+  }
+
+  /* Notched corners: top-left and bottom-right. */
+  :--style :is(.nb-card, .nb-btn:not(:where(.nb-btn--link))) {
+    clip-path: polygon(
+      var(--_cut) 0,
+      100% 0,
+      100% calc(100% - var(--_cut)),
+      calc(100% - var(--_cut)) 100%,
+      0 100%,
+      0 var(--_cut)
+    );
+  }
+
+  :--style .nb-card {
+    --_cut: var(--nb-cut);
+  }
+
+  :--style .nb-btn {
+    --_cut: calc(var(--nb-cut) * 0.6);
+  }
+
+  /* The clip would cut off an outline drawn outside: draw it inside, in a colour that contrasts with the fill. */
+  :--style .nb-btn:not(:where(.nb-btn--link)):focus-visible,
+  :--style .nb-card__link:focus-visible::after {
+    outline-offset: calc(-1 * var(--nb-control-focus-ring-width) - 2px);
+  }
+
+  :--style :is(.nb-btn--primary, .nb-btn--danger):focus-visible {
+    outline-color: var(--_fg);
+  }
+
+  :--style :is(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--nb-font-family-mono);
+    letter-spacing: var(--nb-font-tracking-tight);
+  }
+
+  :--style :is(.nb-btn, .nb-badge, .nb-chip, th, label, legend) {
+    font-family: var(--nb-font-family-mono);
+    text-transform: uppercase;
+    letter-spacing: var(--nb-font-tracking-wide);
+  }
+
+  /* Static scanlines over the page (no drift); they never take pointer events. */
+  :root:--style > body::after,
+  body:--style::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--nb-style-overlay) 0 1px,
+      transparent 1px 3px
+    );
+  }
+
+  @keyframes nb-cyber-glitch {
+    0%,
+    100% {
+      translate: 0;
+    }
+
+    33% {
+      translate: 2px -1px;
+    }
+
+    66% {
+      translate: -2px 1px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @media (hover: hover) {
+      :--style .nb-btn:hover {
+        animation: nb-cyber-glitch 240ms steps(3, end) 1;
+      }
+    }
+  }
+
+  /* Decoration off where it would hurt: forced colors, the contrast theme, more contrast, print. */
+  :--contrast :is(.nb-card, .nb-btn) {
+    clip-path: none;
+    animation: none;
+  }
+
+  :--contrast :is(.nb-btn, .nb-card__link):focus-visible,
+  :--contrast .nb-card__link:focus-visible::after {
+    outline-offset: revert-layer;
+    outline-color: revert-layer;
+  }
+
+  :root[data-nb-theme="contrast"]:--style > body::after,
+  [data-nb-theme="contrast"] body:--style::after,
+  body[data-nb-theme="contrast"]:--style::after {
+    content: none;
+  }
+
+  @media (forced-colors: active), (prefers-contrast: more), print {
+    :--style :is(.nb-card, .nb-btn) {
+      clip-path: none;
+      animation: none;
+    }
+
+    :--style :is(.nb-btn, .nb-card__link):focus-visible,
+    :--style .nb-card__link:focus-visible::after {
+      outline-offset: revert-layer;
+      outline-color: revert-layer;
+    }
+
+    :root:--style > body::after,
+    body:--style::after {
+      content: none;
+    }
+  }
+}

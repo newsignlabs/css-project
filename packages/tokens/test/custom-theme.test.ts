@@ -26,7 +26,7 @@ describe("themeDeclarations", () => {
     const light = themeDeclarations(tokensCss, "light");
     expect(light.get("color-scheme")).toBe("light");
     expect(light.get("--nb-scheme")).toBe("light");
-    expect(light.get("--nb-color-accent")).toBe("var(--nb-color-brand-600)");
+    expect(light.get("--nb-color-accent-base")).toBe("var(--nb-color-brand-600)");
     expect(light.get("--nb-color-surface-base")).toBe("var(--nb-color-neutral-50)");
     expect(light.get("--nb-color-surface")).toBe("var(--nb-color-surface-base)");
     expect(light.has("--nb-color-brand-600")).toBe(false); // palettes are primitives, not theme declarations
@@ -35,12 +35,12 @@ describe("themeDeclarations", () => {
   it("dark and contrast: light declarations with that theme's overrides", () => {
     const dark = themeDeclarations(tokensCss, "dark");
     expect(dark.get("color-scheme")).toBe("dark");
-    expect(dark.get("--nb-color-accent")).toBe("var(--nb-color-brand-400)");
+    expect(dark.get("--nb-color-accent-base")).toBe("var(--nb-color-brand-400)");
     expect(dark.get("--nb-color-surface-base")).toBe("var(--nb-color-neutral-950)");
     const contrast = themeDeclarations(tokensCss, "contrast");
     expect(contrast.get("--nb-contrast")).toBe("more");
     expect(contrast.get("color-scheme")).toBe("light");
-    expect(contrast.get("--nb-color-accent")).toBe("var(--nb-color-brand-800)");
+    expect(contrast.get("--nb-color-accent-base")).toBe("var(--nb-color-brand-800)");
     expect(contrast.size).toBe(themeDeclarations(tokensCss, "light").size + 1);
   });
 
@@ -68,7 +68,7 @@ describe("customThemeCss", () => {
       expect(css).toContain(
         `--nb-color-brand-${s.step}: var(--nb-tint-brand-${s.step}, ${s.value});`,
       );
-    expect(css).toContain("--nb-color-accent: var(--nb-color-brand-400);");
+    expect(css).toContain("--nb-color-accent-base: var(--nb-color-brand-400);");
     expect(css).not.toContain("--nb-color-neutral-50:"); // unseeded palettes are inherited
     expect(css.match(/:root/g)).toBeNull();
   });
