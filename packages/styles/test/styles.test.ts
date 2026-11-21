@@ -58,8 +58,8 @@ describe("built-in styles", () => {
     for (const s of manifest.styles) expect(() => Style.parse(s)).not.toThrow();
   });
 
-  it("minimal, g-morph, neon and cyber have a look of their own (S1, S2a)", () => {
-    for (const name of ["minimal", "g-morph", "neon", "cyber"]) {
+  it("all six styles have a look of their own (S1, S2)", () => {
+    for (const name of ["minimal", "g-morph", "neon", "cyber", "n-morph", "pixelate"]) {
       const s = manifest.styles.find((x) => x.name === name);
       expect(s?.tokens.length, name).toBeGreaterThan(0);
       expect(s?.recipes.length, name).toBeGreaterThan(0);

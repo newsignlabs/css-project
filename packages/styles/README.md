@@ -18,7 +18,8 @@ Design styles for newBrush (specs/004-design-styles). One class re-skins every c
 | `g-morph` (`glass`) | available | Translucent raised, subtle and overlay surfaces with backdrop blur and light edges, larger radii, soft shadows, and an ambient brand/accent background when the class is on `<html>` or `<body>`. |
 | `neon` | available, dark-first | Near-black surfaces, accent edges and glows, outlined primary buttons, glowing headings, a focus ring in the text colour with a glow around it. `data-nb-theme="light"` gives a light neon. |
 | `cyber` | available, dark-first | Notched corners (`--nb-cut`), square radii, monospace uppercase labels, static scanlines (dark scheme), a one-shot glitch on hover when motion is allowed. Focus rings are drawn inside the notch. |
-| `n-morph` (`neumorph`), `pixelate` (`pixel`) | planned | The marker works (`--nb-style`), the look lands in S2b. |
+| `n-morph` (`neumorph`) | available | Surfaces extruded from the page by a soft light and shadow pair, large radii, inset inputs, pressed buttons pushed in with a bolder label, a thick focus ring. Controls keep their borders. |
+| `pixelate` (`pixel`) | available | Square corners everywhere, stepped 4 px pixel frames on cards and buttons, `steps()` motion, pixelated images, pixel headings (`--nb-font-family-pixel`: monospace, or Pixelify Sans with `@newbrush/fonts/pixelify-sans.css`). |
 
 ### g-morph knobs
 
@@ -36,13 +37,15 @@ in print and in the contrast theme. Under forced colors and `prefers-contrast: m
 ambient background go too. Every text and UI pair stays WCAG AA over the strongest ambient tint, in light and dark
 and with any brand seed (apps/visual-tests `styles-contrast.spec.ts`).
 
-### neon and cyber knobs
+### neon, cyber and n-morph knobs
 
 | Property | Default | Meaning |
 | -------- | ------- | ------- |
 | `--nb-glow` | accent at 55% | neon's glow colour |
 | `--nb-cut` | `0.75rem` | cyber's corner notch (buttons use 60% of it) |
 | `--nb-style-overlay` | black 10% in dark, none in light | cyber's scanline colour |
+| `--nb-extrude` | `0.375rem` | n-morph's extrusion depth |
+| `--nb-soft-light`, `--nb-soft-shadow` | from the surface, per scheme | n-morph's light and shadow pair |
 
 ### Dark-first styles
 

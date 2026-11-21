@@ -7,7 +7,63 @@
   "keywords": ["neumorphism", "soft ui", "extruded", "tactile", "skeuomorphic"],
   "preferredScheme": "light",
   "density": "default",
-  "tokens": {},
+  "effects": ["extruded-surfaces", "soft-shadow-pair", "inset-pressed-states", "large-radius"],
+  "tokens": {
+    "color": {
+      "surface": {
+        "raised": {
+          "$value": "{color.surface.default}"
+        }
+      }
+    },
+    "radius": {
+      "md": {
+        "$value": "{radius.xl}"
+      },
+      "lg": {
+        "$value": "{radius.2xl}"
+      }
+    },
+    "control": {
+      "radius": {
+        "$value": "{radius.xl}"
+      },
+      "focus-ring-width": {
+        "$value": "{border.width.thick}"
+      }
+    },
+    "elevation": {
+      "1": {
+        "$value": "calc(-1 * var(--nb-extrude) * 1) calc(-1 * var(--nb-extrude) * 1) calc(var(--nb-extrude) * 1 * 2.25) var(--nb-soft-light), calc(var(--nb-extrude) * 1) calc(var(--nb-extrude) * 1) calc(var(--nb-extrude) * 1 * 2.25) var(--nb-soft-shadow)"
+      },
+      "2": {
+        "$value": "calc(-1 * var(--nb-extrude) * 1.5) calc(-1 * var(--nb-extrude) * 1.5) calc(var(--nb-extrude) * 1.5 * 2.25) var(--nb-soft-light), calc(var(--nb-extrude) * 1.5) calc(var(--nb-extrude) * 1.5) calc(var(--nb-extrude) * 1.5 * 2.25) var(--nb-soft-shadow)"
+      },
+      "3": {
+        "$value": "calc(-1 * var(--nb-extrude) * 2) calc(-1 * var(--nb-extrude) * 2) calc(var(--nb-extrude) * 2 * 2.25) var(--nb-soft-light), calc(var(--nb-extrude) * 2) calc(var(--nb-extrude) * 2) calc(var(--nb-extrude) * 2 * 2.25) var(--nb-soft-shadow)"
+      }
+    }
+  },
+  "recipes": [
+    {
+      "target": "nb-card, nb-table-wrap",
+      "description": "Extruded from the page: same surface, soft light and shadow pair, no border"
+    },
+    {
+      "target": "nb-btn",
+      "description": "Extruded; pressed shows an inset pair and a bolder label (never shadow alone)"
+    },
+    {
+      "target": "nb-input",
+      "description": "Inset into the page, keeping its border"
+    }
+  ],
+  "a11y": [
+    "Controls keep their borders (WCAG 1.4.11); only cards and table wrappers rely on shadows",
+    "The pressed state also changes the label weight, so it is not conveyed by shadow alone",
+    "Focus ring strengthened to the thick border width",
+    "Under the contrast theme, forced colors and prefers-contrast: more, borders come back and the soft shadows go"
+  ],
   "status": "beta",
   "since": "0.4.0"
 }

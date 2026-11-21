@@ -7,7 +7,79 @@
   "keywords": ["pixel", "8-bit", "retro", "arcade", "game"],
   "preferredScheme": "auto",
   "density": "grid-4",
-  "tokens": {},
+  "fonts": ["pixelify-sans"],
+  "effects": [
+    "square-corners",
+    "stepped-borders",
+    "steps-motion",
+    "pixelated-images",
+    "pixel-headings"
+  ],
+  "tokens": {
+    "radius": {
+      "xs": {
+        "$value": "{radius.none}"
+      },
+      "sm": {
+        "$value": "{radius.none}"
+      },
+      "md": {
+        "$value": "{radius.none}"
+      },
+      "lg": {
+        "$value": "{radius.none}"
+      },
+      "xl": {
+        "$value": "{radius.none}"
+      },
+      "2xl": {
+        "$value": "{radius.none}"
+      },
+      "full": {
+        "$value": "{radius.none}"
+      }
+    },
+    "control": {
+      "radius": {
+        "$value": "{radius.none}"
+      }
+    },
+    "motion": {
+      "easing": {
+        "standard": {
+          "$value": "steps(4, end)"
+        },
+        "emphasized": {
+          "$value": "steps(4, end)"
+        },
+        "decelerate": {
+          "$value": "steps(4, end)"
+        },
+        "accelerate": {
+          "$value": "steps(4, end)"
+        }
+      }
+    }
+  },
+  "recipes": [
+    {
+      "target": "nb-card, nb-btn",
+      "description": "Stepped 4 px pixel frame with notched corners (box-shadow, no layout change)"
+    },
+    {
+      "target": "headings",
+      "description": "Pixel face (--nb-font-family-pixel; monospace unless @newbrush/fonts/pixelify-sans.css is loaded)"
+    },
+    {
+      "target": "img",
+      "description": "image-rendering: pixelated"
+    }
+  ],
+  "a11y": [
+    "The focus ring sits outside the pixel frame, so the frame never hides it",
+    "Pixel headings fall back to the monospace stack; the opt-in web font has metric-matched fallbacks (no layout shift)",
+    "Under the contrast theme, forced colors and prefers-contrast: more, real borders replace the pixel frame"
+  ],
   "status": "beta",
   "since": "0.4.0"
 }

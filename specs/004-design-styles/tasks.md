@@ -43,9 +43,9 @@ Format: `[ID] [P?] [Story] Description` — tests precede implementation (consti
 ### Implementation
 - [x] T021 [P] [US1] `neon`: dark-first palette + light variant, glow tokens (`--nb-glow`), outlined controls, glow focus ring, text glow for headings
 - [x] T022 [P] [US1] `cyber`: notched corners (`--nb-cut`, clip-path) with focus-ring workaround, mono/condensed type, uppercase labels, scanline overlay, glitch hover (motion-safe)
-- [ ] T042 [P] [US1] `n-morph`: surface-matched backgrounds, soft light/shadow pair, inset pressed/input states, large radius; contrast-theme borders and strengthened focus ring
-- [ ] T023 [P] [US1] `pixelate`: radius 0, stepped borders, 4 px grid density, `steps()` motion tokens, pixelated images
-- [ ] T024 [P] [US1] Pixel font in `@newbrush/fonts` (OFL), opt-in; fallback metrics to avoid layout shift
+- [x] T042 [P] [US1] `n-morph`: surface-matched backgrounds, soft light/shadow pair, inset pressed/input states, large radius; contrast-theme borders and strengthened focus ring
+- [x] T023 [P] [US1] `pixelate`: radius 0, stepped borders, 4 px grid density, `steps()` motion tokens, pixelated images
+- [x] T024 [P] [US1] Pixel font in `@newbrush/fonts` (OFL), opt-in; fallback metrics to avoid layout shift
 - [x] T025 [US3] Island polish: dark-first style inside light page (and vice versa) renders correctly
 
 ## Phase 4: Utilities, config & tooling (S3)

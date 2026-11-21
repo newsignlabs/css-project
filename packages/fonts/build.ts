@@ -20,9 +20,13 @@ interface Family {
   name: string;
   pkg: string;
   /** Token it fills: --nb-font-family-<token>. */
-  token: "sans" | "serif" | "mono";
+  token: "sans" | "serif" | "mono" | "pixel";
   metrics: string;
   fallback: string;
+  /** Fontsource stylesheets to read (default: the weight axis, upright and italic). */
+  sources?: string[];
+  /** Whether fonts.css includes it (default true); display faces are opt-in only. */
+  inBundle?: boolean;
 }
 
 const FAMILIES: Family[] = [
@@ -49,6 +53,17 @@ const FAMILIES: Family[] = [
     token: "mono",
     metrics: "jetBrainsMono",
     fallback: "courierNew",
+  },
+  {
+    // Pixel display face for the pixelate design style (specs/004 T024): opt-in, its own file only.
+    id: "pixelify-sans",
+    name: "Pixelify Sans Variable",
+    pkg: "@fontsource-variable/pixelify-sans",
+    token: "pixel",
+    metrics: "pixelifySans",
+    fallback: "courierNew",
+    sources: ["index.css"],
+    inBundle: false,
   },
 ];
 
@@ -104,16 +119,16 @@ const manifest: {
     styles: string[];
     files: { file: string; bytes: number }[];
     license: string;
+    inBundle: boolean;
   }[];
 } = { families: [] };
 const all: string[] = [];
 
 for (const family of FAMILIES) {
   const dir = dirname(require.resolve(`${family.pkg}/package.json`));
-  const list = [
-    ...faces(await readFile(join(dir, "wght.css"), "utf8")),
-    ...faces(await readFile(join(dir, "wght-italic.css"), "utf8")),
-  ];
+  const list: Face[] = [];
+  for (const source of family.sources ?? ["wght.css", "wght-italic.css"])
+    list.push(...faces(await readFile(join(dir, source), "utf8")));
   const files: { file: string; bytes: number }[] = [];
   for (const face of list) {
     await copyFile(join(dir, "files", face.file), join("dist/files", face.file));
@@ -148,7 +163,7 @@ for (const family of FAMILIES) {
     "",
   ].join("\n");
   await writeFile(`dist/${family.id}.css`, HEADER + css);
-  all.push(css);
+  if (family.inBundle !== false) all.push(css);
   manifest.families.push({
     id: family.id,
     name: family.name,
@@ -158,6 +173,7 @@ for (const family of FAMILIES) {
     styles: [...new Set(list.map((f) => f.style))],
     files,
     license: `licenses/${basename(family.id)}.txt`,
+    inBundle: family.inBundle !== false,
   });
 }
 

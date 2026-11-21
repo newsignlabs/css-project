@@ -1,0 +1,59 @@
+@layer nb.styles {
+  /* Knobs (contract: --nb-extrude, --nb-soft-light, --nb-soft-shadow): the light and shadow pair around surfaces. */
+  :--style,
+  :root:has(> body:--style) {
+    --nb-extrude: 0.375rem;
+    --nb-soft-light: light-dark(
+      color-mix(in oklch, oklch(100% 0 0) 85%, var(--nb-color-surface)),
+      color-mix(in oklch, var(--nb-color-surface) 86%, oklch(100% 0 0))
+    );
+    --nb-soft-shadow: light-dark(
+      color-mix(in oklch, var(--nb-color-surface) 80%, oklch(0% 0 0)),
+      color-mix(in oklch, var(--nb-color-surface) 45%, oklch(0% 0 0))
+    );
+  }
+
+  /* Surfaces are extruded from the page: no border, the soft pair does the work. */
+  :--style :is(.nb-card, .nb-table-wrap) {
+    border-color: transparent;
+  }
+
+  :--style .nb-table-wrap {
+    box-shadow: var(--nb-elevation-1);
+  }
+
+  :--style .nb-btn:not(:where(.nb-btn--link, .nb-btn--ghost)) {
+    box-shadow: var(--nb-elevation-1);
+  }
+
+  /* Pressed: pushed in, and the label gets bolder so the state never relies on shadow alone. */
+  :--style .nb-btn:not(:where(.nb-btn--link, .nb-btn--ghost)):is(:active, [aria-pressed="true"]) {
+    box-shadow:
+      inset var(--nb-extrude) var(--nb-extrude) calc(var(--nb-extrude) * 2) var(--nb-soft-shadow),
+      inset calc(-1 * var(--nb-extrude)) calc(-1 * var(--nb-extrude)) calc(var(--nb-extrude) * 2)
+        var(--nb-soft-light);
+    font-weight: var(--nb-font-weight-semibold);
+  }
+
+  /* Inputs are inset into the page and keep their border (it is their boundary). */
+  :--style .nb-input {
+    box-shadow:
+      inset calc(var(--nb-extrude) * 0.5) calc(var(--nb-extrude) * 0.5) var(--nb-extrude) var(--nb-soft-shadow),
+      inset calc(var(--nb-extrude) * -0.5) calc(var(--nb-extrude) * -0.5) var(--nb-extrude) var(--nb-soft-light);
+  }
+
+  /* Decoration off where it would hurt: borders come back, soft shadows go. */
+  :--contrast :is(.nb-card, .nb-table-wrap, .nb-btn, .nb-input),
+  :--contrast .nb-btn:is(:active, [aria-pressed="true"]) {
+    border-color: revert-layer;
+    box-shadow: none;
+  }
+
+  @media (forced-colors: active), (prefers-contrast: more) {
+    :--style :is(.nb-card, .nb-table-wrap, .nb-btn, .nb-input),
+    :--style .nb-btn:is(:active, [aria-pressed="true"]) {
+      border-color: revert-layer;
+      box-shadow: none;
+    }
+  }
+}

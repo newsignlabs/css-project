@@ -87,3 +87,34 @@ test("without the package, newBrush keeps the system stack and downloads no font
     ),
   ).toBe(0);
 });
+
+test("the pixelate style's headings use the pixel face: monospace by default, Pixelify Sans once loaded (specs/004 T024)", async ({
+  page,
+}) => {
+  const failed: string[] = [];
+  page.on("requestfailed", (r) => failed.push(r.url()));
+  const html = (extra: string) =>
+    `<!doctype html><html lang="en"><head><link rel="stylesheet" href="${href("newbrush/css")}">${extra}</head>` +
+    `<body class="pixelate"><h1 id="h">Level 1</h1><p id="p">Body text</p></body></html>`;
+  const family = (sel: string) =>
+    page.locator(sel).evaluate((el) => getComputedStyle(el).fontFamily);
+
+  await open(page, html(""));
+  expect(await family("#h")).toMatch(/^ui-monospace/);
+  expect(await family("#p")).toMatch(/^system-ui/); // body text keeps the sans stack
+
+  await open(
+    page,
+    html(`<link rel="stylesheet" href="${href("@newbrush/fonts/pixelify-sans.css")}">`),
+  );
+  await page.evaluate(() => document.fonts.ready);
+  expect(await family("#h")).toMatch(
+    /^"Pixelify Sans Variable", "Pixelify Sans Fallback", ui-monospace/,
+  );
+  const loaded = await page.evaluate(async () => {
+    await document.fonts.load('1em "Pixelify Sans Variable"', "Level");
+    return [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family);
+  });
+  expect(loaded.map((f) => f.replaceAll('"', ""))).toContain("Pixelify Sans Variable");
+  expect(failed).toEqual([]);
+});
