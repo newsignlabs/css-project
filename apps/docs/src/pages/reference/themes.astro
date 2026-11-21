@@ -1,0 +1,72 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import TableWrap from "../../components/TableWrap.astro";
+import { groupBy, manifest, slug } from "../../lib/manifest.ts";
+
+// specs/001 T081 — themes and variants from the manifest.
+const kinds: Record<string, string> = {
+  selector: "State and pseudo-element",
+  "parent-selector": "Parent and theme",
+  media: "Media queries",
+  container: "Container queries",
+  "at-rule": "Other at-rules",
+};
+const variantGroups = groupBy(manifest.variants, (v) => v.kind);
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Themes & variants",
+    description: "newBrush themes (light, dark, contrast) and the variant prefixes utilities accept.",
+    editUrl: false,
+  }}
+  headings={[
+    { depth: 2, slug: "themes", text: "Themes" },
+    { depth: 2, slug: "variants", text: "Variants" },
+    ...variantGroups.map(([kind]) => ({ depth: 3, slug: slug(kind), text: kinds[kind] ?? kind })),
+  ]}
+>
+  <h2 id="themes">Themes</h2>
+  <p>
+    Without an attribute, newBrush follows the system (<code>prefers-color-scheme</code>, plus
+    <code>prefers-contrast: more</code>). Set <code>data-nb-theme</code> on any element to force a theme for that
+    subtree; this site sets it on <code>&lt;html&gt;</code> from the theme picker.
+  </p>
+  <TableWrap label={"Themes"}>
+    <table>
+      <thead><tr><th scope="col">Theme</th><th scope="col">Attribute</th><th scope="col">Color scheme</th><th scope="col">Extends</th></tr></thead>
+      <tbody>
+        {
+          manifest.themes.map((t) => (
+            <tr data-theme-name={t.name}>
+              <td>{t.name}</td>
+              <td><code>data-nb-theme="{t.name}"</code></td>
+              <td>{t.colorScheme}</td>
+              <td>{t.extends ?? "—"}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </TableWrap>
+
+  <h2 id="variants">Variants</h2>
+  <p>Prefix a utility with a variant, e.g. <code>hover:bg-accent</code> or <code>md:dark:p-8</code>. Variants compose left to right.</p>
+  {
+    variantGroups.map(([kind, variants]) => (
+      <>
+        <h3 id={slug(kind)}>{kinds[kind] ?? kind}</h3>
+        <TableWrap label={`${kinds[kind] ?? kind} variants`}>
+          <table>
+            <thead><tr><th scope="col">Variant</th><th scope="col">Generates</th></tr></thead>
+            <tbody>
+              {variants.map((v) => (
+                <tr data-variant={v.name}><td><code>{v.name}:</code></td><td><code>{v.template}</code></td></tr>
+              ))}
+            </tbody>
+          </table>
+        </TableWrap>
+      </>
+    ))
+  }
+</StarlightPage>

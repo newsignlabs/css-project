@@ -11,3 +11,6 @@ test-results/
 
 # test fixtures
 **/test/.tmp/
+
+# Astro generated types
+.astro/

@@ -1,0 +1,86 @@
+/*
+ * Starlight's colour, font and shadow variables, mapped to newBrush tokens. Unlayered, so these win over
+ * Starlight's own values; the tokens themselves switch with data-nb-theme, so one block covers light and dark.
+ */
+:root,
+:root[data-theme="light"],
+::backdrop {
+  --sl-color-accent-low: var(--nb-color-accent-subtle);
+  --sl-color-accent: var(--nb-color-accent);
+  --sl-color-accent-high: var(--nb-color-accent-text);
+
+  --sl-color-white: var(--nb-color-text);
+  --sl-color-gray-1: var(--nb-color-text);
+  --sl-color-gray-2: var(--nb-color-text);
+  --sl-color-gray-3: var(--nb-color-text-muted);
+  --sl-color-gray-4: var(--nb-color-text-muted);
+  --sl-color-gray-5: var(--nb-color-border);
+  --sl-color-gray-6: var(--nb-color-surface-subtle);
+  --sl-color-gray-7: var(--nb-color-surface-subtle);
+  --sl-color-black: var(--nb-color-surface);
+
+  --sl-color-text: var(--nb-color-text);
+  --sl-color-text-accent: var(--nb-color-accent-text);
+  --sl-color-text-invert: var(--nb-color-on-accent);
+  --sl-color-bg: var(--nb-color-surface);
+  --sl-color-bg-nav: var(--nb-color-surface);
+  --sl-color-bg-sidebar: var(--nb-color-surface);
+  --sl-color-bg-inline-code: var(--nb-color-surface-subtle);
+  --sl-color-bg-accent: var(--nb-color-accent);
+  --sl-color-hairline-light: var(--nb-color-border-subtle);
+  --sl-color-hairline: var(--nb-color-border);
+  --sl-color-hairline-shade: var(--nb-color-border-strong);
+  --sl-color-backdrop-overlay: color-mix(in oklch, var(--nb-color-backdrop) 66%, transparent);
+
+  --sl-shadow-sm: var(--nb-elevation-1);
+  --sl-shadow-md: var(--nb-elevation-2);
+  --sl-shadow-lg: var(--nb-elevation-4);
+
+  --sl-font: var(--nb-font-family-sans);
+  --sl-font-mono: var(--nb-font-family-mono);
+}
+
+/* A live example: rendered with newBrush only (not-content opts out of Starlight's prose styles). */
+.nb-docs-preview {
+  padding: var(--nb-space-6);
+  border: 1px solid var(--nb-color-border);
+  border-radius: var(--nb-radius-lg);
+  background: var(--nb-color-surface-raised);
+  color: var(--nb-color-text);
+}
+
+.nb-docs-swatch {
+  display: inline-block;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  vertical-align: middle;
+  border: 1px solid var(--nb-color-border-strong);
+  border-radius: var(--nb-radius-sm);
+}
+
+/* The wrapper scrolls (see TableWrap.astro), not the table: undo Starlight's block-level scrolling tables. */
+.nb-docs-table-wrap {
+  overflow-x: auto;
+}
+
+.nb-docs-table-wrap:focus-visible {
+  outline: 2px solid var(--nb-color-focus-ring);
+  outline-offset: 2px;
+}
+
+.sl-markdown-content .nb-docs-table-wrap table {
+  display: table;
+  overflow: visible;
+}
+
+.nb-docs-table-wrap table {
+  font-size: var(--sl-text-sm);
+}
+
+.nb-docs-table-wrap td code {
+  white-space: nowrap;
+}
+
+.nb-docs-nowrap {
+  white-space: nowrap;
+}

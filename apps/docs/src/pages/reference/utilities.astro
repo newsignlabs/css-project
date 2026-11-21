@@ -1,0 +1,59 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import TableWrap from "../../components/TableWrap.astro";
+import { groupBy, manifest, slug, titleCase, utilityValues } from "../../lib/manifest.ts";
+
+// specs/001 T081 — every utility family, by category.
+const groups = groupBy(manifest.utilities, (u) => u.category);
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Utilities",
+    description: `The ${manifest.utilities.length} newBrush utility families: class patterns, CSS properties and values.`,
+    editUrl: false,
+  }}
+  headings={groups.map(([category]) => ({ depth: 2, slug: slug(category), text: titleCase(category) }))}
+>
+  <p>
+    Utilities are generated on demand from the classes you use (CLI, PostCSS or Vite). Every family accepts the
+    <a href="/reference/themes/#variants">variants</a> (<code>hover:</code>, <code>md:</code>, <code>dark:</code>,
+    <code>neon:</code>…) unless noted. <code>{"{space}"}</code> in a pattern stands for a token name from that group,
+    <code>[length]</code> for an arbitrary value.
+  </p>
+  {
+    groups.map(([category, families]) => (
+      <>
+        <h2 id={slug(category)}>{titleCase(category)}</h2>
+        <TableWrap label={`${titleCase(category)} utilities`}>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Family</th>
+                <th scope="col">Patterns</th>
+                <th scope="col">Properties</th>
+                <th scope="col">Values</th>
+              </tr>
+            </thead>
+            <tbody>
+              {families.map((u) => (
+                <tr data-utility={u.name}>
+                  <td>
+                    <strong>{u.name}</strong>
+                    <br />
+                    {u.description}
+                    {u.negative && <><br />Negative values: <code>-{u.patterns[0]}</code></>}
+                    {Array.isArray(u.variants) && <><br />Variants: {u.variants.join(", ")}</>}
+                  </td>
+                  <td>{u.patterns.slice(0, 8).map((p) => <><code>{p}</code> </>)}{u.patterns.length > 8 && `… (${u.patterns.length})`}</td>
+                  <td>{u.properties.map((p) => <><code>{p}</code> </>)}</td>
+                  <td>{utilityValues(u)}{u.arbitrary && <><br />Arbitrary: {u.arbitrary.grammar}</>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableWrap>
+      </>
+    ))
+  }
+</StarlightPage>

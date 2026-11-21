@@ -1,0 +1,128 @@
+---
+title: Getting started
+description: Add newBrush to a page from a CDN or npm, then generate utilities with the CLI, PostCSS or Vite.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+newBrush is plain CSS, so components and themes work without a build step. Add a build step only if you want
+utility classes generated from your markup.
+
+## 1. Add the stylesheet
+
+<Tabs>
+  <TabItem label="CDN">
+    ```html
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/newbrush@1/dist/newbrush.min.css">
+    ```
+    For prototyping, `newbrush-full.min.css` adds a curated set of utilities as well.
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install newbrush
+    ```
+    ```css
+    @import "newbrush";
+    ```
+  </TabItem>
+</Tabs>
+
+| File | Contents |
+| ---- | -------- |
+| `newbrush.css` | Reset, tokens, themes, all components and the design styles |
+| `newbrush-core.css` | Reset, tokens, themes and base styles only |
+| `newbrush-full.css` | `newbrush.css` plus the curated utility preset |
+
+## 2. Use components
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/newbrush@1/dist/newbrush.min.css">
+</head>
+<body class="nb-container">
+  <h1>Hello newBrush</h1>
+  <button class="nb-btn nb-btn--primary" type="button">Get started</button>
+  <article class="nb-card">
+    <header class="nb-card__header">Card</header>
+    <div class="nb-card__body">Token-driven, layered, accessible.</div>
+  </article>
+</body>
+</html>
+```
+
+Dark mode follows the operating system. To force a theme on the page or on any part of it, set
+`data-nb-theme="light"`, `"dark"` or `"contrast"`. See [themes and variants](/reference/themes/).
+
+## 3. Generate utilities (optional)
+
+Install the CLI and a bundler plugin. Then only the utility classes you use end up in your CSS.
+
+<Tabs>
+  <TabItem label="Vite">
+    ```bash
+    npm install -D @newbrush/cli @newbrush/vite
+    npx nb init --template vite
+    ```
+    ```js
+    // vite.config.js
+    import newbrush from "@newbrush/vite";
+    import { defineConfig } from "vite";
+
+    export default defineConfig({ plugins: [newbrush()] });
+    ```
+  </TabItem>
+  <TabItem label="PostCSS">
+    ```bash
+    npm install -D @newbrush/cli @newbrush/postcss
+    npx nb init
+    ```
+    ```js
+    // postcss.config.js
+    import newbrush from "@newbrush/postcss";
+
+    export default { plugins: [newbrush()] };
+    ```
+  </TabItem>
+  <TabItem label="CLI">
+    ```bash
+    npm install -D @newbrush/cli
+    npx nb init
+    npx nb build -i newbrush.css -o dist/app.css --watch
+    ```
+  </TabItem>
+</Tabs>
+
+```css
+/* your entry stylesheet */
+@import "newbrush";
+@newbrush utilities;
+```
+
+```html
+<section class="grid gap-6 p-8 md:grid-cols-3">
+  <div class="rounded-xl bg-surface-raised p-6 shadow-md hover:shadow-lg transition">…</div>
+</section>
+```
+
+## 4. Brand it
+
+```ts
+// newbrush.config.ts
+import { defineConfig } from "newbrush/config";
+
+export default defineConfig({
+  content: ["./src/**/*.{html,tsx}"],
+  theme: { seeds: { brand: "oklch(62% 0.19 255)" } },
+  contrast: { level: "AA", onFail: "fix" },
+});
+```
+
+`npx nb contrast` checks that every text and surface pair meets WCAG AA.
+
+## Next steps
+
+- Browse the [components](/components/).
+- Look up [utilities](/reference/utilities/) and [design tokens](/reference/tokens/).
+- Try a [design style](/reference/styles/): `<body class="neon">`.

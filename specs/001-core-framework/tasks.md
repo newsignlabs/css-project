@@ -158,8 +158,8 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 
 > Docs information architecture is grouped by design style — see specs/004-design-styles tasks T033–T036.
 
-- [ ] T080 [US6] Scaffold `apps/docs` (Astro + Starlight), theme with newBrush itself
-- [ ] T081 [US6] Manifest-driven page generator (components, utilities, tokens tables)
+- [x] T080 [US6] Scaffold `apps/docs` (Astro + Starlight), theme with newBrush itself
+- [x] T081 [US6] Manifest-driven page generator (components, utilities, tokens tables)
 - [ ] T082 [P] [US6] Live example renderer + copy button + theme/dir/width toggles
 - [ ] T083 [P] [US6] Browser playground (engine in web worker, sandboxed iframe, share via URL hash)
 - [ ] T084 [P] [US6] Pagefind search; guides: getting started, CDN, bundlers, theming, migrating from Bootstrap/Tailwind, MCP
