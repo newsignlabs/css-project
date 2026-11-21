@@ -113,7 +113,7 @@ describe("editor support (T058)", () => {
   it("classes.d.ts accepts real classes and rejects typos", { timeout: 20_000 }, () => {
     expect(
       diagnosticsFor(
-        'import type { NewBrushClass } from "./classes";\nconst ok: NewBrushClass[] = ["nb-btn", "nb-btn--primary", "p-4", "md:grid-cols-3", "hover:bg-accent"];\nexport { ok };\n',
+        'import type { NewBrushClass } from "./classes";\nconst ok: NewBrushClass[] = ["nb-btn", "nb-btn--primary", "p-4", "md:grid-cols-3", "hover:bg-accent", "neon", "glass", "nb-pixelate", "style-default", "neon:p-4"];\nexport { ok };\n',
       ),
     ).toEqual([]);
     expect(
@@ -132,8 +132,29 @@ describe("editor support (T058)", () => {
     const htmlData = JSON.parse(await dist("vscode.html-data.json"));
     const values = htmlData.globalAttributes[0].values.map((v: { name: string }) => v.name);
     expect(values).toEqual(
-      expect.arrayContaining(["nb-btn", "nb-card__header", "p-4", "grid-cols-3"]),
+      expect.arrayContaining([
+        "nb-btn",
+        "nb-card__header",
+        "p-4",
+        "grid-cols-3",
+        "g-morph",
+        "glass",
+      ]),
     );
+    const glass = htmlData.globalAttributes[0].values.find(
+      (v: { name: string }) => v.name === "glass",
+    );
+    expect(glass.description).toMatch(/^Design style G-morph/);
+  });
+
+  it("types design styles and style variants (specs/004 T032)", async () => {
+    const dts = await dist("classes.d.ts");
+    expect(dts).toMatch(/export type NewBrushStyle =\n {2}\| "cyber"/);
+    for (const name of ["neon", "nb-neon", "glass", "neumorph", "pixel", "style-default"])
+      expect(dts).toContain(`| "${name}"`);
+    const variants = dts.slice(dts.indexOf("export type NewBrushVariant"));
+    for (const name of ["neon", "g-morph", "glass", "pixelate"])
+      expect(variants).toContain(`| "${name}"`);
   });
 });
 

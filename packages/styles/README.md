@@ -37,6 +37,20 @@ in print and in the contrast theme. Under forced colors and `prefers-contrast: m
 ambient background go too. Every text and UI pair stays WCAG AA over the strongest ambient tint, in light and dark
 and with any brand seed (apps/visual-tests `styles-contrast.spec.ts`).
 
+### Style variants
+
+With the utility engine (CLI, PostCSS, Vite), every included style is also a variant: `neon:p-8`, `glass:rounded-none`,
+`pixelate:hidden`. It applies under the nearest style: inside the styled element and on it, but not inside another
+style or `.style-default` nested in it. The strategy follows `themeVariants` (style queries on `--nb-style`, or a
+selector strategy two levels deep). `newbrush-full.css` ships `<style>:hidden|block|inline-block|flex|inline-flex|grid`
+for showing content per style without a build.
+
+### Choosing styles
+
+`styles` in `newbrush.config` picks the styles a build includes: `"all"` (default), a list such as `["neon"]`, or
+`false`. The others' CSS is removed from the built stylesheet (CLI `nb build`, PostCSS once imports are inlined, the
+Vite production build) and they get no variants. `.style-default` is always kept.
+
 ### neon, cyber and n-morph knobs
 
 | Property | Default | Meaning |

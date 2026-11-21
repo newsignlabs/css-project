@@ -45,6 +45,7 @@
     "picomatch": "^4.0.7"
   },
   "devDependencies": {
+    "@newbrush/styles": "workspace:*",
     "@newbrush/tokens": "workspace:*",
     "@types/picomatch": "^4.0.3",
     "fast-check": "^4.10.2",

@@ -6,6 +6,7 @@ import {
   type UtilityFamily,
   type Variant,
 } from "@newbrush/schema";
+import stylesManifest from "@newbrush/styles/manifest.json" with { type: "json" };
 import {
   type ContrastReport,
   checkContrast,
@@ -15,10 +16,17 @@ import {
 import { seedTokensCss } from "@newbrush/tokens/seeds";
 import { escapeClassName } from "./escape.ts";
 import { families as defaultFamilies } from "./families/index.ts";
+import { pruneStyles } from "./prune.ts";
 import { createTheme, type Theme } from "./theme.ts";
 import type { Decl, Family, Resolved } from "./types.ts";
 import { validateArbitrary } from "./validate.ts";
-import { createVariants, type RuleState, type VariantRegistry } from "./variants.ts";
+import { createVariants, type RuleState, type StyleRef, type VariantRegistry } from "./variants.ts";
+
+/** The built-in design styles (@newbrush/styles), bundled like the tokens. */
+export const BUILT_IN_STYLES: StyleRef[] = stylesManifest.styles.map((s) => ({
+  name: s.name,
+  aliases: s.aliases,
+}));
 
 export interface Diagnostic {
   code: "NB_ARBITRARY_REJECTED" | "NB_UNKNOWN_CLASS" | "NB_UNKNOWN_VARIANT";
@@ -112,6 +120,7 @@ export class Engine {
     config: Config = { content: ["**/*"] },
     families: Family[] = defaultFamilies,
     theme: Theme = createTheme(),
+    styles: StyleRef[] = BUILT_IN_STYLES,
   ) {
     this.config = Config.parse(config);
     this.seedCss = seedTokensCss(this.config.theme?.seeds);
@@ -123,7 +132,15 @@ export class Engine {
       for (const root of f.roots)
         this.functional.set(root, [...(this.functional.get(root) ?? []), i]);
     });
-    this.variantRegistry = createVariants(theme, this.config);
+    this.variantRegistry = createVariants(theme, this.config, styles);
+  }
+
+  /**
+   * Applies config `styles` (specs/004 T028) to a built stylesheet: the CSS of design styles the build does not
+   * include is removed. Unchanged for `styles: "all"` (the default).
+   */
+  selectStyles(css: string): string {
+    return this.config.styles === "all" ? css : pruneStyles(css, this.config.styles);
   }
 
   /**
