@@ -81,18 +81,35 @@ describe("docs build", () => {
   });
 
   it("is published: site/ (served by Catalyst Slate) matches this build — run `pnpm site` if not", () => {
-    const site = new URL("../../../site/", import.meta.url);
+    // Astro derives scoped-style ids (data-astro-cid-*) from file paths, so builds in different checkouts differ in
+    // those ids and the asset hashes that follow from them. Compare pages and stylesheets with both normalised; the
+    // search index (pagefind/) is generated from the same pages.
+    const site = new URL(process.env.NB_SITE_DIR ?? "../../../site/", import.meta.url);
+    const normalise = (text: string) =>
+      text
+        .replace(/data-astro-cid-[a-z0-9]+/g, "data-astro-cid")
+        .replace(/(\/_astro\/[^"'\s]+?)\.[A-Za-z0-9_-]{8}\.(css|js)/g, "$1.$2");
     const files = (root: URL, dir = ""): string[] =>
       readdirSync(new URL(dir || ".", root)).flatMap((name) =>
         statSync(new URL(dir + name, root)).isDirectory()
-          ? files(root, `${dir}${name}/`)
+          ? name === "pagefind" && dir === ""
+            ? []
+            : files(root, `${dir}${name}/`)
           : [dir + name],
       );
-    const built = files(dist).sort();
-    expect(files(site).sort()).toEqual(built);
-    const stale = built.filter(
-      (f) => !readFileSync(new URL(f, dist)).equals(readFileSync(new URL(f, site))),
-    );
+    const snapshot = (root: URL) =>
+      Object.fromEntries(
+        files(root).map((f) => [
+          normalise(`/${f}`),
+          /\.(html|css|js|xml|svg)$/.test(f)
+            ? normalise(readFileSync(new URL(f, root), "utf8"))
+            : "",
+        ]),
+      );
+    const built = snapshot(dist);
+    const published = snapshot(site);
+    expect(Object.keys(published).sort()).toEqual(Object.keys(built).sort());
+    const stale = Object.keys(built).filter((f) => built[f] !== published[f]);
     expect(stale).toEqual([]);
   });
 
