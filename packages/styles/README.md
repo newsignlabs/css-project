@@ -3,7 +3,7 @@
 Design styles for newBrush (specs/004-design-styles). One class re-skins every component:
 
 ```html
-<body class="g-morph">            <!-- or nb-g-morph, glass, data-nb-style="g-morph" -->
+<body class="g-morph">            <!-- or nb-g-morph, data-nb-style="g-morph" -->
   <section class="style-default">  <!-- the default style again for this subtree -->
 ```
 
@@ -15,7 +15,7 @@ Design styles for newBrush (specs/004-design-styles). One class re-skins every c
 | Style | Status | Look |
 | ----- | ------ | ---- |
 | `minimal` | available | Small radii, no shadows below overlays (elevated cards keep a hairline border), airier cards, tight headings. Changes no colours. |
-| `g-morph` (`glass`) | available | Translucent raised, subtle and overlay surfaces with backdrop blur and light edges, larger radii, soft shadows, and an ambient brand/accent background when the class is on `<html>` or `<body>`. |
+| `g-morph` | available | Translucent raised, subtle and overlay surfaces with backdrop blur and light edges, larger radii, soft shadows, and an ambient brand/accent background when the class is on `<html>` or `<body>`. |
 | `neon` | available, dark-first | Near-black surfaces, accent edges and glows, outlined primary buttons, glowing headings, a focus ring in the text colour with a glow around it. `data-nb-theme="light"` gives a light neon. |
 | `cyber` | available, dark-first | Notched corners (`--nb-cut`), square radii, monospace uppercase labels, static scanlines (dark scheme), a one-shot glitch on hover when motion is allowed. Focus rings are drawn inside the notch. |
 | `n-morph` (`neumorph`) | available | Surfaces extruded from the page by a soft light and shadow pair, large radii, inset inputs, pressed buttons pushed in with a bolder label, a thick focus ring. Controls keep their borders. |
@@ -39,7 +39,7 @@ and with any brand seed (apps/visual-tests `styles-contrast.spec.ts`).
 
 ### Style variants
 
-With the utility engine (CLI, PostCSS, Vite), every included style is also a variant: `neon:p-8`, `glass:rounded-none`,
+With the utility engine (CLI, PostCSS, Vite), every included style is also a variant: `neon:p-8`, `g-morph:rounded-none`,
 `pixelate:hidden`. It applies under the nearest style: inside the styled element and on it, but not inside another
 style or `.style-default` nested in it. The strategy follows `themeVariants` (style queries on `--nb-style`, or a
 selector strategy two levels deep). `newbrush-full.css` ships `<style>:hidden|block|inline-block|flex|inline-flex|grid`

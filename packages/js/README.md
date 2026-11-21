@@ -16,8 +16,7 @@ await setStyle("default", { target: section });   // default style for one subtr
 ```
 
 `setStyle(name, options)` swaps the style class on `target` (default `<body>`, which styles the whole page): it removes
-any style class (bare, `nb-` or alias) and `data-nb-style`, then adds the new one. Aliases work (`glass`, `neumorph`,
-`pixel`). Options:
+any style class (bare, `nb-` or alias) and `data-nb-style`, then adds the new one. Aliases work (`neumorph`, `pixel`). Options:
 
 | Option | Default | |
 | ------ | ------- | - |

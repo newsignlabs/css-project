@@ -8,7 +8,7 @@ Public, semver-protected surface (constitution §VIII).
 | ---- | ------- | ----- |
 | Class | `<body class="g-morph">` | Canonical. Any element; nearest wins. |
 | Attribute | `<body data-nb-style="g-morph">` | Equivalent; handy for frameworks that own `class`. |
-| Alias | `class="glass"`, `class="neumorph"`, `class="pixel"` | Short aliases of `g-morph`, `n-morph`, `pixelate`. |
+| Alias | `class="neumorph"`, `class="pixel"` | Short aliases of `n-morph`, `pixelate`. `g-morph` has none: `glass` is the frosted-surface utility, so an alias would apply both. |
 | Reset | `class="style-default"` | Default style for a subtree inside a styled page. |
 | Prefixed | `class="nb-g-morph"` | Always available, identical to the bare name (bare and `nb-` forms both work). |
 

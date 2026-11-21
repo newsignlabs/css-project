@@ -38,9 +38,9 @@ test("setStyle switches the style, getStyle reads it, restoreStyle brings it bac
   expect(await run((nb) => nb.getStyle(document.getElementById("card") as Element))).toBe("neon");
   expect(await page.evaluate(() => getComputedStyle(document.body).colorScheme)).toBe("light");
 
-  await run((nb) => nb.setStyle("glass", { transition: true }));
-  expect(await page.evaluate(() => document.body.className)).toBe("g-morph");
-  expect(await run((nb) => nb.getStyle())).toBe("g-morph");
+  await run((nb) => nb.setStyle("neumorph", { transition: true }));
+  expect(await page.evaluate(() => document.body.className)).toBe("n-morph");
+  expect(await run((nb) => nb.getStyle())).toBe("n-morph");
 
   await page.evaluate(() => {
     document.body.className = "";

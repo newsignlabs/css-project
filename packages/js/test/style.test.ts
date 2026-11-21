@@ -26,8 +26,8 @@ describe("setStyle", () => {
   it("swaps the style class on <body>, keeping other classes, and accepts aliases", async () => {
     await setStyle("neon");
     expect([...document.body.classList]).toEqual(["page", "neon"]);
-    await setStyle("glass");
-    expect([...document.body.classList]).toEqual(["page", "g-morph"]);
+    await setStyle("neumorph");
+    expect([...document.body.classList]).toEqual(["page", "n-morph"]);
   });
 
   it("removes nb- forms, aliases and data-nb-style; null removes the style, default sets the reset", async () => {
@@ -97,8 +97,8 @@ describe("getStyle", () => {
   it("finds the nearest style from the markup, the reset, or null", () => {
     const p = document.getElementById("p") as Element;
     expect(getStyle(p)).toBeNull();
-    document.body.classList.add("glass");
-    expect(getStyle(p)).toBe("g-morph");
+    document.body.classList.add("pixel");
+    expect(getStyle(p)).toBe("pixelate");
     (document.getElementById("s") as Element).setAttribute("data-nb-style", "neon");
     expect(getStyle(p)).toBe("neon");
     (document.getElementById("s") as Element).removeAttribute("data-nb-style");

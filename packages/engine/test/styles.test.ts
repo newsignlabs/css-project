@@ -36,9 +36,11 @@ describe("style variants", () => {
   });
 
   it("aliases resolve to their style; prefix.styles prefixes bare names and aliases", () => {
-    expect(cssFor(["glass:p-4"], selector)).toContain(
-      ':where(.g-morph,.nb-g-morph,.glass,[data-nb-style="g-morph"]) .glass\\:p-4',
+    expect(cssFor(["neumorph:p-4"], selector)).toContain(
+      ':where(.n-morph,.nb-n-morph,.neumorph,[data-nb-style="n-morph"]) .neumorph\\:p-4',
     );
+    // g-morph has no alias: `glass` is a utility (frosted surface), not a style.
+    expect(selector.variants().some((v) => v.name === "glass")).toBe(false);
     const prefixed = createEngine({
       content: ["x"],
       themeVariants: "selector",
@@ -57,7 +59,7 @@ describe("style variants", () => {
   it("config styles: only the included styles get variants; false gives none", () => {
     const only = createEngine({ content: ["x"], styles: ["neon"] });
     expect(only.generate(["neon:p-4"]).classes.used).toEqual(["neon:p-4"]);
-    expect(only.generate(["glass:p-4"]).classes.used).toEqual([]);
+    expect(only.generate(["neumorph:p-4"]).classes.used).toEqual([]);
     const none = createEngine({ content: ["x"], styles: false });
     expect(none.variants().some((v) => v.name === "neon")).toBe(false);
   });

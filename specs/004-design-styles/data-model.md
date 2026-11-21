@@ -13,7 +13,7 @@ packages/styles/src/<name>/
 // packages/styles/src/g-morph/style.json
 {
   "name": "g-morph",
-  "aliases": ["glass", "nb-g-morph"],
+  "aliases": [],                             // the nb- form is generated; `glass` is a utility
   "title": "G-morph",
   "description": "Glassmorphism: translucent surfaces, backdrop blur and soft light edges.",
   "keywords": ["glassmorphism", "frosted", "translucent", "modern", "depth"],

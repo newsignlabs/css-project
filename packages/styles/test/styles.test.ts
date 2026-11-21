@@ -51,7 +51,7 @@ describe("built-in styles", () => {
     expect(names.sort()).toEqual(["cyber", "g-morph", "minimal", "n-morph", "neon", "pixelate"]);
     const aliases = Object.fromEntries(manifest.styles.map((s) => [s.name, s.aliases]));
     expect(aliases).toMatchObject({
-      "g-morph": ["glass"],
+      "g-morph": [],
       "n-morph": ["neumorph"],
       pixelate: ["pixel"],
     });

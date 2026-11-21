@@ -37,7 +37,6 @@ test("attribute ≡ class ≡ nb- class, and aliases resolve to their style", as
     ['data-nb-style="cyber"', "cyber"],
     ['class="nb-cyber"', "cyber"],
     ['class="cyber"', "cyber"],
-    ['class="glass"', "g-morph"],
     ['data-nb-style="g-morph"', "g-morph"],
     ['class="neumorph"', "n-morph"],
     ['class="pixel"', "pixelate"],
