@@ -14,7 +14,8 @@
   "dependencies": {
     "@astrojs/starlight": "^0.43.1",
     "astro": "^7.4.13",
-    "newbrush": "workspace:*"
+    "newbrush": "workspace:*",
+    "pagefind": "^1.6.0"
   },
   "devDependencies": {
     "@newbrush/schema": "workspace:*",

@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import explicitIndex from "./src/explicit-index.mjs";
 
 // specs/001 T080 — the newBrush docs, built with Starlight and themed with newBrush itself. Reference pages are
 // generated from newbrush/manifest.json (T081), so the sidebar lists exactly what the manifest has.
@@ -74,5 +75,7 @@ export default defineConfig({
         },
       ],
     }),
+    // After Starlight (its search index is replaced): links name index.html files for Catalyst Slate.
+    explicitIndex(base),
   ],
 });
