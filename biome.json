@@ -15,9 +15,6 @@
       "!**/*.css",
       "!specs",
       "!.specify",
-      "!catalyst/client/index.html",
-      "!catalyst/client/overview.css",
-      "!catalyst/client/overview.js",
       "!**/*.astro"
     ]
   },
