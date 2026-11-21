@@ -1,0 +1,16 @@
+---
+import { Code } from "@astrojs/starlight/components";
+
+// A live example: the markup rendered with newBrush (outside Starlight's prose styles), then its code.
+interface Props {
+  title: string;
+  html: string;
+}
+const { title, html } = Astro.props;
+---
+
+<figure class="nb-docs-example">
+  <figcaption><strong>{title}</strong></figcaption>
+  <div class="nb-docs-preview not-content" data-example={title} set:html={html} />
+  <Code code={html} lang="html" title={`${title}.html`} />
+</figure>

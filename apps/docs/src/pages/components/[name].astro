@@ -1,0 +1,105 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import type { Component } from "@newbrush/schema";
+import Example from "../../components/Example.astro";
+import TableWrap from "../../components/TableWrap.astro";
+import { componentHeadings, manifest, slug, titleCase } from "../../lib/manifest.ts";
+
+// specs/001 T081 — one page per manifest component.
+export function getStaticPaths() {
+  return manifest.components.map((component) => ({ params: { name: component.name }, props: { component } }));
+}
+interface Props {
+  component: Component;
+}
+const { component: c } = Astro.props;
+const attrs = Object.entries(c.html.attributes ?? {})
+  .map(([k, v]) => ` ${k}="${v}"`)
+  .join("");
+---
+
+<StarlightPage
+  frontmatter={{ title: c.title, description: c.description, editUrl: false }}
+  headings={componentHeadings(c)}
+>
+  <p>
+    <code>.{c.className}</code> · {titleCase(c.category)} · <code>&lt;{c.html.element}{attrs}&gt;</code> ·
+    <span class="nb-badge" data-status={c.status}>{c.status}</span> · since {c.since}
+  </p>
+
+  <h2 id={slug("Examples")}>Examples</h2>
+  {c.examples.map((e) => <Example title={e.title} html={e.html} />)}
+
+  <h2 id={slug("Anatomy")}>Anatomy</h2>
+  <TableWrap label={`${c.title} anatomy`}>
+    <table>
+      <thead><tr><th scope="col">Part</th><th scope="col">Class</th><th scope="col">Element</th><th scope="col">Required</th></tr></thead>
+      <tbody>
+        {
+          c.anatomy.map((a) => (
+            <tr>
+              <td>{a.part}</td>
+              <td><code>.{a.className}</code>{a.requiredParent && <> inside <code>.{a.requiredParent}</code></>}</td>
+              <td>{a.element ? <code>&lt;{a.element}&gt;</code> : "any"}</td>
+              <td>{a.required ? "Yes" : "No"}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </TableWrap>
+
+  {
+    c.modifiers.length > 0 && (
+      <>
+        <h2 id={slug("Modifiers")}>Modifiers</h2>
+        <TableWrap label={`${c.title} modifiers`}>
+          <table>
+            <thead><tr><th scope="col">Class</th><th scope="col">Description</th></tr></thead>
+            <tbody>
+              {c.modifiers.map((m) => (
+                <tr><td><code>.{m.className}</code></td><td>{m.description}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </TableWrap>
+      </>
+    )
+  }
+
+  {
+    (c.sizes.length > 0 || c.states.length > 0) && (
+      <>
+        <h2 id={slug("Sizes and states")}>Sizes and states</h2>
+        {c.sizes.length > 0 && (
+          <p>Sizes: {c.sizes.map((s, i) => <>{i > 0 && ", "}<code>.{c.className}--{s}</code></>)}</p>
+        )}
+        {c.states.length > 0 && (
+          <p>States styled: {c.states.map((s, i) => <>{i > 0 && ", "}<code>{s}</code></>)}</p>
+        )}
+      </>
+    )
+  }
+
+  <h2 id={slug("Accessibility")}>Accessibility</h2>
+  {c.a11y.role && <p>Role: <code>{c.a11y.role}</code></p>}
+  <ul>{c.a11y.requirements.map((r) => <li>{r}</li>)}</ul>
+  {
+    c.a11y.keyboard && c.a11y.keyboard.length > 0 && (
+      <>
+        <p><strong>Keyboard</strong></p>
+        <ul>{c.a11y.keyboard.map((k) => <li>{k}</li>)}</ul>
+      </>
+    )
+  }
+
+  {
+    c.tokens.length > 0 && (
+      <>
+        <h2 id={slug("Tokens")}>Tokens</h2>
+        <p>Override these to restyle the component (see <a href="/reference/tokens/">design tokens</a>):</p>
+        <ul>{c.tokens.map((t) => <li><code>{t}</code></li>)}</ul>
+      </>
+    )
+  }
+</StarlightPage>

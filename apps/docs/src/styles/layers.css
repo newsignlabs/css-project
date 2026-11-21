@@ -1,0 +1,7 @@
+/*
+ * Cascade-layer order for the docs. Starlight imports custom CSS before its own layers, so this statement
+ * decides the order: newBrush's reset, tokens and element defaults sit below Starlight (its navigation and prose
+ * styles win), while newBrush layout primitives, components, design styles and utilities sit above it (live
+ * examples render exactly as they would in a newBrush page).
+ */
+@layer nb.reset, nb.tokens, nb.base, starlight, nb.layout, nb.components, nb.styles, nb.utilities;

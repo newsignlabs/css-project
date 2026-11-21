@@ -1,0 +1,27 @@
+{
+  "name": "@newbrush/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The newBrush documentation site (Astro + Starlight), themed with newBrush and generated from its manifest.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro sync && tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.43.1",
+    "astro": "^7.4.13",
+    "newbrush": "workspace:*"
+  },
+  "devDependencies": {
+    "@newbrush/schema": "workspace:*",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  },
+  "engines": {
+    "node": ">=22.23"
+  }
+}

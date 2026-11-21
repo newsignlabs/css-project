@@ -1,0 +1,66 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import TableWrap from "../../components/TableWrap.astro";
+import { manifest, slug, titleCase, tokensByTier } from "../../lib/manifest.ts";
+
+// specs/001 T081 — every token, grouped by tier and group, with its per-theme values.
+const themes = manifest.themes.map((t) => t.name).filter((n) => n !== "light");
+const headings = tokensByTier.flatMap(([tier, groups]) => [
+  { depth: 2, slug: slug(tier), text: `${titleCase(tier)} tokens` },
+  ...groups.map(([group]) => ({ depth: 3, slug: slug(`${tier}-${group}`), text: group })),
+]);
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Design tokens",
+    description: `All ${manifest.tokens.length} newBrush design tokens: CSS custom properties with light, dark and contrast values.`,
+    editUrl: false,
+  }}
+  headings={headings}
+>
+  <p>
+    Tokens are CSS custom properties under <code>--nb-*</code>. Use <strong>semantic</strong> tokens in your own
+    CSS; <strong>component</strong> tokens tune one component; <strong>primitive</strong> tokens are the raw palette
+    and scales the others point to. A value in the {themes.join(" / ")} column replaces the default under that theme.
+  </p>
+  {
+    tokensByTier.map(([tier, groups]) => (
+      <>
+        <h2 id={slug(tier)}>{titleCase(tier)} tokens</h2>
+        {groups.map(([group, tokens]) => (
+          <>
+            <h3 id={slug(`${tier}-${group}`)}>{group}</h3>
+            <TableWrap label={`${titleCase(tier)} ${group} tokens`}>
+              <table data-token-group={group}>
+                <thead>
+                  <tr>
+                    <th scope="col">Variable</th>
+                    <th scope="col">Default (light)</th>
+                    {themes.map((t) => <th scope="col">{titleCase(t)}</th>)}
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tokens.map((t) => (
+                    <tr data-token={t.cssVar}>
+                      <td class="nb-docs-nowrap">
+                        {t.type === "color" && (
+                          <span class="nb-docs-swatch" style={`background: var(${t.cssVar})`} aria-hidden="true" />
+                        )}{" "}
+                        <code>{t.cssVar}</code>
+                      </td>
+                      <td><code>{t.value}</code></td>
+                      {themes.map((th) => <td>{t.themes[th] ? <code>{t.themes[th]}</code> : "—"}</td>)}
+                      <td>{t.description ?? ""}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </TableWrap>
+          </>
+        ))}
+      </>
+    ))
+  }
+</StarlightPage>

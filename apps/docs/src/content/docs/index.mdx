@@ -1,0 +1,36 @@
+---
+title: newBrush
+description: A platform-native CSS framework with token-driven themes, accessible components, on-demand utilities and design styles.
+template: splash
+editUrl: false
+hero:
+  tagline: Accessible components, on-demand utilities, token-driven themes, and design styles that re-skin everything with one class. All of it is plain, modern CSS.
+  actions:
+    - text: Get started
+      link: /guides/getting-started/
+      icon: right-arrow
+    - text: Browse components
+      link: /components/
+      variant: minimal
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+<CardGrid>
+  <Card title="Components" icon="puzzle">
+    Buttons, forms, tabs, modals and layout primitives on semantic HTML, each with documented anatomy, keyboard
+    support and accessibility requirements. [Browse components](/components/).
+  </Card>
+  <Card title="Utilities" icon="setting">
+    Tailwind-style classes generated on demand from your markup, with variants for states, breakpoints, containers,
+    themes and styles. [See the utility reference](/reference/utilities/).
+  </Card>
+  <Card title="Tokens and themes" icon="seti:css">
+    Every value is a `--nb-*` custom property. Light, dark and high-contrast themes follow the system, or you can
+    scope one to any element. [Explore tokens](/reference/tokens/).
+  </Card>
+  <Card title="Design styles" icon="star">
+    Put `class="neon"` on `<body>` and the whole site turns neon. Other styles: glass, neumorphic, cyber, pixel and
+    minimal. [Meet the styles](/reference/styles/).
+  </Card>
+</CardGrid>

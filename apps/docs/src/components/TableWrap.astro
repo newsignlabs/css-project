@@ -1,0 +1,8 @@
+---
+// A horizontally scrollable table: the wrapper scrolls, and is focusable and labelled so keyboard users can scroll it.
+interface Props {
+  label: string;
+}
+---
+
+<div class="nb-docs-table-wrap" tabindex="0" role="region" aria-label={Astro.props.label}><slot /></div>
