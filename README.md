@@ -1,6 +1,6 @@
 # newBrush
 
-> A high-end, platform-native CSS framework: Bootstrap-grade components, Tailwind-grade utilities,
+> A high-end, platform-native CSS framework: polished accessible components, on-demand utilities,
 > token-driven themes — and an MCP server that lets AI agents build styled UIs on demand.
 
 **Status**: 📐 Planning (Spec-Driven Development with [GitHub Spec Kit](https://github.com/github/spec-kit)). No code yet.
@@ -43,7 +43,7 @@ brand colors, work as islands on any element, and the docs are organised around 
 | ------- | ------ |
 | Styles | Native modern CSS (layers, nesting, container queries, `:has()`, OKLCH) |
 | Build | Lightning CSS · Style Dictionary v4 (W3C DTCG tokens) · tsup |
-| Utility engine | `@newbrush/engine` (TypeScript, JIT, Tailwind-compatible grammar) |
+| Utility engine | `@newbrush/engine` (TypeScript, JIT, `variant:utility-value` class grammar) |
 | Integrations | CLI (`nb`), PostCSS plugin, Vite plugin, optional `@newbrush/js` |
 | Monorepo | pnpm workspaces · Turborepo · Changesets |
 | Quality | Vitest · Playwright visual regression · axe-core · Stylelint · size-limit |

@@ -1,6 +1,6 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
-import { groupBy, manifest, slug, titleCase } from "../../lib/manifest.ts";
+import { groupBy, manifest, slug, titleCase, url } from "../../lib/manifest.ts";
 
 const groups = groupBy(manifest.components, (c) => c.category);
 ---
@@ -24,7 +24,7 @@ const groups = groupBy(manifest.components, (c) => c.category);
         <h2 id={slug(category)}>{titleCase(category)}</h2>
         <ul>
           {items.map((c) => (
-            <li><a href={`/components/${c.name}/`}>{c.title}</a> — {c.description}</li>
+            <li><a href={url(`/components/${c.name}/`)}>{c.title}</a> — {c.description}</li>
           ))}
         </ul>
       </>

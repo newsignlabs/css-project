@@ -25,6 +25,10 @@
     "visual": {
       "dependsOn": ["^build"],
       "outputs": ["playwright-report/**", "test-results/**"]
+    },
+    "@newbrush/docs#typecheck": {
+      "dependsOn": ["^build", "build"],
+      "outputs": []
     }
   }
 }
