@@ -37,7 +37,7 @@ describe("docs build", () => {
   it("lists every component in the sidebar and on the overview", () => {
     const overview = page("components");
     for (const c of manifest.components) {
-      expect(overview).toContain(`href="${BASE}components/${c.name}/"`);
+      expect(overview).toContain(`href="${BASE}components/${c.name}/index.html"`);
     }
   });
 
@@ -67,6 +67,8 @@ describe("docs build", () => {
       const pageUrl = new URL(`http://x${BASE}${file.replace(/index\.html$/, "")}`);
       for (const [, attr] of html.matchAll(/\s(?:href|src)="([^"#?]+)[^"]*"/g)) {
         if (!attr || /^(https?:|mailto:|data:|\/\/)/.test(attr)) continue;
+        // Catalyst Slate does not serve a folder's index.html for a folder URL: links must name the file.
+        if (attr.endsWith("/")) broken.push(`${file}: ${attr} (folder URL)`);
         const path = new URL(attr, pageUrl).pathname;
         if (!path.startsWith(BASE)) {
           broken.push(`${file}: ${attr} (outside ${BASE})`);

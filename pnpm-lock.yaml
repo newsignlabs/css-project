@@ -41,6 +41,9 @@ importers:
       newbrush:
         specifier: workspace:*
         version: link:../../packages/css
+      pagefind:
+        specifier: ^1.6.0
+        version: 1.6.0
     devDependencies:
       '@newbrush/schema':
         specifier: workspace:*
