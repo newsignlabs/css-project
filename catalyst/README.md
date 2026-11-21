@@ -1,5 +1,8 @@
 # newBrush overview on Zoho Catalyst
 
+> The Catalyst Slate app now opens the documentation site (`site/`, built with `pnpm site`; see
+> `apps/docs/README.md`). This overview page is still generated and can be opened at `catalyst/client/index.html`.
+
 `client/index.html` (with `client/overview.css` and `client/overview.js`, no other network requests) shows how newBrush
 is made today: architecture, design tokens, every component rendered live, the utility engine, themes, the planned
 design styles and build status. It is generated from the real build outputs.

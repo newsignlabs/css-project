@@ -5,6 +5,9 @@ import data from "newbrush/manifest.json";
 
 export const manifest = data as unknown as Manifest;
 
+/** A site path with the configured base (the site is served under /site/). */
+export const url = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}${path}`;
+
 export const slug = (text: string) =>
   text
     .toLowerCase()

@@ -1,7 +1,7 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import TableWrap from "../../components/TableWrap.astro";
-import { groupBy, manifest, slug, titleCase, utilityValues } from "../../lib/manifest.ts";
+import { groupBy, manifest, slug, titleCase, url, utilityValues } from "../../lib/manifest.ts";
 
 // specs/001 T081 — every utility family, by category.
 const groups = groupBy(manifest.utilities, (u) => u.category);
@@ -17,7 +17,7 @@ const groups = groupBy(manifest.utilities, (u) => u.category);
 >
   <p>
     Utilities are generated on demand from the classes you use (CLI, PostCSS or Vite). Every family accepts the
-    <a href="/reference/themes/#variants">variants</a> (<code>hover:</code>, <code>md:</code>, <code>dark:</code>,
+    <a href={url("/reference/themes/#variants")}>variants</a> (<code>hover:</code>, <code>md:</code>, <code>dark:</code>,
     <code>neon:</code>…) unless noted. <code>{"{space}"}</code> in a pattern stands for a token name from that group,
     <code>[length]</code> for an arbitrary value.
   </p>

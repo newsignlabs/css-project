@@ -3,7 +3,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import type { Component } from "@newbrush/schema";
 import Example from "../../components/Example.astro";
 import TableWrap from "../../components/TableWrap.astro";
-import { componentHeadings, manifest, slug, titleCase } from "../../lib/manifest.ts";
+import { componentHeadings, manifest, slug, titleCase, url } from "../../lib/manifest.ts";
 
 // specs/001 T081 — one page per manifest component.
 export function getStaticPaths() {
@@ -97,7 +97,7 @@ const attrs = Object.entries(c.html.attributes ?? {})
     c.tokens.length > 0 && (
       <>
         <h2 id={slug("Tokens")}>Tokens</h2>
-        <p>Override these to restyle the component (see <a href="/reference/tokens/">design tokens</a>):</p>
+        <p>Override these to restyle the component (see <a href={url("/reference/tokens/")}>design tokens</a>):</p>
         <ul>{c.tokens.map((t) => <li><code>{t}</code></li>)}</ul>
       </>
     )

@@ -10,6 +10,9 @@ const manifest = JSON.parse(
   readFileSync(createRequire(import.meta.url).resolve("newbrush/manifest.json"), "utf8"),
 );
 const repo = "https://github.com/newsignlabs/css-project";
+// Catalyst Slate serves the repository root, and the built site is committed to /site (see README), so pages live
+// under /site/. Starlight adds the base to sidebar links itself.
+const base = "/site";
 
 /** Components grouped by manifest category, in manifest order. */
 const componentGroups = Object.entries(
@@ -24,7 +27,8 @@ const componentGroups = Object.entries(
 }));
 
 export default defineConfig({
-  site: "https://newbrush.dev",
+  site: "https://css-project-fyqaeqal.onslate.in",
+  base,
   // Keep the site's own CSS in files (not inlined) so the layer-order statement always comes first.
   build: { inlineStylesheets: "never" },
   integrations: [
@@ -53,19 +57,19 @@ export default defineConfig({
       sidebar: [
         {
           label: "Start here",
-          items: [{ label: "Getting started", link: "/guides/getting-started/" }],
+          items: [{ label: "Getting started", link: `/guides/getting-started/` }],
         },
         {
           label: "Components",
-          items: [{ label: "Overview", link: "/components/" }, ...componentGroups],
+          items: [{ label: "Overview", link: `/components/` }, ...componentGroups],
         },
         {
           label: "Reference",
           items: [
-            { label: "Design tokens", link: "/reference/tokens/" },
-            { label: "Utilities", link: "/reference/utilities/" },
-            { label: "Themes & variants", link: "/reference/themes/" },
-            { label: "Design styles", link: "/reference/styles/" },
+            { label: "Design tokens", link: `/reference/tokens/` },
+            { label: "Utilities", link: `/reference/utilities/` },
+            { label: "Themes & variants", link: `/reference/themes/` },
+            { label: "Design styles", link: `/reference/styles/` },
           ],
         },
       ],

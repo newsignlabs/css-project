@@ -9,6 +9,7 @@ import { expectNoAxeViolations, manifest } from "../harness/fixtures.ts";
 
 const dist = fileURLToPath(new URL("../../docs/dist/", import.meta.url));
 const origin = "http://docs.newbrush.test";
+const base = "/site"; // apps/docs builds for /site/ (served from the repository root on Catalyst Slate)
 const types: Record<string, string> = {
   ".html": "text/html",
   ".css": "text/css",
@@ -19,7 +20,10 @@ const types: Record<string, string> = {
 
 async function serveDocs(page: Page) {
   await page.route(`${origin}/**`, (route) => {
-    let file = join(dist, decodeURIComponent(new URL(route.request().url()).pathname));
+    const path = decodeURIComponent(new URL(route.request().url()).pathname);
+    if (!path.startsWith(`${base}/`))
+      return route.fulfill({ status: 404, body: "outside the site" });
+    let file = join(dist, path.slice(base.length));
     if (existsSync(file) && statSync(file).isDirectory()) file = join(file, "index.html");
     if (!existsSync(file)) return route.fulfill({ status: 404, body: "not found" });
     return route.fulfill({
@@ -47,7 +51,7 @@ for (const scheme of ["light", "dark"] as const) {
       test(`${path} has no axe violations`, async ({ page }) => {
         await serveDocs(page);
         await page.emulateMedia({ reducedMotion: "reduce" });
-        await page.goto(origin + path);
+        await page.goto(origin + base + path);
         await expect(page.locator("html")).toHaveAttribute("data-nb-theme", scheme);
         await expectNoAxeViolations(page);
       });
@@ -58,7 +62,7 @@ for (const scheme of ["light", "dark"] as const) {
 test("the theme picker switches newBrush themes", async ({ page }) => {
   await serveDocs(page);
   await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
-  await page.goto(`${origin}/components/button/`);
+  await page.goto(`${origin}${base}/components/button/`);
   const surface = () =>
     page.evaluate(() =>
       getComputedStyle(document.body).getPropertyValue("--nb-color-surface").trim(),

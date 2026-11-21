@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { manifest } from "../src/lib/manifest.ts";
 
@@ -8,6 +8,14 @@ import { manifest } from "../src/lib/manifest.ts";
 const dist = new URL("../dist/", import.meta.url);
 const page = (path: string) =>
   readFileSync(new URL(path ? `${path}/index.html` : "index.html", dist), "utf8");
+const BASE = "/site/";
+/** Every built HTML file, relative to dist (index.html, components/button/index.html…). */
+const htmlFiles = (dir = ""): string[] =>
+  readdirSync(new URL(dir || ".", dist)).flatMap((name) => {
+    const rel = dir + name;
+    if (statSync(new URL(rel, dist)).isDirectory()) return htmlFiles(`${rel}/`);
+    return rel.endsWith(".html") ? [rel] : [];
+  });
 const squash = (html: string) => html.replace(/\s+/g, " ").replace(/> </g, "><").trim();
 
 describe("docs build", () => {
@@ -29,7 +37,7 @@ describe("docs build", () => {
   it("lists every component in the sidebar and on the overview", () => {
     const overview = page("components");
     for (const c of manifest.components) {
-      expect(overview).toContain(`href="/components/${c.name}/"`);
+      expect(overview).toContain(`href="${BASE}components/${c.name}/"`);
     }
   });
 
@@ -48,6 +56,50 @@ describe("docs build", () => {
   it("has the home page and the getting-started guide", () => {
     expect(page("")).toContain("Get started");
     expect(page("guides/getting-started")).toContain("@newbrush/vite");
+  });
+
+  it("keeps every internal link and asset under /site/, pointing at a built file", () => {
+    // The site is served from /site/ on Catalyst Slate, so a root-relative URL outside it would 404.
+    const broken: string[] = [];
+    for (const file of htmlFiles()) {
+      const html = readFileSync(new URL(file, dist), "utf8");
+      // Relative links (the MDX pages use them) are resolved against the page's own URL.
+      const pageUrl = new URL(`http://x${BASE}${file.replace(/index\.html$/, "")}`);
+      for (const [, attr] of html.matchAll(/\s(?:href|src)="([^"#?]+)[^"]*"/g)) {
+        if (!attr || /^(https?:|mailto:|data:|\/\/)/.test(attr)) continue;
+        const path = new URL(attr, pageUrl).pathname;
+        if (!path.startsWith(BASE)) {
+          broken.push(`${file}: ${attr} (outside ${BASE})`);
+          continue;
+        }
+        const target = decodeURIComponent(path.slice(BASE.length));
+        const onDisk = target === "" || target.endsWith("/") ? `${target}index.html` : target;
+        if (!existsSync(new URL(onDisk, dist))) broken.push(`${file}: ${attr}`);
+      }
+    }
+    expect(broken).toEqual([]);
+  });
+
+  it("is published: site/ (served by Catalyst Slate) matches this build — run `pnpm site` if not", () => {
+    const site = new URL("../../../site/", import.meta.url);
+    const files = (root: URL, dir = ""): string[] =>
+      readdirSync(new URL(dir || ".", root)).flatMap((name) =>
+        statSync(new URL(dir + name, root)).isDirectory()
+          ? files(root, `${dir}${name}/`)
+          : [dir + name],
+      );
+    const built = files(dist).sort();
+    expect(files(site).sort()).toEqual(built);
+    const stale = built.filter(
+      (f) => !readFileSync(new URL(f, dist)).equals(readFileSync(new URL(f, site))),
+    );
+    expect(stale).toEqual([]);
+  });
+
+  it("never names other CSS frameworks", () => {
+    for (const file of htmlFiles()) {
+      expect(readFileSync(new URL(file, dist), "utf8"), file).not.toMatch(/bootstrap|tailwind/i);
+    }
   });
 
   it("orders cascade layers: newBrush defaults < Starlight < newBrush components and utilities", () => {

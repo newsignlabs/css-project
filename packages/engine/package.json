@@ -1,7 +1,7 @@
 {
   "name": "@newbrush/engine",
   "version": "0.0.0",
-  "description": "newBrush utility engine: parses Tailwind-compatible class names and generates token-driven, layered CSS on demand.",
+  "description": "newBrush utility engine: parses utility class names and generates token-driven, layered CSS on demand.",
   "type": "module",
   "license": "MIT",
   "repository": {

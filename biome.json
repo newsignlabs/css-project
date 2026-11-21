@@ -10,6 +10,7 @@
       "**",
       "!**/dist",
       "!**/schemas",
+      "!site",
       "!**/.turbo",
       "!**/*.css",
       "!specs",

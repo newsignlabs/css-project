@@ -279,7 +279,7 @@ const variantChips = manifest.variants
 const engineSection = `
 <section class="nb-stack" id="engine" aria-labelledby="engine-title">
   <h2 id="engine-title">Utility engine</h2>
-  <p class="text-muted max-w-prose">Tailwind-compatible class names, newBrush tokens and logical properties underneath. The engine scans
+  <p class="text-muted max-w-prose">Short, composable class names, newBrush tokens and logical properties underneath. The engine scans
   your files and writes only what you use; output is deterministic. Cold build of 1,000 files: ~150 ms · incremental rebuild: &lt; 1 ms.</p>
   <div class="nb-cluster">${byCategory}</div>
   <div class="nb-table-wrap" tabindex="0" role="region" aria-label="Class to CSS examples">

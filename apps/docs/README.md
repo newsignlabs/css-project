@@ -11,6 +11,19 @@ pnpm --filter @newbrush/docs test     # checks the built site against the manife
 
 The site needs Node ≥ 22.23 (Astro 7).
 
+## Publishing (Catalyst Slate)
+
+The live site is the Catalyst Slate app linked to this repository. Slate serves the repository root as static files,
+with no build step, and redeploys on every push to `main`. So the built site is committed:
+
+```bash
+pnpm site    # builds the docs and copies apps/docs/dist → site/
+```
+
+Commit `site/` along with your docs change. The root `index.html` redirects to `site/`, and the site is built with
+`base: "/site"`. Internal links must stay base-aware: use `url()` from `src/lib/manifest.ts` in `.astro` pages and
+relative links in MDX. `test/build.test.ts` fails on any link outside `/site/` or to a missing file.
+
 ## How pages are made
 
 | Pages | Source |
