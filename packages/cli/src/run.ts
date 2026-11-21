@@ -31,6 +31,7 @@ Commands:
   doctor    Check config, content globs, browserslist and class collisions
   contrast  Report semantic colour contrast (WCAG 2 + APCA)       [--level AA|AAA] [--all] [--json] [-c config]
   theme     Scaffold a named theme: theme create <name>           --seed <color> [--accent c] [--neutral c] [--from light|dark|contrast] [-o file] [--force]
+  style     Design styles: style list | style create <name>       list: [--json] [-c config] · create: [--from <style>] [-o dir] [--force]
   tokens    Export design tokens                                 [--format css|json|ts|figma] [-o dir]
 
 Options:
@@ -72,6 +73,8 @@ export async function run(argv: string[], io: IO): Promise<number> {
         return await contrast(rest, io);
       case "theme":
         return await theme(rest, io);
+      case "style":
+        return await style(rest, io);
       default:
         io.stderr(`nb: Unknown command "${command}"\n\n${USAGE}`);
         return EXIT.error;
@@ -358,7 +361,7 @@ async function contrast(argv: string[], io: IO): Promise<number> {
 }
 
 async function doctor(_argv: string[], io: IO): Promise<number> {
-  const { config, configPath } = await createProjectEngine(io.cwd);
+  const { engine, config, configPath, customStyles } = await createProjectEngine(io.cwd);
   const ok = (text: string) => io.stdout(`✓ ${text}\n`);
   const warn = (text: string) => io.stdout(`⚠ ${text}\n`);
   ok(
@@ -380,6 +383,40 @@ async function doctor(_argv: string[], io: IO): Promise<number> {
     warn("newbrush is not installed — run npm i newbrush");
   }
 
+  // Design styles (specs/004 T029): what the build includes, and markup that cannot work as written.
+  const builtIn = await builtInStyles();
+  const all = [...builtIn, ...customStyles.info];
+  const prefix = config.prefix?.styles ?? "";
+  const classes = styleClassMap(all, prefix);
+  ok(
+    `styles: ${config.styles === "all" ? "all built-in" : config.styles === false ? "none built-in" : config.styles.join(", ")}${customStyles.info.length ? ` + custom ${customStyles.info.map((c) => c.name).join(", ")}` : ""}`,
+  );
+  const known = new Set([...all.map((st) => st.name), "default"]);
+  const used = new Set<string>();
+  for (const file of files) {
+    const text = await readFile(file, "utf8").catch(() => "");
+    const where = relative(io.cwd, file);
+    for (const m of text.matchAll(/\bclass(?:Name)?=["'`]([^"'`]*)["'`]/g)) {
+      const list = (m[1] ?? "").split(/\s+/);
+      for (const c of list) used.add(c);
+      const styled = [...new Set(list.map((c) => classes.get(c)).filter(Boolean))];
+      if (styled.length > 1)
+        warn(
+          `${where}: one element has several styles (${styled.join(", ")}) — the last in the stylesheet wins; keep one`,
+        );
+    }
+    for (const m of text.matchAll(/data-nb-style=["']([^"']*)["']/g))
+      if (!known.has(m[1] ?? ""))
+        warn(`${where}: data-nb-style="${m[1]}" is not a style (${[...known].join(", ")})`);
+  }
+  const utilities = new Set(engine.knownClasses());
+  // Only classes the content actually uses: e.g. `glass` is both g-morph's alias and the glass utility.
+  const clashes = [...classes.keys()].filter((c) => utilities.has(c) && used.has(c));
+  if (clashes.length)
+    warn(
+      `${clashes.join(", ")} applies both a style and a utility of the same name — use the style's own name or nb- form (e.g. nb-g-morph), or set prefix: { styles: "s-" }`,
+    );
+
   const pkgPath = join(io.cwd, "package.json");
   if (existsSync(pkgPath)) {
     const pkg = JSON.parse(await readFile(pkgPath, "utf8")) as Record<
@@ -396,6 +433,131 @@ async function doctor(_argv: string[], io: IO): Promise<number> {
     }
   }
   return EXIT.ok;
+}
+
+// ── style ────────────────────────────────────────────────────────────────────
+
+interface BuiltInStyle {
+  name: string;
+  aliases: string[];
+  title: string;
+  preferredScheme: string;
+  status: string;
+}
+
+async function builtInStyles(): Promise<BuiltInStyle[]> {
+  const require = createRequire(import.meta.url);
+  const manifest = JSON.parse(
+    await readFile(require.resolve("@newbrush/styles/manifest.json"), "utf8"),
+  ) as { styles: BuiltInStyle[] };
+  return manifest.styles;
+}
+
+/** Every class that applies a style (bare with prefix.styles, nb-, aliases), by style name. */
+function styleClassMap(
+  styles: { name: string; aliases: string[] }[],
+  prefix: string,
+): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const st of styles)
+    for (const cls of [
+      `${prefix}${st.name}`,
+      `nb-${st.name}`,
+      ...st.aliases.map((a) => `${prefix}${a}`),
+    ])
+      map.set(cls, st.name);
+  for (const cls of [`${prefix}style-default`, "nb-style-default"]) map.set(cls, "default");
+  return map;
+}
+
+const STYLE_NAME = /^[a-z][a-z0-9-]*$/;
+
+/** nb style list | nb style create <name> (specs/004 T029). */
+async function style(argv: string[], io: IO): Promise<number> {
+  const { values, positionals } = parseArgs({
+    args: argv,
+    allowPositionals: true,
+    options: {
+      json: { type: "boolean", default: false },
+      config: { type: "string", short: "c" },
+      from: { type: "string", default: "minimal" },
+      output: { type: "string", short: "o" },
+      force: { type: "boolean", default: false },
+    },
+  });
+  const [action, name] = positionals;
+  const builtIn = await builtInStyles();
+
+  if (action === "list") {
+    const { config, customStyles } = await createProjectEngine(io.cwd, values.config);
+    const included = (n: string) =>
+      config.styles === "all" || (config.styles !== false && config.styles.includes(n));
+    const rows = [
+      ...builtIn.map((st) => ({ ...st, source: "built-in", included: included(st.name) })),
+      ...customStyles.info.map((st) => ({ ...st, source: st.path, included: true })),
+    ];
+    if (values.json) {
+      io.stdout(`${JSON.stringify(rows, null, 2)}\n`);
+      return EXIT.ok;
+    }
+    for (const r of rows)
+      io.stdout(
+        `${r.included ? "●" : "○"} ${r.name.padEnd(12)} ${(r.aliases.length ? `(${r.aliases.join(", ")})` : "").padEnd(12)} ${r.preferredScheme.padEnd(5)} ${r.status.padEnd(6)} ${r.source}\n`,
+      );
+    io.stdout(
+      `\n● included in the build (config styles: ${JSON.stringify(config.styles)}), ○ left out. Use one: <body class="neon">, variants: neon:p-4\n`,
+    );
+    return EXIT.ok;
+  }
+
+  if (action === "create" && name) {
+    if (!STYLE_NAME.test(name))
+      throw new UsageError(
+        `style name "${name}" must start with a letter and use only lowercase letters, digits and hyphens`,
+      );
+    if (name === "default" || name.startsWith("nb-"))
+      throw new UsageError(`"${name}" is reserved; choose another name`);
+    if (builtIn.some((st) => st.name === name || st.aliases.includes(name)))
+      throw new UsageError(`"${name}" is a built-in style or alias; choose another name`);
+    const from = values.from as string;
+    if (!builtIn.some((st) => st.name === from))
+      throw new UsageError(
+        `--from must be a built-in style: ${builtIn.map((st) => st.name).join(", ")} (got "${from}")`,
+      );
+    const dir = resolve(io.cwd, values.output ?? join("styles", name));
+    if (existsSync(join(dir, "style.json")) && !values.force)
+      throw new UsageError(`${relative(io.cwd, dir)}/style.json exists (use --force to overwrite)`);
+    const require = createRequire(import.meta.url);
+    const src = join(dirname(require.resolve("@newbrush/styles/package.json")), "src", from);
+    const source = JSON.parse(await readFile(join(src, "style.json"), "utf8")) as Record<
+      string,
+      unknown
+    >;
+    const json = {
+      ...source,
+      $schema: "https://newbrush.dev/schema/style-source.v1.json",
+      name,
+      aliases: [],
+      title: name.replace(
+        /(^|-)([a-z])/g,
+        (_, dash: string, c: string) => `${dash ? " " : ""}${c.toUpperCase()}`,
+      ),
+      description: `Custom style based on ${from}.`,
+      status: "beta",
+    };
+    await mkdir(dir, { recursive: true });
+    await writeFile(join(dir, "style.json"), `${JSON.stringify(json, null, 2)}\n`);
+    for (const file of ["recipes.css", "preview.html"])
+      if (existsSync(join(src, file))) await copyFile(join(src, file), join(dir, file));
+    const rel = relative(io.cwd, dir);
+    io.stdout(
+      `Created ${rel}/ (style "${name}", based on ${from})\n\nUse it:\n  1. add "./${rel}" to customStyles in newbrush.config\n  2. <body class="${name}">   or   <section class="${name}">\n  3. nb build — the style is validated and its colours are contrast-checked\n`,
+    );
+    return EXIT.ok;
+  }
+  throw new UsageError(
+    "Usage: nb style list [--json] | nb style create <name> [--from <style>] [-o dir] [--force]",
+  );
 }
 
 // ── tokens ───────────────────────────────────────────────────────────────────

@@ -433,3 +433,106 @@ describe("nb tokens", () => {
     expect(await read(f.dir, `out/${file}`)).toContain(needle);
   });
 });
+
+describe("nb style (specs/004 T029, T030)", () => {
+  const base = {
+    "newbrush.config.json": JSON.stringify({ content: ["src/**/*.html"] }),
+    "src/index.html": '<body class="neon"><p class="p-4">x</p></body>',
+    "src/app.css": '@import "newbrush";\n@newbrush utilities;\n',
+  };
+
+  it("lists the built-in styles, with what the build includes", async () => {
+    const f = await fixture({
+      ...base,
+      "newbrush.config.json": JSON.stringify({ content: ["src/**/*.html"], styles: ["neon"] }),
+    });
+    cleanup = f.cleanup;
+    const r = await nb(f.dir, "style", "list", "--json");
+    expect(r.code).toBe(0);
+    const rows = JSON.parse(r.out) as { name: string; included: boolean; source: string }[];
+    expect(rows.map((s) => s.name)).toEqual(
+      expect.arrayContaining(["minimal", "g-morph", "n-morph", "neon", "cyber", "pixelate"]),
+    );
+    expect(rows.find((s) => s.name === "neon")?.included).toBe(true);
+    expect(rows.find((s) => s.name === "cyber")?.included).toBe(false);
+    expect((await nb(f.dir, "style", "list")).out).toMatch(/● neon .* built-in/);
+  });
+
+  it("creates a custom style from a built-in, which then builds with variants and lists as custom", async () => {
+    const f = await fixture({
+      ...base,
+      "src/index.html": '<body class="brand"><p class="brand:p-8">x</p></body>',
+    });
+    cleanup = f.cleanup;
+    const created = await nb(f.dir, "style", "create", "brand", "--from", "neon");
+    expect(created.code).toBe(0);
+    expect(created.out).toContain('add "./styles/brand" to customStyles');
+    const json = JSON.parse(await read(f.dir, "styles/brand/style.json"));
+    expect(json).toMatchObject({
+      name: "brand",
+      aliases: [],
+      preferredScheme: "dark",
+      status: "beta",
+    });
+    expect(existsSync(join(f.dir, "styles/brand/recipes.css"))).toBe(true);
+    // Refuses to overwrite, and refuses reserved or built-in names.
+    expect((await nb(f.dir, "style", "create", "brand")).code).toBe(1);
+    expect((await nb(f.dir, "style", "create", "glass")).err).toMatch(/built-in style or alias/);
+    expect((await nb(f.dir, "style", "create", "default")).err).toMatch(/reserved/);
+    expect((await nb(f.dir, "style", "create", "Bad")).err).toMatch(/lowercase/);
+
+    await writeFile(
+      join(f.dir, "newbrush.config.json"),
+      JSON.stringify({ content: ["src/**/*.html"], customStyles: ["./styles/brand"] }),
+    );
+    const build = await nb(f.dir, "build", "-i", "src/app.css", "-o", "out.css");
+    expect(build.code).toBe(0);
+    const css = await read(f.dir, "out.css");
+    expect(css).toMatch(/--nb-style:\s*brand/);
+    expect(css).toContain(".brand\\:p-8");
+    const list = JSON.parse((await nb(f.dir, "style", "list", "--json")).out) as {
+      name: string;
+      source: string;
+    }[];
+    expect(list.find((s) => s.name === "brand")?.source).toBe("./styles/brand");
+  });
+
+  it("validates custom styles (exit 2) and contrast-checks their colours (exit 3 with onFail: error)", async () => {
+    const style = (extra: object) =>
+      JSON.stringify({ name: "brand", title: "Brand", description: "x", since: "0.0.0", ...extra });
+    const f = await fixture({
+      ...base,
+      "newbrush.config.json": JSON.stringify({
+        content: ["src/**/*.html"],
+        customStyles: ["./styles/brand"],
+        contrast: { onFail: "error" },
+      }),
+      "styles/brand/style.json": style({ aliases: ["glass"] }),
+    });
+    cleanup = f.cleanup;
+    const clash = await nb(f.dir, "build", "-i", "src/app.css", "-o", "out.css");
+    expect(clash.code).toBe(2);
+    expect(clash.err).toMatch(/glass/);
+
+    await writeFile(
+      join(f.dir, "styles/brand/style.json"),
+      style({ schemes: { light: { color: { text: { muted: { $value: "#c8c8c8" } } } } } }),
+    );
+    const low = await nb(f.dir, "build", "-i", "src/app.css", "-o", "out.css");
+    expect(low.code).toBe(3);
+    expect(low.err).toMatch(/style brand \(light\): color\.text\.muted on color\.surface/);
+  });
+
+  it("doctor warns about several styles on one element, unknown data-nb-style and style/utility clashes", async () => {
+    const f = await fixture({
+      ...base,
+      "src/index.html": '<div class="neon cyber"><p data-nb-style="nope" class="glass">x</p></div>',
+    });
+    cleanup = f.cleanup;
+    const r = await nb(f.dir, "doctor");
+    expect(r.out).toMatch(/several styles \(neon, cyber\)/);
+    expect(r.out).toMatch(/data-nb-style="nope" is not a style/);
+    expect(r.out).toMatch(/glass applies both a style and a utility/);
+    expect(r.out).toMatch(/✓ styles: all built-in/);
+  });
+});

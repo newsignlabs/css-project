@@ -9,7 +9,11 @@ import chokidar from "chokidar";
 import fg from "fast-glob";
 import { browserslistToTargets, transform } from "lightningcss";
 import picomatch from "picomatch";
-import { Engine } from "../engine.ts";
+import { BUILT_IN_STYLES, Engine } from "../engine.ts";
+import { type LoadedCustomStyles, loadCustomStyles } from "./custom-styles.ts";
+
+export { checkStyleContrast, type LoadedCustomStyles, loadCustomStyles } from "./custom-styles.ts";
+
 import { extractCandidates } from "../extract.ts";
 
 export const CONFIG_FILES = [
@@ -82,10 +86,37 @@ export function resolveThemeVariants(config: ResolvedConfig, cwd = process.cwd()
 export async function createProjectEngine(
   cwd = process.cwd(),
   configFile?: string,
-): Promise<{ engine: Engine; config: ResolvedConfig; configPath: string | null }> {
+): Promise<{
+  engine: Engine;
+  config: ResolvedConfig;
+  configPath: string | null;
+  /** Files of config customStyles (style.json, recipes.css, preview.html), for watchers. */
+  styleFiles: string[];
+  customStyles: LoadedCustomStyles;
+}> {
   const { config, path } = await loadConfig(cwd, configFile);
   const resolved = resolveThemeVariants(config, cwd);
-  return { engine: new Engine(resolved), config: resolved, configPath: path };
+  // Custom styles (specs/004 T030): compiled with the built-in pipeline, given variants, checked for contrast.
+  let custom: LoadedCustomStyles;
+  try {
+    custom = await loadCustomStyles(resolved, cwd);
+  } catch (error) {
+    throw new ConfigError((error as Error).message);
+  }
+  const engine = new Engine(
+    resolved,
+    undefined,
+    undefined,
+    [...BUILT_IN_STYLES, ...custom.refs],
+    custom,
+  );
+  return {
+    engine,
+    config: resolved,
+    configPath: path,
+    styleFiles: custom.files,
+    customStyles: custom,
+  };
 }
 
 const IGNORE = ["**/node_modules/**", "**/dist/**", "**/.git/**", "**/.turbo/**", "**/coverage/**"];

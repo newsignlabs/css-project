@@ -76,6 +76,20 @@ specificity. The nearest style wins: a style class on an element beats a style i
 (`data-nb-theme`) inside a style keeps that style's overrides in its own scheme, and recipes stop at another style or
 `.style-default` in between (two levels deep, the same selector strategy as theme variants).
 
+### Custom styles
+
+```bash
+nb style list                          # built-in and custom styles, and what the build includes
+nb style create brand --from neon      # scaffolds styles/brand/{style.json,recipes.css,preview.html}
+```
+
+Add the folder to `customStyles` in `newbrush.config`; `nb build`, the PostCSS plugin and the Vite plugin then compile
+it with the same pipeline as the built-ins (schema validation, recipes kept in `nb.styles`, unique names, dark-first,
+islands, `.style-default`), give it variants (`brand:p-8`), and contrast-check every colour that resolves at build
+time against the semantic pairs (`contrast.onFail: "error"` fails the build). Colours computed in the browser
+(`color-mix(...)`) are listed as not checked. `nb doctor` warns about several styles on one element, unknown
+`data-nb-style` values, and style classes that are also utilities. At runtime, `@newbrush/js` switches styles.
+
 ### Contrast theme and forced colors outrank styles
 
 For every colour a style overrides, the build adds a rule in `nb.styles` restoring it under the contrast theme,

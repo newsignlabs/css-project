@@ -28,29 +28,43 @@ export default function newbrush(options: NewBrushViteOptions = {}): Plugin {
   let engine: Engine | undefined;
   let scanner: Scanner | undefined;
   let isContent: (file: string) => boolean = () => false;
+  let styleFiles = new Set<string>();
   const cssModules = new Set<string>();
 
   async function setup(): Promise<void> {
     const project = await createProjectEngine(root, options.config);
     engine = project.engine;
+    styleFiles = new Set(project.styleFiles);
     scanner = new Scanner(project.config.content, root);
     const match = picomatch(project.config.content.map((g) => g.replace(/^\.\//, "")));
     isContent = (file) => match(relative(root, file).split(sep).join("/"));
     engine.addCandidates(await scanner.scanAll());
   }
 
-  async function onContentChange(server: ViteDevServer, file: string): Promise<void> {
-    await ready;
-    if (!engine || !scanner || !isContent(file)) return;
-    const start = performance.now();
-    const fresh = await scanner.update(file);
-    if (!engine.addCandidates(fresh).changed) return;
+  /** Re-runs the stylesheets that use directives (their output depends on the engine). */
+  async function reloadCss(server: ViteDevServer): Promise<void> {
     for (const id of cssModules) {
       const mod = server.moduleGraph.getModuleById(id);
       if (!mod) continue;
       server.moduleGraph.invalidateModule(mod);
       await server.reloadModule(mod);
     }
+  }
+
+  async function onContentChange(server: ViteDevServer, file: string): Promise<void> {
+    await ready;
+    // A custom style changed (specs/004 T030): rebuild the engine, then the stylesheets.
+    if (styleFiles.has(file)) {
+      ready = setup();
+      await ready;
+      await reloadCss(server);
+      return;
+    }
+    if (!engine || !scanner || !isContent(file)) return;
+    const start = performance.now();
+    const fresh = await scanner.update(file);
+    if (!engine.addCandidates(fresh).changed) return;
+    await reloadCss(server);
     options.onUpdate?.({
       ms: performance.now() - start,
       file,
@@ -93,6 +107,7 @@ export default function newbrush(options: NewBrushViteOptions = {}): Plugin {
     configureServer(server) {
       for (const event of ["add", "change"] as const)
         server.watcher.on(event, (file) => void onContentChange(server, file));
+      void ready.then(() => server.watcher.add([...styleFiles]));
     },
   };
 }

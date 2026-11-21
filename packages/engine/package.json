@@ -36,6 +36,8 @@
   },
   "dependencies": {
     "@newbrush/schema": "workspace:*",
+    "@newbrush/styles": "workspace:*",
+    "@newbrush/tokens": "workspace:*",
     "browserslist": "^4.25.0",
     "chokidar": "^4.0.3",
     "culori": "^4.0.2",
@@ -45,8 +47,7 @@
     "picomatch": "^4.0.7"
   },
   "devDependencies": {
-    "@newbrush/styles": "workspace:*",
-    "@newbrush/tokens": "workspace:*",
+    "@types/culori": "^4.0.1",
     "@types/picomatch": "^4.0.3",
     "fast-check": "^4.10.2",
     "tsup": "^8.5.1",
