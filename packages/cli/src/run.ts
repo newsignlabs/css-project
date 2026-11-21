@@ -410,7 +410,7 @@ async function doctor(_argv: string[], io: IO): Promise<number> {
         warn(`${where}: data-nb-style="${m[1]}" is not a style (${[...known].join(", ")})`);
   }
   const utilities = new Set(engine.knownClasses());
-  // Only classes the content actually uses: e.g. `glass` is both g-morph's alias and the glass utility.
+  // Only classes the content actually uses, e.g. a custom style or alias named like a utility (`grid`).
   const clashes = [...classes.keys()].filter((c) => utilities.has(c) && used.has(c));
   if (clashes.length)
     warn(

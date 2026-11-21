@@ -5,7 +5,7 @@
  *
  * Emitted shape, all in `@layer nb.styles` so it outranks every token declaration whatever its specificity:
  *   :where(…dark-first…) { …the dark theme… }                    ← preferredScheme "dark", no explicit theme
- *   .g-morph, .nb-g-morph, .glass, [data-nb-style="g-morph"],
+ *   .n-morph, .nb-n-morph, .neumorph, [data-nb-style="n-morph"],
  *   :where(:root:has(> body:is(…)), …theme islands inside…) { --nb-style: g-morph; …overrides }
  *   :where(…) { color; background-color }                         ← repaint, when the style changes them
  *   :where(.g-morph, …) .nb-card { … }                              ← recipes.css, `:--style` expanded

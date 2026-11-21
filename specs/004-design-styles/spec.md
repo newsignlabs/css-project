@@ -52,7 +52,7 @@ v1.1 candidates (same mechanism, not in v1.0 scope): `brutal` (neo-brutalism), `
   existing project CSS.
 - Q2 Exact names → **`g-morph`** (glassmorphism, replaces "glassy"), **`n-morph`** (neumorphism — promoted from the v1.1
   list into v1.0), **`pixelate`** (replaces "pixel"). `minimal`, `neon` and `cyber` keep their names unless renamed later.
-  Short aliases accepted: `glass` → `g-morph`, `neumorph` → `n-morph`, `pixel` → `pixelate`.
+  Short aliases accepted: `neumorph` → `n-morph`, `pixel` → `pixelate`. (`g-morph` has none: `glass` is the frosted-surface utility.)
 - Q3 Scope → **Skin + density**: colors, surfaces, borders, radius, depth, typography, motion, effects and a density token
   (`--nb-density`). No layout changes — switching styles never moves content between rows/columns or changes structure.
 - Q4 Packaging → **Single file**, on the condition that it does not slow the site down: styles are pure CSS (no

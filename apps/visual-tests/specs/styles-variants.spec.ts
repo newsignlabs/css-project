@@ -15,7 +15,7 @@ const html = `
     <div class="style-default"><p id="reset" class="neon:p-8">inside reset</p></div>
     <div data-nb-theme="dark"><p id="island" class="neon:p-8">theme island</p></div>
   </section>
-  <section class="glass"><p id="alias" class="glass:p-8">alias</p></section>`;
+  <section class="neumorph"><p id="alias" class="neumorph:p-8">alias</p></section>`;
 
 const expected = {
   outside: "0px",
@@ -36,7 +36,7 @@ for (const strategy of ["selector", "style-query"] as const) {
     const engine = createEngine({ content: ["x"], themeVariants: strategy });
     await renderFixture(page, {
       html,
-      extraCss: engine.generate(["neon:p-8", "glass:p-8"]).css,
+      extraCss: engine.generate(["neon:p-8", "neumorph:p-8"]).css,
     });
     const padding = await page.evaluate((ids) => {
       const out: Record<string, string> = {};

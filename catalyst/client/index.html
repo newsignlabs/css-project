@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>How newBrush is made</title>
 <meta name="description" content="Live overview of the newBrush CSS framework: architecture, tokens, components, utility engine and status.">
-<link rel="stylesheet" href="overview.css?v=92303e6c6e">
+<link rel="stylesheet" href="overview.css?v=968e817627">
 </head>
 <body>
 
@@ -28,7 +28,7 @@
 <main class="nb-container nb-stack nb-stack--xl py-12" id="top">
 
 <section class="nb-stack" aria-labelledby="top-title">
-  <p class="nb-badge nb-badge--accent nb-badge--dot self-start">Status · v0.0.0 · 2026-11-20</p>
+  <p class="nb-badge nb-badge--accent nb-badge--dot self-start">Status · v0.0.0 · 2026-11-21</p>
   <h1 id="top-title" class="text-5xl font-bold tracking-tight">How newBrush is made</h1>
   <p class="text-lg text-muted max-w-prose">A live look at the framework as it exists today. This page is styled entirely by newBrush:
   every component below is the real component, and the utility CSS for this page was generated on demand by the newBrush engine.</p>
@@ -36,10 +36,10 @@
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">252</p><p class="text-sm text-muted mt-1">design tokens (W3C DTCG)</p></div>
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">16</p><p class="text-sm text-muted mt-1">components + 9 layout primitives</p></div>
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">137</p><p class="text-sm text-muted mt-1">utility families · 3,824 utilities</p></div>
-    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">77</p><p class="text-sm text-muted mt-1">variants (md:, hover:, dark:, @md: …)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">85</p><p class="text-sm text-muted mt-1">variants (md:, hover:, dark:, @md: …)</p></div>
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">5.4 kB</p><p class="text-sm text-muted mt-1">core CSS, brotli (budget 8 kB)</p></div>
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">11.4 kB</p><p class="text-sm text-muted mt-1">framework CSS, brotli (budget 35 kB)</p></div>
-    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">47.3 kB</p><p class="text-sm text-muted mt-1">with utility preset, brotli (budget 70 kB)</p></div>
+    <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">47.7 kB</p><p class="text-sm text-muted mt-1">with utility preset, brotli (budget 70 kB)</p></div>
     <div class="nb-card p-5"><p class="text-3xl font-bold leading-tight">0</p><p class="text-sm text-muted mt-1">JavaScript required</p></div>
   </div>
 </section>
@@ -762,7 +762,7 @@
 }</code></pre></td></tr></tbody>
     </table>
   </div>
-  <details><summary>All 77 variants</summary><p class="mt-2"><code class="text-xs">before</code> <code class="text-xs">after</code> <code class="text-xs">placeholder</code> <code class="text-xs">selection</code> <code class="text-xs">marker</code> <code class="text-xs">file</code> <code class="text-xs">backdrop</code> <code class="text-xs">first-line</code> <code class="text-xs">first-letter</code> <code class="text-xs">first</code> <code class="text-xs">last</code> <code class="text-xs">only</code> <code class="text-xs">odd</code> <code class="text-xs">even</code> <code class="text-xs">first-of-type</code> <code class="text-xs">last-of-type</code> <code class="text-xs">empty</code> <code class="text-xs">visited</code> <code class="text-xs">target</code> <code class="text-xs">open</code> <code class="text-xs">default</code> <code class="text-xs">checked</code> <code class="text-xs">indeterminate</code> <code class="text-xs">placeholder-shown</code> <code class="text-xs">autofill</code> <code class="text-xs">optional</code> <code class="text-xs">required</code> <code class="text-xs">valid</code> <code class="text-xs">invalid</code> <code class="text-xs">user-valid</code> <code class="text-xs">user-invalid</code> <code class="text-xs">in-range</code> <code class="text-xs">out-of-range</code> <code class="text-xs">read-only</code> <code class="text-xs">focus-within</code> <code class="text-xs">hover</code> <code class="text-xs">focus</code> <code class="text-xs">focus-visible</code> <code class="text-xs">active</code> <code class="text-xs">enabled</code> <code class="text-xs">disabled</code> <code class="text-xs">group</code> <code class="text-xs">peer</code> <code class="text-xs">aria</code> <code class="text-xs">data</code> <code class="text-xs">has</code> <code class="text-xs">not</code> <code class="text-xs">[arbitrary]</code> <code class="text-xs">ltr</code> <code class="text-xs">rtl</code> <code class="text-xs">motion-safe</code> <code class="text-xs">motion-reduce</code> <code class="text-xs">contrast-more</code> <code class="text-xs">forced-colors</code> <code class="text-xs">portrait</code> <code class="text-xs">landscape</code> <code class="text-xs">print</code> <code class="text-xs">light</code> <code class="text-xs">dark</code> <code class="text-xs">contrast</code> <code class="text-xs">starting</code> <code class="text-xs">max-2xl</code> <code class="text-xs">max-xl</code> <code class="text-xs">max-lg</code> <code class="text-xs">max-md</code> <code class="text-xs">max-sm</code> <code class="text-xs">sm</code> <code class="text-xs">md</code> <code class="text-xs">lg</code> <code class="text-xs">xl</code> <code class="text-xs">2xl</code> <code class="text-xs">@sm</code> <code class="text-xs">@md</code> <code class="text-xs">@lg</code> <code class="text-xs">@xl</code> <code class="text-xs">@2xl</code> <code class="text-xs">supports</code></p></details>
+  <details><summary>All 85 variants</summary><p class="mt-2"><code class="text-xs">before</code> <code class="text-xs">after</code> <code class="text-xs">placeholder</code> <code class="text-xs">selection</code> <code class="text-xs">marker</code> <code class="text-xs">file</code> <code class="text-xs">backdrop</code> <code class="text-xs">first-line</code> <code class="text-xs">first-letter</code> <code class="text-xs">first</code> <code class="text-xs">last</code> <code class="text-xs">only</code> <code class="text-xs">odd</code> <code class="text-xs">even</code> <code class="text-xs">first-of-type</code> <code class="text-xs">last-of-type</code> <code class="text-xs">empty</code> <code class="text-xs">visited</code> <code class="text-xs">target</code> <code class="text-xs">open</code> <code class="text-xs">default</code> <code class="text-xs">checked</code> <code class="text-xs">indeterminate</code> <code class="text-xs">placeholder-shown</code> <code class="text-xs">autofill</code> <code class="text-xs">optional</code> <code class="text-xs">required</code> <code class="text-xs">valid</code> <code class="text-xs">invalid</code> <code class="text-xs">user-valid</code> <code class="text-xs">user-invalid</code> <code class="text-xs">in-range</code> <code class="text-xs">out-of-range</code> <code class="text-xs">read-only</code> <code class="text-xs">focus-within</code> <code class="text-xs">hover</code> <code class="text-xs">focus</code> <code class="text-xs">focus-visible</code> <code class="text-xs">active</code> <code class="text-xs">enabled</code> <code class="text-xs">disabled</code> <code class="text-xs">group</code> <code class="text-xs">peer</code> <code class="text-xs">aria</code> <code class="text-xs">data</code> <code class="text-xs">has</code> <code class="text-xs">not</code> <code class="text-xs">[arbitrary]</code> <code class="text-xs">ltr</code> <code class="text-xs">rtl</code> <code class="text-xs">motion-safe</code> <code class="text-xs">motion-reduce</code> <code class="text-xs">contrast-more</code> <code class="text-xs">forced-colors</code> <code class="text-xs">portrait</code> <code class="text-xs">landscape</code> <code class="text-xs">print</code> <code class="text-xs">light</code> <code class="text-xs">dark</code> <code class="text-xs">contrast</code> <code class="text-xs">cyber</code> <code class="text-xs">g-morph</code> <code class="text-xs">minimal</code> <code class="text-xs">n-morph</code> <code class="text-xs">neumorph</code> <code class="text-xs">neon</code> <code class="text-xs">pixelate</code> <code class="text-xs">pixel</code> <code class="text-xs">starting</code> <code class="text-xs">max-2xl</code> <code class="text-xs">max-xl</code> <code class="text-xs">max-lg</code> <code class="text-xs">max-md</code> <code class="text-xs">max-sm</code> <code class="text-xs">sm</code> <code class="text-xs">md</code> <code class="text-xs">lg</code> <code class="text-xs">xl</code> <code class="text-xs">2xl</code> <code class="text-xs">@sm</code> <code class="text-xs">@md</code> <code class="text-xs">@lg</code> <code class="text-xs">@xl</code> <code class="text-xs">@2xl</code> <code class="text-xs">supports</code></p></details>
 </section>
 
 <section class="nb-stack" id="themes" aria-labelledby="themes-title">
@@ -795,8 +795,8 @@
   <div class="grid gap-4 md:grid-cols-2">
     <div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Core framework</p><p class="text-sm text-muted">68/94 tasks</p></div>
         <div class="progress" role="progressbar" aria-label="Core framework progress" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"><span data-nb-s="97"></span></div>
-        <p class="text-sm text-muted">Tokens, components, utility engine, tooling</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Design styles</p><p class="text-sm text-muted">27/43 tasks</p></div>
-        <div class="progress" role="progressbar" aria-label="Design styles progress" aria-valuenow="63" aria-valuemin="0" aria-valuemax="100"><span data-nb-s="98"></span></div>
+        <p class="text-sm text-muted">Tokens, components, utility engine, tooling</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Design styles</p><p class="text-sm text-muted">34/43 tasks</p></div>
+        <div class="progress" role="progressbar" aria-label="Design styles progress" aria-valuenow="79" aria-valuemin="0" aria-valuemax="100"><span data-nb-s="98"></span></div>
         <p class="text-sm text-muted">g-morph, n-morph, neon, cyber, pixelate, minimal</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">MCP server</p><p class="text-sm text-muted">0/38 tasks</p></div>
         <div class="progress" role="progressbar" aria-label="MCP server progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><span data-nb-s="99"></span></div>
         <p class="text-sm text-muted">CSS & page generation for AI agents</p></div><div class="nb-card p-5 nb-stack nb-stack--xs"><div class="nb-cluster nb-cluster--between"><p class="font-semibold">Distribution</p><p class="text-sm text-muted">0/30 tasks</p></div>
@@ -810,7 +810,7 @@
 <footer class="text-sm text-muted border-t pt-6"><p>newBrush · MIT · generated by <code>apps/overview</code> from the build outputs.
 Source: github.com/newsignlabs/css-project</p></footer>
 </main>
-<script src="overview.js?v=92303e6c6e" defer></script>
+<script src="overview.js?v=968e817627" defer></script>
 <!-- utilities generated for this page: 61 classes, 3.3 kB -->
 </body>
 </html>

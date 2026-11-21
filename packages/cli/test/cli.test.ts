@@ -477,7 +477,7 @@ describe("nb style (specs/004 T029, T030)", () => {
     expect(existsSync(join(f.dir, "styles/brand/recipes.css"))).toBe(true);
     // Refuses to overwrite, and refuses reserved or built-in names.
     expect((await nb(f.dir, "style", "create", "brand")).code).toBe(1);
-    expect((await nb(f.dir, "style", "create", "glass")).err).toMatch(/built-in style or alias/);
+    expect((await nb(f.dir, "style", "create", "neumorph")).err).toMatch(/built-in style or alias/);
     expect((await nb(f.dir, "style", "create", "default")).err).toMatch(/reserved/);
     expect((await nb(f.dir, "style", "create", "Bad")).err).toMatch(/lowercase/);
 
@@ -507,12 +507,12 @@ describe("nb style (specs/004 T029, T030)", () => {
         customStyles: ["./styles/brand"],
         contrast: { onFail: "error" },
       }),
-      "styles/brand/style.json": style({ aliases: ["glass"] }),
+      "styles/brand/style.json": style({ aliases: ["pixel"] }),
     });
     cleanup = f.cleanup;
     const clash = await nb(f.dir, "build", "-i", "src/app.css", "-o", "out.css");
     expect(clash.code).toBe(2);
-    expect(clash.err).toMatch(/glass/);
+    expect(clash.err).toMatch(/pixel/);
 
     await writeFile(
       join(f.dir, "styles/brand/style.json"),
@@ -526,13 +526,24 @@ describe("nb style (specs/004 T029, T030)", () => {
   it("doctor warns about several styles on one element, unknown data-nb-style and style/utility clashes", async () => {
     const f = await fixture({
       ...base,
-      "src/index.html": '<div class="neon cyber"><p data-nb-style="nope" class="glass">x</p></div>',
+      "newbrush.config.json": JSON.stringify({
+        content: ["src/**/*.html"],
+        customStyles: ["./styles/brand"],
+      }),
+      "styles/brand/style.json": JSON.stringify({
+        name: "brand",
+        aliases: ["grid"],
+        title: "Brand",
+        description: "x",
+        since: "0.0.0",
+      }),
+      "src/index.html": '<div class="neon cyber"><p data-nb-style="nope" class="grid">x</p></div>',
     });
     cleanup = f.cleanup;
     const r = await nb(f.dir, "doctor");
     expect(r.out).toMatch(/several styles \(neon, cyber\)/);
     expect(r.out).toMatch(/data-nb-style="nope" is not a style/);
-    expect(r.out).toMatch(/glass applies both a style and a utility/);
-    expect(r.out).toMatch(/✓ styles: all built-in/);
+    expect(r.out).toMatch(/grid applies both a style and a utility/);
+    expect(r.out).toMatch(/✓ styles: all built-in \+ custom brand/);
   });
 });

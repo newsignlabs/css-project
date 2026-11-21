@@ -113,7 +113,7 @@ describe("editor support (T058)", () => {
   it("classes.d.ts accepts real classes and rejects typos", { timeout: 20_000 }, () => {
     expect(
       diagnosticsFor(
-        'import type { NewBrushClass } from "./classes";\nconst ok: NewBrushClass[] = ["nb-btn", "nb-btn--primary", "p-4", "md:grid-cols-3", "hover:bg-accent", "neon", "glass", "nb-pixelate", "style-default", "neon:p-4"];\nexport { ok };\n',
+        'import type { NewBrushClass } from "./classes";\nconst ok: NewBrushClass[] = ["nb-btn", "nb-btn--primary", "p-4", "md:grid-cols-3", "hover:bg-accent", "neon", "neumorph", "nb-pixelate", "style-default", "neon:p-4"];\nexport { ok };\n',
       ),
     ).toEqual([]);
     expect(
@@ -138,22 +138,22 @@ describe("editor support (T058)", () => {
         "p-4",
         "grid-cols-3",
         "g-morph",
-        "glass",
+        "neumorph",
       ]),
     );
     const glass = htmlData.globalAttributes[0].values.find(
-      (v: { name: string }) => v.name === "glass",
+      (v: { name: string }) => v.name === "neumorph",
     );
-    expect(glass.description).toMatch(/^Design style G-morph/);
+    expect(glass.description).toMatch(/^Design style N-morph/);
   });
 
   it("types design styles and style variants (specs/004 T032)", async () => {
     const dts = await dist("classes.d.ts");
     expect(dts).toMatch(/export type NewBrushStyle =\n {2}\| "cyber"/);
-    for (const name of ["neon", "nb-neon", "glass", "neumorph", "pixel", "style-default"])
+    for (const name of ["neon", "nb-neon", "neumorph", "pixel", "style-default"])
       expect(dts).toContain(`| "${name}"`);
     const variants = dts.slice(dts.indexOf("export type NewBrushVariant"));
-    for (const name of ["neon", "g-morph", "glass", "pixelate"])
+    for (const name of ["neon", "g-morph", "neumorph", "pixelate"])
       expect(variants).toContain(`| "${name}"`);
   });
 });
@@ -165,7 +165,7 @@ describe("design styles (specs/004 S0)", () => {
       for (const name of ["minimal", "g-morph", "n-morph", "neon", "cyber", "pixelate"])
         expect(css).toMatch(new RegExp(`--nb-style:\\s*${name}`));
       expect(css).toContain(".style-default");
-      expect(css).toContain(".glass");
+      expect(css).toContain(".neumorph");
     }
     expect(await dist("newbrush-core.css")).not.toContain("--nb-style");
   });
