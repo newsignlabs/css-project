@@ -3,7 +3,7 @@
  * Every concrete utility, plus the variants people actually reach for on the families that need them.
  * Budget: newbrush-full.min.css ≤ 70 kB brotli (constitution §VI), enforced by size-limit.
  */
-import type { Engine } from "@newbrush/engine";
+import { BUILT_IN_STYLES, type Engine } from "@newbrush/engine";
 
 const RESPONSIVE = ["sm", "md", "lg", "xl"];
 const CONTAINER = ["@sm", "@md", "@lg"];
@@ -55,6 +55,11 @@ export function presetClasses(engine: Engine): string[] {
     ["opacity-50", "opacity-disabled", "cursor-not-allowed", "pointer-events-none"],
   );
   add(["motion-reduce"], ["animate-none", "transition-none"]);
+  // Show or hide content per design style (specs/004 T028), e.g. a neon-only badge: `hidden neon:inline-flex`.
+  add(
+    BUILT_IN_STYLES.map((s) => s.name),
+    ["hidden", "block", "inline-block", "flex", "inline-flex", "grid"],
+  );
   add(
     ["motion-safe"],
     known.filter((c) => /^(animate-|transition)/.test(c)),

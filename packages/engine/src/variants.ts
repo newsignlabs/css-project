@@ -102,6 +102,44 @@ export function safeArbitrary(raw: string): string | null {
 
 type ThemeStrategy = "style-query" | "selector";
 
+/** A design style as the engine needs it (specs/004): its name and class aliases. */
+export interface StyleRef {
+  name: string;
+  aliases: string[];
+}
+
+/** Classes and attribute that apply a style, as @newbrush/styles emits them (bare, nb-, aliases, data-nb-style). */
+export function styleSelectorList(style: StyleRef, prefix = ""): string[] {
+  const classes = new Set([
+    `${prefix}${style.name}`,
+    `nb-${style.name}`,
+    ...style.aliases.map((a) => `${prefix}${a}`),
+  ]);
+  return [...[...classes].map((c) => `.${c}`), `[data-nb-style="${style.name}"]`];
+}
+
+/**
+ * `neon:p-4` (specs/004 FR-014): applies under the nearest style. With style queries, `@container style(--nb-style)`
+ * reads the inherited marker; otherwise a selector strategy (depth 2) excludes elements inside another style or
+ * `.style-default` nested in this one. The styled element itself always matches.
+ */
+function styleVariant(
+  style: StyleRef,
+  others: string[],
+  prefix: string,
+  strategy: ThemeStrategy,
+): VariantDef["apply"] {
+  const own = styleSelectorList(style, prefix).join(", ");
+  const self = `:is(${own})&`;
+  if (strategy === "style-query")
+    return (s) => [
+      { ...clone(s), atRules: [...s.atRules, `@container style(--nb-style: ${style.name})`] },
+      { ...clone(s), wrappers: [...s.wrappers, self] },
+    ];
+  const nested = others.length ? `:not(:where(${own}) :is(${others.join(", ")}) *)` : "";
+  return (s) => [{ ...clone(s), wrappers: [...s.wrappers, `:where(${own}) &${nested}, ${self}`] }];
+}
+
 function themeVariant(
   name: "dark" | "light" | "contrast",
   strategy: ThemeStrategy,
@@ -143,7 +181,11 @@ export interface VariantRegistry {
   resolve: (name: string) => { def: VariantDef; arg?: string } | null;
 }
 
-export function createVariants(theme: Theme, config: ResolvedConfig): VariantRegistry {
+export function createVariants(
+  theme: Theme,
+  config: ResolvedConfig,
+  styles: StyleRef[] = [],
+): VariantRegistry {
   const defs: VariantDef[] = [];
   const add = (
     name: string,
@@ -285,6 +327,31 @@ export function createVariants(theme: Theme, config: ResolvedConfig): VariantReg
     "[data-nb-theme=contrast] / prefers-contrast",
     themeVariant("contrast", strategy),
   );
+  // Style variants, after the theme variants (specs/004 T027): only for the styles the build includes.
+  const included =
+    config.styles === false
+      ? []
+      : config.styles === "all"
+        ? styles
+        : styles.filter((st) => (config.styles as string[]).includes(st.name));
+  const prefix = config.prefix?.styles ?? "";
+  for (const style of included) {
+    const others = [
+      ...styles.filter((o) => o !== style).flatMap((o) => styleSelectorList(o, prefix)),
+      `.${prefix}style-default`,
+      ".nb-style-default",
+      '[data-nb-style="default"]',
+    ];
+    const apply = styleVariant(style, others, prefix, strategy);
+    for (const name of [style.name, ...style.aliases])
+      add(
+        name,
+        "parent-selector",
+        `${styleSelectorList(style, prefix)[0]} / --nb-style: ${style.name}`,
+        apply,
+      );
+  }
+
   add("starting", "at-rule", "@starting-style", (s) => [
     { ...clone(s), atRules: [...s.atRules, "@starting-style"] },
   ]);

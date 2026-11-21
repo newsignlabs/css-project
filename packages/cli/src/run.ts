@@ -190,8 +190,9 @@ async function compileCss(
       },
     },
   });
-  // Lower nesting from @nb-apply and other modern syntax for the project's browserslist.
-  return optimize(code.toString(), { minify, cwd, filename: input }).code;
+  // Drop the design styles config `styles` leaves out, then lower nesting from @nb-apply and other modern syntax
+  // for the project's browserslist.
+  return optimize(engine.selectStyles(code.toString()), { minify, cwd, filename: input }).code;
 }
 
 async function buildCommand(argv: string[], io: IO): Promise<number> {

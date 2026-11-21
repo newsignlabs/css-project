@@ -81,6 +81,13 @@ const newbrush: PluginCreator<NewBrushPostcssOptions> = (options = {}) => ({
         postcss.parse(css, { from: parent ? relative(cwd, parent) : undefined }).nodes,
       );
     });
+    // Config `styles` (specs/004 T028): drop the design styles the build leaves out. Imports are inlined by now when
+    // an import plugin (postcss-import, Vite) runs first; otherwise the bundler that inlines them keeps every style.
+    if (config.styles !== "all") {
+      const pruned = engine.selectStyles(root.toString());
+      root.removeAll();
+      root.append(postcss.parse(pruned, { from: parent }).nodes);
+    }
   },
 });
 newbrush.postcss = true;

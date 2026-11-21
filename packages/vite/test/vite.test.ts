@@ -89,6 +89,29 @@ describe("@newbrush/vite", () => {
     ]);
   }, 30_000);
 
+  it("keeps only the design styles config styles includes in the built CSS (specs/004 T028)", async () => {
+    await writeFile(
+      join(dir, "newbrush.config.json"),
+      JSON.stringify({ content: ["index.html", "src/**/*.{js,ts}"], styles: ["neon"] }),
+    );
+    const result = await build({
+      root: dir,
+      logLevel: "silent",
+      plugins: [newbrush()],
+      build: { write: false },
+    });
+    const css = (Array.isArray(result) ? result : [result])
+      .flatMap((r) => ("output" in r ? r.output : []))
+      .filter((o) => o.fileName.endsWith(".css"))
+      .map((o) => ("source" in o ? String(o.source) : ""))
+      .join("");
+    expect(css).toMatch(/--nb-style:\s*neon/);
+    expect(css).toMatch(/--nb-style:\s*default/);
+    for (const other of ["cyber", "g-morph", "minimal", "n-morph", "pixelate"])
+      expect(css, other).not.toMatch(new RegExp(`--nb-style:\\s*${other}`));
+    expect(css).toContain(".p-4");
+  }, 30_000);
+
   describe("dev server", () => {
     let server: ViteDevServer | undefined;
     afterEach(async () => {

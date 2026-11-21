@@ -87,6 +87,27 @@ describe("@newbrush/postcss", () => {
     expect((await processCss("@newbrush utilities;")).css).toContain(".gap-12");
   });
 
+  it("keeps only the design styles config styles includes, once imports are inlined (specs/004 T028)", async () => {
+    await writeFile(
+      join(dir, "newbrush.config.json"),
+      JSON.stringify({ content: ["src/**/*.html"], styles: ["neon"] }),
+    );
+    const { css } = await processCss(
+      [
+        "@layer nb.styles {",
+        '  .neon, .nb-neon, [data-nb-style="neon"] { --nb-style: neon; }',
+        '  .cyber, .nb-cyber, [data-nb-style="cyber"] { --nb-style: cyber; }',
+        "}",
+        "@newbrush utilities;",
+        ".app { color: red; }",
+      ].join("\n"),
+    );
+    expect(css).toContain("--nb-style: neon");
+    expect(css).not.toContain("--nb-style: cyber");
+    expect(css).toContain(".p-4");
+    expect(css).toContain(".app { color: red; }");
+  });
+
   it("leaves CSS without directives untouched", async () => {
     expect((await processCss(".a { color: red; }")).css).toBe(".a { color: red; }");
   });

@@ -96,6 +96,23 @@ describe("nb build", () => {
     expect(a.split("\n").length).toBeLessThan(5);
   });
 
+  it("keeps only the design styles config styles includes (specs/004 T028)", async () => {
+    const f = await fixture({
+      ...files,
+      "newbrush.config.json": JSON.stringify({ content: ["src/**/*.html"], styles: ["neon"] }),
+      "src/index.html": '<main class="neon neon:p-8">',
+    });
+    cleanup = f.cleanup;
+    expect((await nb(f.dir, "build", "-i", "src/app.css", "-o", "dist/app.css")).code).toBe(0);
+    const css = await read(f.dir, "dist/app.css");
+    expect(css).toMatch(/--nb-style:\s*neon/);
+    expect(css).toContain(".neon\\:p-8");
+    expect(css).toMatch(/--nb-style:\s*default/);
+    for (const other of ["cyber", "g-morph", "minimal", "n-morph", "pixelate"])
+      expect(css, other).not.toMatch(new RegExp(`--nb-style:\\s*${other}`));
+    expect(css).not.toContain("nb-cyber-glitch");
+  });
+
   it("writes utilities only when no input is given", async () => {
     const f = await fixture(files);
     cleanup = f.cleanup;

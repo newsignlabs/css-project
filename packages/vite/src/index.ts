@@ -82,6 +82,14 @@ export default function newbrush(options: NewBrushViteOptions = {}): Plugin {
       cssModules.add(id);
       return { code: processDirectives(code, engine, scanner.candidates()).css, map: null };
     },
+    // Config `styles` (specs/004 T028): the built CSS keeps only the design styles the config includes. The dev
+    // server keeps them all (it is a size optimisation, not a behaviour change).
+    generateBundle(_, bundle) {
+      if (!engine) return;
+      for (const file of Object.values(bundle))
+        if (file.type === "asset" && file.fileName.endsWith(".css"))
+          file.source = engine.selectStyles(String(file.source));
+    },
     configureServer(server) {
       for (const event of ["add", "change"] as const)
         server.watcher.on(event, (file) => void onContentChange(server, file));

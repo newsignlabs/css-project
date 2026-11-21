@@ -8,6 +8,7 @@ import { extractCandidates } from "./extract.ts";
 
 export { DirectiveError, expandApply, hasDirectives, processDirectives } from "./apply.ts";
 export {
+  BUILT_IN_STYLES,
   type Diagnostic,
   Engine,
   type Explanation,
@@ -17,9 +18,11 @@ export {
 } from "./engine.ts";
 export { escapeClassName } from "./escape.ts";
 export { extractCandidates } from "./extract.ts";
+export { pruneStyles } from "./prune.ts";
 export { createTheme, type Theme } from "./theme.ts";
 export type { Family, Resolved } from "./types.ts";
 export { type Grammar, type Validation, validateArbitrary } from "./validate.ts";
+export { type StyleRef, styleSelectorList } from "./variants.ts";
 
 export function createEngine(config?: Config): Engine {
   return new Engine(config);
