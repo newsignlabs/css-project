@@ -23,6 +23,14 @@ import { validateArbitrary } from "./validate.ts";
 import { createVariants, type RuleState, type StyleRef, type VariantRegistry } from "./variants.ts";
 
 /** The built-in design styles (@newbrush/styles), bundled like the tokens. */
+/** Custom styles compiled for a project: their CSS, names and build-time contrast findings. */
+export interface CustomStyles {
+  css: string;
+  names: string[];
+  messages: string[];
+  failures: number;
+}
+
 export const BUILT_IN_STYLES: StyleRef[] = stylesManifest.styles.map((s) => ({
   name: s.name,
   aliases: s.aliases,
@@ -121,6 +129,8 @@ export class Engine {
     families: Family[] = defaultFamilies,
     theme: Theme = createTheme(),
     styles: StyleRef[] = BUILT_IN_STYLES,
+    /** Compiled custom styles (config customStyles) and their contrast check, from @newbrush/engine/node. */
+    readonly customStyles: CustomStyles = { css: "", names: [], messages: [], failures: 0 },
   ) {
     this.config = Config.parse(config);
     this.seedCss = seedTokensCss(this.config.theme?.seeds);
@@ -140,7 +150,9 @@ export class Engine {
    * include is removed. Unchanged for `styles: "all"` (the default).
    */
   selectStyles(css: string): string {
-    return this.config.styles === "all" ? css : pruneStyles(css, this.config.styles);
+    if (this.config.styles === "all") return css;
+    // Custom styles were configured explicitly: always kept.
+    return pruneStyles(css, [...(this.config.styles || []), ...this.customStyles.names]);
   }
 
   /**
@@ -149,7 +161,7 @@ export class Engine {
    */
   get themeCss(): string {
     const fixes = this.config.contrast?.onFail === "fix" ? contrastFixCss(this.contrast) : "";
-    return this.seedCss + fixes;
+    return this.seedCss + fixes + this.customStyles.css;
   }
 
   /** Semantic contrast report for this config's palettes and `contrast` settings (computed once, T062). */
@@ -169,8 +181,10 @@ export class Engine {
   contrastVerdict(): { messages: string[]; fail: boolean } {
     const report = this.contrast;
     return {
-      messages: formatContrast(report),
-      fail: this.config.contrast?.onFail === "error" && report.failures.length > 0,
+      messages: [...formatContrast(report), ...this.customStyles.messages],
+      fail:
+        this.config.contrast?.onFail === "error" &&
+        report.failures.length + this.customStyles.failures > 0,
     };
   }
 

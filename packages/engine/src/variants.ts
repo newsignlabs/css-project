@@ -106,6 +106,8 @@ type ThemeStrategy = "style-query" | "selector";
 export interface StyleRef {
   name: string;
   aliases: string[];
+  /** A project's own style (config customStyles): always included, whatever config `styles` says. */
+  custom?: boolean;
 }
 
 /** Classes and attribute that apply a style, as @newbrush/styles emits them (bare, nb-, aliases, data-nb-style). */
@@ -328,12 +330,12 @@ export function createVariants(
     themeVariant("contrast", strategy),
   );
   // Style variants, after the theme variants (specs/004 T027): only for the styles the build includes.
-  const included =
-    config.styles === false
-      ? []
-      : config.styles === "all"
-        ? styles
-        : styles.filter((st) => (config.styles as string[]).includes(st.name));
+  const included = styles.filter(
+    (st) =>
+      st.custom ||
+      config.styles === "all" ||
+      (config.styles !== false && config.styles.includes(st.name)),
+  );
   const prefix = config.prefix?.styles ?? "";
   for (const style of included) {
     const others = [

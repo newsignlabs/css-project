@@ -53,9 +53,9 @@ Format: `[ID] [P?] [Story] Description` — tests precede implementation (consti
 - [x] T026 [P] [US4] Engine tests: `g-morph:`/`neon:`… variants resolve nearest style in both strategies; parse every known class × style variant with Lightning CSS
 - [x] T027 [US4] Engine: style variants registered from the manifest (built-ins + custom), sort order after theme variants
 - [x] T028 [US4] Config `styles: [...]` tree-shaking in CLI/PostCSS/Vite builds; `newbrush-full.css` preset adds common style variants
-- [ ] T029 [P] [US7] CLI tests then `nb style list` / `nb style create <name> --from <style>`; `nb doctor` style warnings (multiple classes, unknown names, prefix collisions)
-- [ ] T030 [P] [US7] Custom style pipeline: `customStyles` paths built and validated with the same contrast/a11y gates
-- [ ] T031 [P] `@newbrush/js` `setStyle()/getStyle()` (View Transitions, persist, reduced-motion aware) + tests
+- [x] T029 [P] [US7] CLI tests then `nb style list` / `nb style create <name> --from <style>`; `nb doctor` style warnings (multiple classes, unknown names, prefix collisions)
+- [x] T030 [P] [US7] Custom style pipeline: `customStyles` paths built and validated with the same contrast/a11y gates
+- [x] T031 [P] `@newbrush/js` `setStyle()/getStyle()` (View Transitions, persist, reduced-motion aware) + tests
 - [x] T032 Editor types: `NewBrushStyle` union and style variants in `classes.d.ts`; VS Code completions
 
 ## Phase 5: Docs grouped by style & MCP (S4)

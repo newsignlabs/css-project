@@ -9,6 +9,7 @@ import { extractCandidates } from "./extract.ts";
 export { DirectiveError, expandApply, hasDirectives, processDirectives } from "./apply.ts";
 export {
   BUILT_IN_STYLES,
+  type CustomStyles,
   type Diagnostic,
   Engine,
   type Explanation,

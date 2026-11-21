@@ -1,7 +1,7 @@
 {
   "name": "@newbrush/styles",
   "version": "0.0.0",
-  "description": "newBrush design styles: one class (g-morph, neon, cyber …) re-skins every component through token overrides and scoped recipes.",
+  "description": "newBrush design styles: one class (g-morph, neon, cyber \u2026) re-skins every component through token overrides and scoped recipes.",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -12,13 +12,19 @@
   "exports": {
     ".": "./dist/styles.css",
     "./styles.css": "./dist/styles.css",
+    "./lib": {
+      "types": "./dist/lib.d.ts",
+      "default": "./dist/lib.js"
+    },
     "./*.css": "./dist/*.css",
     "./manifest.json": "./dist/manifest.json",
+    "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
   "style": "./dist/styles.css",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": [
     "*.css"
@@ -27,13 +33,16 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsx build.ts",
+    "build": "tsx build.ts && tsup",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json"
   },
+  "dependencies": {
+    "@newbrush/schema": "workspace:*"
+  },
   "devDependencies": {
-    "@newbrush/schema": "workspace:*",
     "@newbrush/tokens": "workspace:*",
+    "tsup": "^8.5.1",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vitest": "^5.0.3"

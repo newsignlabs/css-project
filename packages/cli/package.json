@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@newbrush/engine": "workspace:*",
+    "@newbrush/styles": "workspace:*",
     "@newbrush/tokens": "workspace:*",
     "lightningcss": "^1.33.0"
   },

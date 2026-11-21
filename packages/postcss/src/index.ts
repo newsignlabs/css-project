@@ -25,7 +25,10 @@ const newbrush: PluginCreator<NewBrushPostcssOptions> = (options = {}) => ({
     if (!hasDirective) return;
 
     const cwd = resolve(options.cwd ?? process.cwd());
-    const { engine, config, configPath } = await createProjectEngine(cwd, options.config);
+    const { engine, config, configPath, styleFiles } = await createProjectEngine(
+      cwd,
+      options.config,
+    );
     const contrast = engine.contrastVerdict();
     for (const message of contrast.messages)
       result.warn(`contrast: ${message}`, { plugin: "@newbrush/postcss" });
@@ -57,6 +60,9 @@ const newbrush: PluginCreator<NewBrushPostcssOptions> = (options = {}) => ({
           parent,
         });
     }
+    // Custom styles (specs/004 T030): editing one rebuilds the stylesheet.
+    for (const file of styleFiles)
+      result.messages.push({ type: "dependency", plugin: "@newbrush/postcss", file, parent });
     if (configPath)
       result.messages.push({
         type: "dependency",

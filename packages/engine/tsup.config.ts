@@ -9,6 +9,8 @@ export default defineConfig({
   dts: true,
   clean: true,
   target: "es2022",
+  // Bundled like before (the core runs anywhere); also runtime dependencies, so the node entry can read their files.
+  noExternal: ["@newbrush/tokens", "@newbrush/styles"],
   external: [
     "culori",
     "lightningcss",
