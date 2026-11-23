@@ -1,16 +1,110 @@
 ---
 import { Code } from "@astrojs/starlight/components";
+import { manifest } from "../lib/manifest.ts";
 
-// A live example: the markup rendered with newBrush (outside Starlight's prose styles), then its code.
+// specs/001 T082 — a live example: a toolbar (theme, design style, direction, width, copy), the markup rendered
+// with newBrush (outside Starlight's prose styles), then its code. The toolbar needs JavaScript and stays hidden
+// without it; the preview and code work either way.
 interface Props {
+  /** Unique on the page: prefixes the toolbar's control ids. */
+  id: string;
   title: string;
   html: string;
 }
-const { title, html } = Astro.props;
+const { id, title, html } = Astro.props;
+const styles = manifest.styles.map((s) => ({ name: s.name, title: s.title }));
 ---
 
 <figure class="nb-docs-example">
   <figcaption><strong>{title}</strong></figcaption>
-  <div class="nb-docs-preview not-content" data-example={title} set:html={html} />
+  <nb-example class="not-content" data-html={html}>
+    <div class="nb-docs-toolbar nb-cluster" role="group" aria-label={`${title}: preview options`} hidden>
+      <label class="nb-docs-control" for={`${id}-theme`}>
+        Theme
+        <span class="nb-select">
+          <select id={`${id}-theme`} data-control="theme">
+            <option value="">Page</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="contrast">Contrast</option>
+          </select>
+        </span>
+      </label>
+      <label class="nb-docs-control" for={`${id}-style`}>
+        Style
+        <span class="nb-select">
+          <select id={`${id}-style`} data-control="style">
+            <option value="">Default</option>
+            {styles.map((s) => <option value={s.name}>{s.title}</option>)}
+          </select>
+        </span>
+      </label>
+      <label class="nb-docs-control" for={`${id}-width`}>
+        Width
+        <span class="nb-select">
+          <select id={`${id}-width`} data-control="width">
+            <option value="">Full</option>
+            <option value="768">768 px</option>
+            <option value="360">360 px</option>
+          </select>
+        </span>
+      </label>
+      <button class="nb-btn nb-btn--sm" type="button" data-control="dir" aria-pressed="false">Right to left</button>
+      <button class="nb-btn nb-btn--sm nb-btn--primary" type="button" data-control="copy">Copy HTML</button>
+      <span class="nb-docs-status" role="status" aria-live="polite"></span>
+    </div>
+    <div class="nb-docs-frame">
+      <div class="nb-docs-preview" data-example={title} set:html={html} />
+    </div>
+  </nb-example>
   <Code code={html} lang="html" title={`${title}.html`} />
 </figure>
+
+<script>
+  /** Wires the toolbar of one live example; the attributes it sets are exactly what a page would use. */
+  class NbExample extends HTMLElement {
+    connectedCallback() {
+      const toolbar = this.querySelector<HTMLElement>(".nb-docs-toolbar");
+      const preview = this.querySelector<HTMLElement>(".nb-docs-preview");
+      const frame = this.querySelector<HTMLElement>(".nb-docs-frame");
+      const status = this.querySelector<HTMLElement>(".nb-docs-status");
+      if (!toolbar || !preview || !frame || !status) return;
+      const control = <T extends HTMLElement>(name: string) =>
+        toolbar.querySelector<T>(`[data-control="${name}"]`);
+      const setAttr = (el: HTMLElement, attr: string, value: string) =>
+        value ? el.setAttribute(attr, value) : el.removeAttribute(attr);
+
+      control<HTMLSelectElement>("theme")?.addEventListener("change", (e) =>
+        setAttr(preview, "data-nb-theme", (e.target as HTMLSelectElement).value),
+      );
+      control<HTMLSelectElement>("style")?.addEventListener("change", (e) =>
+        setAttr(preview, "data-nb-style", (e.target as HTMLSelectElement).value),
+      );
+      control<HTMLSelectElement>("width")?.addEventListener("change", (e) => {
+        const px = (e.target as HTMLSelectElement).value;
+        frame.style.maxInlineSize = px ? `${px}px` : "";
+      });
+      const dir = control<HTMLButtonElement>("dir");
+      dir?.addEventListener("click", () => {
+        const rtl = dir.getAttribute("aria-pressed") !== "true";
+        dir.setAttribute("aria-pressed", String(rtl));
+        setAttr(preview, "dir", rtl ? "rtl" : "");
+      });
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      control<HTMLButtonElement>("copy")?.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(this.dataset.html ?? "");
+          status.textContent = "Copied";
+        } catch {
+          status.textContent = "Copy failed";
+        }
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          status.textContent = "";
+        }, 2000);
+      });
+      toolbar.hidden = false;
+    }
+  }
+  if (!customElements.get("nb-example")) customElements.define("nb-example", NbExample);
+</script>

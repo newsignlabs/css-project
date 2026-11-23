@@ -1,0 +1,124 @@
+---
+title: Bundlers and frameworks
+description: Generate only the utilities you use with the newBrush CLI, PostCSS plugin or Vite plugin, in Vite, Astro, Next.js and plain projects.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+Components and themes need no build step. A build step scans your files and writes only the utility classes you
+use, so your CSS stays small.
+
+## 1. Configure
+
+`npx nb init` creates `newbrush.config.ts` and an entry stylesheet. `content` lists the files to scan for classes:
+
+```ts
+// newbrush.config.ts
+import { defineConfig } from "newbrush/config";
+
+export default defineConfig({
+  content: ["./src/**/*.{html,astro,tsx,vue,svelte}"],
+});
+```
+
+## 2. The entry stylesheet
+
+```css
+@import "newbrush";        /* reset, tokens, themes, components, design styles */
+@newbrush utilities;       /* the utilities found in your content files */
+
+.feature {
+  @nb-apply rounded-xl p-6 transition hover:shadow-lg;   /* reuse utilities in your own rules */
+}
+```
+
+## 3. Hook it into your build
+
+<Tabs>
+  <TabItem label="Vite">
+    ```bash
+    npm install newbrush
+    npm install -D @newbrush/cli @newbrush/vite
+    npx nb init --template vite
+    ```
+    ```js
+    // vite.config.js
+    import newbrush from "@newbrush/vite";
+    import { defineConfig } from "vite";
+
+    export default defineConfig({ plugins: [newbrush()] });
+    ```
+    Import the entry stylesheet from your app. Edits to your markup update the CSS instantly (HMR).
+  </TabItem>
+  <TabItem label="Astro">
+    ```bash
+    npm install newbrush
+    npm install -D @newbrush/cli @newbrush/vite
+    npx nb init --template astro
+    ```
+    ```js
+    // astro.config.mjs
+    import newbrush from "@newbrush/vite";
+    import { defineConfig } from "astro/config";
+
+    export default defineConfig({ vite: { plugins: [newbrush()] } });
+    ```
+    Import `src/styles/app.css` in your layout.
+  </TabItem>
+  <TabItem label="Next.js">
+    ```bash
+    npm install newbrush
+    npm install -D @newbrush/cli @newbrush/postcss
+    npx nb init --template next
+    ```
+    ```js
+    // postcss.config.mjs
+    export default { plugins: { "@newbrush/postcss": {} } };
+    ```
+    Import `app/newbrush.css` in `app/layout.tsx`.
+  </TabItem>
+  <TabItem label="PostCSS">
+    ```bash
+    npm install newbrush
+    npm install -D @newbrush/cli @newbrush/postcss
+    npx nb init
+    ```
+    ```js
+    // postcss.config.js
+    import newbrush from "@newbrush/postcss";
+
+    export default { plugins: [newbrush()] };
+    ```
+  </TabItem>
+  <TabItem label="CLI only">
+    ```bash
+    npm install -D newbrush @newbrush/cli
+    npx nb init
+    npx nb build -i newbrush.css -o dist/app.css --watch
+    ```
+    Link `dist/app.css` from your pages. `--minify` shrinks it for production.
+  </TabItem>
+</Tabs>
+
+## Useful commands
+
+| Command | What it does |
+| ------- | ------------ |
+| `nb explain "md:hover:bg-accent"` | Prints the CSS a class generates, or why it is rejected |
+| `nb doctor` | Checks the config, content globs, browser targets and class collisions |
+| `nb contrast` | Reports colour contrast for every text and surface pair |
+| `nb tokens --format json` | Exports the design tokens (css, json, ts or figma) |
+| `nb style list` | Lists the design styles in your build |
+
+## Pick what ships
+
+In `newbrush.config.ts`, `components`, `utilities` and `styles` each take `"all"` (the default), a list of names, or
+`false`:
+
+```ts
+export default defineConfig({
+  content: ["./src/**/*.html"],
+  components: ["button", "card", "field", "input"],
+  styles: ["neon"],
+});
+```

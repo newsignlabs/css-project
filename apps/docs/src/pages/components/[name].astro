@@ -28,7 +28,7 @@ const attrs = Object.entries(c.html.attributes ?? {})
   </p>
 
   <h2 id={slug("Examples")}>Examples</h2>
-  {c.examples.map((e) => <Example title={e.title} html={e.html} />)}
+  {c.examples.map((e, i) => <Example id={`ex-${i + 1}`} title={e.title} html={e.html} />)}
 
   <h2 id={slug("Anatomy")}>Anatomy</h2>
   <TableWrap label={`${c.title} anatomy`}>

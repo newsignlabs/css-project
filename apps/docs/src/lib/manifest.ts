@@ -30,6 +30,11 @@ export function groupBy<T>(items: readonly T[], key: (item: T) => string): [stri
 export const tokenGroup = (t: ResolvedToken) =>
   t.path[0] === "color" ? `color.${t.path[1]}` : (t.path[0] ?? t.name);
 
+/** Components that use each token (from each component's `tokens` list), keyed by CSS variable. */
+export const tokenUsers: Map<string, Component[]> = new Map();
+for (const c of manifest.components)
+  for (const v of c.tokens) tokenUsers.set(v, [...(tokenUsers.get(v) ?? []), c]);
+
 export const tierOrder = ["semantic", "component", "primitive"] as const;
 
 export const tokensByTier = tierOrder.map(
