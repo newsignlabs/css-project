@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { manifest } from "../src/lib/manifest.ts";
+import { codeFromHash, decode } from "../src/playground/share.ts";
 
 // specs/001 T080–T081 — the built site (turbo runs `build` before `test`): a page per manifest component with its
 // live examples, and reference tables listing every token, utility family, variant, theme and style.
@@ -62,6 +63,30 @@ describe("docs build", () => {
     expect(page("guides/from-other-frameworks")).toContain("prefix");
   });
 
+  it("has the playground: editor, sandboxed preview (no scripts) and toolbar (T083)", () => {
+    const html = page("playground");
+    expect(html).toContain('id="pg-editor"');
+    const iframe = html.match(/<iframe[^>]*data-pg="preview"[^>]*>/)?.[0] ?? "";
+    expect(iframe).toMatch(/\ssandbox(=""|\s|>)/);
+    expect(iframe).not.toContain("allow-scripts");
+    for (const control of ["theme", "style", "width", "dir", "copy-link", "copy-html", "reset"])
+      expect(html).toContain(`data-control="${control}"`);
+  });
+
+  it('links every example to the playground with its markup ("Open in playground", T083)', async () => {
+    for (const c of manifest.components) {
+      const html = page(`components/${c.name}`);
+      const links = [...html.matchAll(/href="([^"]*playground\/index\.html#code=[^"]+)"/g)].map(
+        (m) => m[1] ?? "",
+      );
+      expect(links.length, c.name).toBe(c.examples.length);
+      const decoded = await Promise.all(
+        links.map((l) => decode(codeFromHash(l.slice(l.indexOf("#"))) ?? "")),
+      );
+      expect(decoded).toEqual(c.examples.map((e) => e.html));
+    }
+  });
+
   it("gives every live example a toolbar: theme, style, width, direction and copy (T082)", () => {
     for (const c of manifest.components) {
       const html = page(`components/${c.name}`);
@@ -79,7 +104,11 @@ describe("docs build", () => {
     // The site is served from /site/ on Catalyst Slate, so a root-relative URL outside it would 404.
     const broken: string[] = [];
     for (const file of htmlFiles()) {
-      const html = readFileSync(new URL(file, dist), "utf8");
+      // Inline scripts can contain markup templates (the playground builds its preview), which are not links.
+      const html = readFileSync(new URL(file, dist), "utf8").replace(
+        /<script\b[^>]*>[\s\S]*?<\/script>/g,
+        "",
+      );
       // Relative links (the MDX pages use them) are resolved against the page's own URL.
       const pageUrl = new URL(`http://x${BASE}${file.replace(/index\.html$/, "")}`);
       for (const [, attr] of html.matchAll(/\s(?:href|src)="([^"#?]+)[^"]*"/g)) {

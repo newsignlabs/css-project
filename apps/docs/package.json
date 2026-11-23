@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.43.1",
+    "@newbrush/engine": "workspace:*",
     "astro": "^7.4.13",
     "newbrush": "workspace:*",
     "pagefind": "^1.6.0"
