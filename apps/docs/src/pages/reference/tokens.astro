@@ -1,7 +1,7 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import TableWrap from "../../components/TableWrap.astro";
-import { manifest, slug, titleCase, tokensByTier } from "../../lib/manifest.ts";
+import { manifest, slug, titleCase, tokensByTier, tokenUsers, url } from "../../lib/manifest.ts";
 
 // specs/001 T081 — every token, grouped by tier and group, with its per-theme values.
 const themes = manifest.themes.map((t) => t.name).filter((n) => n !== "light");
@@ -39,6 +39,7 @@ const headings = tokensByTier.flatMap(([tier, groups]) => [
                     <th scope="col">Default (light)</th>
                     {themes.map((t) => <th scope="col">{titleCase(t)}</th>)}
                     <th scope="col">Description</th>
+                    <th scope="col">Used by</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -53,6 +54,11 @@ const headings = tokensByTier.flatMap(([tier, groups]) => [
                       <td><code>{t.value}</code></td>
                       {themes.map((th) => <td>{t.themes[th] ? <code>{t.themes[th]}</code> : "—"}</td>)}
                       <td>{t.description ?? ""}</td>
+                      <td>
+                        {(tokenUsers.get(t.cssVar) ?? []).map((c, i) => (
+                          <>{i > 0 && ", "}<a href={url(`/components/${c.name}/`)}>{c.title}</a></>
+                        ))}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

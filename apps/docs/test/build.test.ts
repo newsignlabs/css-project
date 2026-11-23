@@ -53,9 +53,26 @@ describe("docs build", () => {
     for (const s of manifest.styles) expect(styles).toContain(`data-style="${s.name}"`);
   });
 
-  it("has the home page and the getting-started guide", () => {
+  it("has the home page and the guides", () => {
     expect(page("")).toContain("Get started");
     expect(page("guides/getting-started")).toContain("@newbrush/vite");
+    expect(page("guides/cdn")).toContain("cdn.jsdelivr.net/npm/newbrush@1/dist/newbrush.min.css");
+    expect(page("guides/bundlers")).toContain("@newbrush/postcss");
+    expect(page("guides/theming")).toContain("nb theme create");
+    expect(page("guides/from-other-frameworks")).toContain("prefix");
+  });
+
+  it("gives every live example a toolbar: theme, style, width, direction and copy (T082)", () => {
+    for (const c of manifest.components) {
+      const html = page(`components/${c.name}`);
+      const examples = html.match(/<nb-example[\s>]/g) ?? [];
+      expect(examples.length, c.name).toBe(c.examples.length);
+      for (const control of ["theme", "style", "width", "dir", "copy"])
+        expect(html.split(`data-control="${control}"`).length - 1, `${c.name}: ${control}`).toBe(
+          c.examples.length,
+        );
+      for (const s of manifest.styles) expect(html).toContain(`<option value="${s.name}">`);
+    }
   });
 
   it("keeps every internal link and asset under /site/, pointing at a built file", () => {

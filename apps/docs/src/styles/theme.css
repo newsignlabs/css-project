@@ -40,8 +40,35 @@
   --sl-font-mono: var(--nb-font-family-mono);
 }
 
-/* A live example: rendered with newBrush only (not-content opts out of Starlight's prose styles). */
+/* A live example (Example.astro): toolbar, then the markup rendered with newBrush only (not-content opts out of
+   Starlight's prose styles). The preview is a size container so container-query components react to the width. */
+.nb-docs-example nb-example {
+  display: block;
+}
+
+.nb-docs-toolbar {
+  margin-block-end: var(--nb-space-3);
+  align-items: end;
+  font-size: var(--sl-text-sm);
+}
+
+.nb-docs-control {
+  display: grid;
+  gap: var(--nb-space-1);
+}
+
+.nb-docs-status {
+  min-inline-size: 6em;
+  color: var(--nb-color-text-muted);
+}
+
+.nb-docs-frame {
+  margin-inline: auto;
+  transition: max-inline-size var(--nb-motion-duration-base) var(--nb-motion-easing-standard);
+}
+
 .nb-docs-preview {
+  container-type: inline-size;
   padding: var(--nb-space-6);
   border: 1px solid var(--nb-color-border);
   border-radius: var(--nb-radius-lg);

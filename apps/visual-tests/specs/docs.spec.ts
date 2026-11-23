@@ -36,6 +36,10 @@ async function serveDocs(page: Page) {
 const pages = [
   "/",
   "/guides/getting-started/",
+  "/guides/cdn/",
+  "/guides/bundlers/",
+  "/guides/theming/",
+  "/guides/from-other-frameworks/",
   "/components/",
   ...manifest.components.map((c) => `/components/${c.name}/`),
   "/reference/tokens/",
@@ -84,4 +88,82 @@ test("the theme picker switches newBrush themes", async ({ page }) => {
   await expect
     .poll(() => page.evaluate(() => getComputedStyle(document.body).backgroundColor))
     .toBe(probe);
+});
+
+test("an example's toolbar switches theme, style, direction and width (T082)", async ({ page }) => {
+  await serveDocs(page);
+  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+  await page.goto(`${origin}${base}/components/button/`);
+  const example = page.locator("nb-example").first();
+  const preview = example.locator(".nb-docs-preview");
+  const primary = preview.locator(".nb-btn--primary").first();
+  const bg = () => primary.evaluate((el) => getComputedStyle(el).backgroundColor);
+  await expect(example.locator(".nb-docs-toolbar")).toBeVisible();
+
+  const light = await bg();
+  await example.getByLabel("Theme").selectOption("dark");
+  await expect(preview).toHaveAttribute("data-nb-theme", "dark");
+  await expect.poll(bg).not.toBe(light);
+  await example.getByLabel("Theme").selectOption("");
+  await expect(preview).not.toHaveAttribute("data-nb-theme", /.*/);
+
+  await example.getByLabel("Style").selectOption("neon");
+  await expect(preview).toHaveAttribute("data-nb-style", "neon");
+  expect(
+    await primary.evaluate((el) => getComputedStyle(el).getPropertyValue("--nb-style").trim()),
+  ).toBe("neon");
+
+  const rtl = example.getByRole("button", { name: "Right to left" });
+  await rtl.click();
+  await expect(preview).toHaveAttribute("dir", "rtl");
+  await expect(rtl).toHaveAttribute("aria-pressed", "true");
+  await rtl.click();
+  await expect(preview).not.toHaveAttribute("dir", /.*/);
+
+  await example.getByLabel("Width").selectOption("360");
+  await expect
+    .poll(() => preview.evaluate((el) => el.getBoundingClientRect().width))
+    .toBeLessThanOrEqual(360);
+});
+
+test("Copy HTML copies the example's markup (T082)", async ({ page }) => {
+  // A stub clipboard: the real one needs permissions that differ per engine.
+  await page.addInitScript(() => {
+    const copied: string[] = [];
+    Object.defineProperty(window, "__copied", { value: copied });
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: async (text: string) => void copied.push(text) },
+    });
+  });
+  await serveDocs(page);
+  await page.goto(`${origin}${base}/components/button/`);
+  const example = page.locator("nb-example").first();
+  await example.getByRole("button", { name: "Copy HTML" }).click();
+  await expect(example.getByRole("status")).toHaveText("Copied");
+  const button = manifest.components.find((c) => c.name === "button");
+  expect(await page.evaluate(() => (window as unknown as { __copied: string[] }).__copied)).toEqual(
+    [button?.examples[0]?.html],
+  );
+});
+
+test('searching "button" finds the button page and the tokens (US6 acceptance 1)', async ({
+  page,
+}) => {
+  await serveDocs(page);
+  await page.goto(`${origin}${base}/index.html`);
+  await page.getByRole("button", { name: "Search" }).first().click();
+  await page.locator("#starlight__search input").fill("button");
+  const results = page.locator("#starlight__search a[href]");
+  await expect(results.first()).toHaveAttribute("href", `${base}/components/button/index.html`);
+  // The UI lists five pages before "Load more"; the full result list comes from Pagefind's API.
+  const urls = await page.evaluate(async (bundle) => {
+    const pagefind = await import(bundle);
+    const search = await pagefind.search("button");
+    const pages = await Promise.all(
+      search.results.map((r: { data: () => Promise<{ url: string }> }) => r.data()),
+    );
+    return pages.map((p) => p.url);
+  }, `${base}/pagefind/pagefind.js`);
+  expect(urls[0]).toBe(`${base}/components/button/index.html`);
+  expect(urls).toContain(`${base}/reference/tokens/index.html`);
 });

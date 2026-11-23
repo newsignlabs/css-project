@@ -160,9 +160,9 @@ Format: `[ID] [P?] [Story] Description` — `[P]` = parallelisable. Tests preced
 
 - [x] T080 [US6] Scaffold `apps/docs` (Astro + Starlight), theme with newBrush itself
 - [x] T081 [US6] Manifest-driven page generator (components, utilities, tokens tables)
-- [ ] T082 [P] [US6] Live example renderer + copy button + theme/dir/width toggles
+- [x] T082 [P] [US6] Live example renderer + copy button + theme/dir/width toggles (plus design style)
 - [ ] T083 [P] [US6] Browser playground (engine in web worker, sandboxed iframe, share via URL hash)
-- [ ] T084 [P] [US6] Pagefind search; guides: getting started, CDN, bundlers, theming, migrating from Bootstrap/Tailwind, MCP
+- [x] T084 [P] [US6] Pagefind search; guides: getting started, CDN, bundlers, theming, coming from another CSS framework (the MCP guide ships with specs/003)
 - [ ] T085 [US6] Lighthouse CI on docs (a11y & best-practices = 100)
 
 ## Phase 9: Polish & cross-cutting

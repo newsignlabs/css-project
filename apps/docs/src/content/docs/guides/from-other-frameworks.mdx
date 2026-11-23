@@ -1,0 +1,81 @@
+---
+title: Coming from another CSS framework
+description: How familiar component and utility patterns map to newBrush, how to avoid class clashes, and how to adopt it step by step.
+---
+
+If you have used a component library or a utility-first framework before, most of newBrush will feel familiar. This
+page maps the common patterns and shows how to run newBrush next to an existing stylesheet.
+
+## Concepts
+
+| You may know | In newBrush |
+| ------------ | ----------- |
+| Component classes such as `btn`, `card` | `nb-btn`, `nb-card`: every component class starts with `nb-` |
+| Modifier classes such as `btn-primary`, `btn-lg` | `nb-btn--primary`, `nb-btn--lg` (`--` for modifiers, `__` for parts) |
+| Utility classes such as `p-4`, `flex`, `gap-2` | The same short grammar, generated on demand: `p-4`, `flex`, `gap-2` |
+| Responsive prefixes | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` (min-width) and `max-md:` and friends |
+| State prefixes | `hover:`, `focus-visible:`, `disabled:`, `aria-expanded:` and more |
+| Container queries | `@container` on a parent, then `@sm:`, `@md:`… on children |
+| Dark mode classes | `dark:`, `light:`, `contrast:`; themes follow the OS or `data-nb-theme` |
+| Theme configuration | Design tokens: `--nb-*` custom properties, from a brand seed or overridden directly |
+| Grid systems | Layout primitives: `nb-grid`, `nb-stack`, `nb-cluster`, `nb-sidebar`, `nb-switcher` |
+
+See the [utility reference](../../reference/utilities/index.html) and the
+[variant list](../../reference/themes/index.html) for everything that is available.
+
+## Side by side
+
+A primary button and a responsive card grid:
+
+```html
+<button class="nb-btn nb-btn--primary" type="button">Save</button>
+
+<div class="nb-grid">
+  <article class="nb-card">
+    <div class="nb-card__body">One</div>
+  </article>
+  <article class="nb-card">
+    <div class="nb-card__body">Two</div>
+  </article>
+</div>
+```
+
+The same with utilities only:
+
+```html
+<button class="rounded-md bg-accent px-4 py-2 text-on-accent hover:bg-accent-hover" type="button">Save</button>
+
+<div class="grid gap-6 md:grid-cols-2">
+  <article class="rounded-xl bg-surface-raised p-6 shadow-md">One</article>
+  <article class="rounded-xl bg-surface-raised p-6 shadow-md">Two</article>
+</div>
+```
+
+Both are valid. Components give you accessible defaults with less markup, and utilities fine-tune them.
+
+## Running next to an existing stylesheet
+
+newBrush puts all of its CSS in cascade layers (`nb.reset` … `nb.utilities`). Any CSS you write outside a layer wins
+over all of it, so newBrush never overrides your own styles by accident.
+
+If class names clash with another stylesheet, add prefixes in `newbrush.config.ts`:
+
+```ts
+export default defineConfig({
+  content: ["./src/**/*.html"],
+  prefix: {
+    components: "ui-",   // ui-btn instead of nb-btn
+    utilities: "nb-",    // nb-p-4 instead of p-4
+    styles: "theme-",    // theme-neon instead of neon (nb-neon always works)
+  },
+});
+```
+
+`npx nb doctor` warns about unprefixed utilities when it finds another CSS framework in your dependencies.
+
+## Adopting it step by step
+
+1. Load `newbrush-core.css` only: tokens, themes and base styles, with no component classes.
+2. Add components one at a time from `components/<name>.css`.
+3. Move pages to newBrush classes as you touch them, then switch to the full `newbrush.css`.
+4. Add a build step for utilities when you need them (see [bundlers and frameworks](../bundlers/index.html)).

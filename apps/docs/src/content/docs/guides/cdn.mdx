@@ -1,0 +1,51 @@
+---
+title: CDN
+description: Load newBrush from jsDelivr, unpkg or cdnjs, pinned for testing or production, and pick the file you need.
+---
+
+newBrush is plain CSS, so one `<link>` is enough to use every component and theme. No build step or JavaScript is
+needed.
+
+## Testing and prototypes
+
+Pin the major version, so you get fixes without breaking changes:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/newbrush@1/dist/newbrush.min.css">
+```
+
+`newbrush-full.min.css` adds a curated set of utility classes on top, which is handy while prototyping. In
+production, generate only the utilities you use (see [bundlers and frameworks](../bundlers/index.html)).
+
+## Production
+
+Pin the exact version and add Subresource Integrity, so the browser refuses a file that changed:
+
+```html
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/newbrush@1.0.0/dist/newbrush.min.css"
+      integrity="sha384-…" crossorigin="anonymous">
+```
+
+Each release lists the `integrity` hash of every file.
+
+## Mirrors
+
+```text
+https://unpkg.com/newbrush@1/dist/newbrush.min.css
+https://cdnjs.cloudflare.com/ajax/libs/newbrush/1.0.0/newbrush.min.css
+```
+
+## Which file
+
+| File | Contents |
+| ---- | -------- |
+| `newbrush-core.min.css` | Reset, tokens, themes, base styles and layout primitives |
+| `newbrush.min.css` | Core, all components and the design styles |
+| `newbrush-full.min.css` | `newbrush.min.css` plus the curated utility preset |
+| `components/<name>.min.css` | One component, to add after core (for example `components/button.min.css`) |
+| `themes/<name>.css` | A theme on its own: `light`, `dark` or `contrast` |
+| `styles/<name>.css` | One design style on its own, such as `styles/neon.css` |
+| `manifest.json` | Machine-readable catalogue of tokens, utilities, components and styles |
+
+Every file has a `.min.css` version and a source map.

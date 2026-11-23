@@ -58,7 +58,13 @@ export default defineConfig({
       sidebar: [
         {
           label: "Start here",
-          items: [{ label: "Getting started", link: `/guides/getting-started/` }],
+          items: [
+            { label: "Getting started", link: "/guides/getting-started/" },
+            { label: "CDN", link: "/guides/cdn/" },
+            { label: "Bundlers & frameworks", link: "/guides/bundlers/" },
+            { label: "Theming", link: "/guides/theming/" },
+            { label: "Coming from another framework", link: "/guides/from-other-frameworks/" },
+          ],
         },
         {
           label: "Components",

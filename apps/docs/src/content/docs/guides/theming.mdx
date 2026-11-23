@@ -1,0 +1,83 @@
+---
+title: Theming
+description: Light, dark and high-contrast themes, brand colours from one seed, scoped themes, custom themes and design styles.
+---
+
+Every colour, space, radius and shadow in newBrush is a `--nb-*` custom property, so a theme is just a different set
+of values.
+
+## Light, dark and high contrast
+
+By default newBrush follows the operating system: `prefers-color-scheme` picks light or dark, and
+`prefers-contrast: more` picks the high-contrast theme. To choose a theme yourself, set `data-nb-theme`:
+
+```html
+<html data-nb-theme="dark">          <!-- the whole page -->
+<aside data-nb-theme="light">…</aside>  <!-- or any part of it -->
+```
+
+The values are `light`, `dark` and `contrast`. Themes nest, and the nearest one wins.
+
+## Your brand colour
+
+Give newBrush one brand colour, and it derives the full palette and checks contrast:
+
+```ts
+// newbrush.config.ts
+import { defineConfig } from "newbrush/config";
+
+export default defineConfig({
+  content: ["./src/**/*.html"],
+  theme: { seeds: { brand: "oklch(62% 0.19 255)" } },
+  contrast: { level: "AA", onFail: "fix" },
+});
+```
+
+`onFail` decides what happens when a colour pair fails WCAG contrast: `warn`, `error` (fail the build) or `fix`
+(adjust the colour until it passes). Run `npx nb contrast` for a full report.
+
+You can also re-tint any part of a page at runtime, with no build:
+
+```html
+<section style="--nb-color-brand-seed: oklch(70% 0.2 150)">…</section>
+```
+
+## Named themes
+
+`nb theme create` writes a theme file from a seed, and prints its contrast report:
+
+```bash
+npx nb theme create acme      --seed "#e11d48"              # light base → themes/acme.css
+npx nb theme create acme-dark --seed "#e11d48" --from dark  # dark base  → themes/acme-dark.css
+```
+
+Load the files after newBrush, then use `data-nb-theme="acme"` like any built-in theme. Add `--accent` or
+`--neutral` to seed those palettes too.
+
+## Override single tokens
+
+Override a token anywhere, in your own CSS:
+
+```css
+:root {
+  --nb-radius-md: 0.25rem;
+}
+
+.checkout {
+  --nb-color-accent: var(--nb-color-success);
+}
+```
+
+The [token reference](../../reference/tokens/index.html) lists every token with its light, dark and contrast
+values. Each [component page](../../components/index.html) lists the tokens that component uses.
+
+## Design styles
+
+A design style changes the whole look (shape, depth, type and motion), not just colours. Put one class on
+`<body>` or on any element, and it works with every theme:
+
+```html
+<body class="neon">
+```
+
+See [design styles](../../reference/styles/index.html) for the built-in styles.
