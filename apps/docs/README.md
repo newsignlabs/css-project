@@ -54,3 +54,9 @@ next build, so the reference can't drift from the code.
   - the layer order is correct.
 - `apps/visual-tests/specs/docs.spec.ts` runs axe (WCAG 2.2 AA) on every page in light and dark, in Chromium,
   Firefox and WebKit, and checks that the theme picker switches newBrush themes.
+- `apps/visual-tests/lighthouse/run.ts` runs Lighthouse on nine representative pages, served the way Slate serves
+  them. Accessibility and best practices must both score 100. CI runs it in the Chromium visual job:
+
+  ```bash
+  pnpm build && pnpm --filter @newbrush/visual-tests lighthouse   # reports in apps/visual-tests/lighthouse-report/
+  ```

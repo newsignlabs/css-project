@@ -65,6 +65,9 @@ jobs:
       - name: Run visual tests
         if: ${{ !inputs.update-snapshots }}
         run: pnpm --filter @newbrush/visual-tests visual
+      - name: Lighthouse on the docs (accessibility and best practices = 100)
+        if: ${{ matrix.browser == 'chromium' && !inputs.update-snapshots }}
+        run: pnpm --filter @newbrush/visual-tests lighthouse
       - name: Update visual baselines
         if: ${{ inputs.update-snapshots }}
         run: pnpm --filter @newbrush/visual-tests visual:update
@@ -76,4 +79,5 @@ jobs:
             apps/visual-tests/playwright-report
             apps/visual-tests/test-results
             apps/visual-tests/specs/__screenshots__
+            apps/visual-tests/lighthouse-report
           retention-days: 7

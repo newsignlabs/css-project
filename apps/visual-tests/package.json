@@ -6,7 +6,8 @@
   "scripts": {
     "visual": "playwright test",
     "visual:update": "playwright test --update-snapshots",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "lighthouse": "node lighthouse/run.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -18,6 +19,8 @@
     "@newbrush/tokens": "workspace:*",
     "@playwright/test": "1.56.1",
     "@types/pngjs": "^6.0.5",
+    "chrome-launcher": "^1.2.3",
+    "lighthouse": "^13.6.0",
     "newbrush": "workspace:*",
     "pngjs": "^7.0.0",
     "typescript": "^5.9.3"
