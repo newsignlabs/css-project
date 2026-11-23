@@ -1,0 +1,64 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import PreviewControls from "../components/PreviewControls.astro";
+
+// specs/001 T083 — write newBrush HTML and see it live: the engine runs in a web worker, the preview is a sandboxed
+// iframe (no scripts), and the address bar always holds a link to what you wrote.
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Playground",
+    description:
+      "Write HTML with newBrush components and utilities and see it rendered live, in any theme and design style. Share it with a link.",
+    editUrl: false,
+    tableOfContents: false,
+    template: "splash",
+  }}
+>
+  <noscript>
+    <p>The playground needs JavaScript. Every example in the docs also shows its HTML, ready to copy.</p>
+  </noscript>
+  <div class="nb-pg not-content" data-playground>
+    <div class="nb-docs-toolbar nb-cluster" role="group" aria-label="Preview options">
+      <PreviewControls id="pg" />
+      <button class="nb-btn nb-btn--sm nb-btn--primary" type="button" data-control="copy-link">Copy link</button>
+      <button class="nb-btn nb-btn--sm" type="button" data-control="copy-html">Copy HTML</button>
+      <button class="nb-btn nb-btn--sm nb-btn--ghost" type="button" data-control="reset">Reset</button>
+      <span class="nb-docs-status" role="status" aria-live="polite" data-pg="status"></span>
+    </div>
+    <div class="nb-pg__panes">
+      <div class="nb-pg__pane">
+        <label class="nb-pg__label" for="pg-editor">HTML</label>
+        <textarea
+          id="pg-editor"
+          class="nb-pg__editor"
+          data-pg="editor"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          aria-describedby="pg-editor-hint"></textarea>
+        <p id="pg-editor-hint" class="nb-pg__hint">Tab indents. Press Escape, then Tab, to move on.</p>
+      </div>
+      <div class="nb-pg__pane">
+        <span class="nb-pg__label" id="pg-preview-label">Preview</span>
+        <div class="nb-pg__frame" data-pg="frame">
+          <iframe class="nb-pg__preview" data-pg="preview" sandbox="" title="Preview" aria-labelledby="pg-preview-label"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+    <details class="nb-pg__output">
+      <summary>Generated CSS and messages <span data-pg="stats"></span></summary>
+      <ul class="nb-pg__issues" data-pg="issues" aria-label="Messages"></ul>
+      <pre class="nb-pg__css" data-pg="css" tabindex="0" aria-label="Generated CSS"></pre>
+    </details>
+  </div>
+</StarlightPage>
+
+<script>
+  import { startPlayground } from "../playground/main.ts";
+
+  const root = document.querySelector<HTMLElement>("[data-playground]");
+  if (root) startPlayground(root);
+</script>

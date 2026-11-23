@@ -32,6 +32,8 @@ export default defineConfig({
   base,
   // Keep the site's own CSS in files (not inlined) so the layer-order statement always comes first.
   build: { inlineStylesheets: "never" },
+  // The playground's engine worker imports modules, so it is bundled as an ES module worker.
+  vite: { worker: { format: "es" } },
   integrations: [
     starlight({
       title: "newBrush",
@@ -68,7 +70,11 @@ export default defineConfig({
         },
         {
           label: "Components",
-          items: [{ label: "Overview", link: `/components/` }, ...componentGroups],
+          items: [
+            { label: "Overview", link: `/components/` },
+            { label: "Playground", link: "/playground/" },
+            ...componentGroups,
+          ],
         },
         {
           label: "Reference",

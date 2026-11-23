@@ -41,6 +41,7 @@ const pages = [
   "/guides/theming/",
   "/guides/from-other-frameworks/",
   "/components/",
+  "/playground/",
   ...manifest.components.map((c) => `/components/${c.name}/`),
   "/reference/tokens/",
   "/reference/utilities/",
@@ -57,7 +58,8 @@ for (const scheme of ["light", "dark"] as const) {
         await page.emulateMedia({ reducedMotion: "reduce" });
         await page.goto(origin + base + path);
         await expect(page.locator("html")).toHaveAttribute("data-nb-theme", scheme);
-        await expectNoAxeViolations(page);
+        // The playground preview shows user markup in a script-less sandbox, which axe cannot enter.
+        await expectNoAxeViolations(page, path === "/playground/" ? ["[data-pg=preview]"] : []);
       });
     }
   });
@@ -166,4 +168,86 @@ test('searching "button" finds the button page and the tokens (US6 acceptance 1)
   }, `${base}/pagefind/pagefind.js`);
   expect(urls[0]).toBe(`${base}/components/button/index.html`);
   expect(urls).toContain(`${base}/reference/tokens/index.html`);
+});
+
+test.describe("playground (T083)", () => {
+  const open = async (page: Page, hash = "") => {
+    await serveDocs(page);
+    await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+    await page.goto(`${origin}${base}/playground/index.html${hash}`);
+    await expect(page.locator("#pg-editor")).not.toHaveValue("");
+  };
+  const preview = (page: Page) => page.frameLocator("[data-pg=preview]");
+
+  test("renders typed markup live with generated utilities", async ({ page }) => {
+    await open(page);
+    await page.locator("#pg-editor").fill('<p class="p-8 text-accent" id="x">Hi</p>');
+    await expect
+      .poll(() =>
+        preview(page)
+          .locator("#x")
+          .evaluate((el) => getComputedStyle(el).paddingTop),
+      )
+      .toBe("32px");
+    await page.locator(".nb-pg__output summary").click();
+    await expect(page.locator("[data-pg=css]")).toContainText(".p-8");
+  });
+
+  test("reports rejected classes", async ({ page }) => {
+    await open(page);
+    await page.locator("#pg-editor").fill('<p class="p-[;evil] made-up">x</p>');
+    await page.locator(".nb-pg__output summary").click();
+    await expect(page.locator("[data-pg=issues]")).toContainText("p-[;evil]");
+    await expect(page.locator("[data-pg=issues]")).toContainText("made-up: not a newBrush class");
+  });
+
+  test("opens an example from its component page", async ({ page }) => {
+    await serveDocs(page);
+    await page.goto(`${origin}${base}/components/button/index.html`);
+    await page.getByRole("link", { name: "Open in playground" }).first().click();
+    const button = manifest.components.find((c) => c.name === "button");
+    await expect(page.locator("#pg-editor")).toHaveValue(button?.examples[0]?.html ?? "");
+    await expect(preview(page).locator(".nb-btn")).toHaveCount(5);
+  });
+
+  test("keeps the markup in the link, so a reload restores it", async ({ page }) => {
+    await open(page);
+    const hash = () => page.evaluate(() => location.hash);
+    await expect.poll(hash).toMatch(/^#code=/);
+    const starter = await hash();
+    await page.locator("#pg-editor").fill('<span class="nb-badge">Shared</span>');
+    await expect.poll(hash).not.toBe(starter);
+    const url = page.url();
+    await page.goto("about:blank");
+    await page.goto(url);
+    await expect(page.locator("#pg-editor")).toHaveValue('<span class="nb-badge">Shared</span>');
+  });
+
+  test("theme, style and direction apply to the preview document", async ({ page }) => {
+    await open(page);
+    const root = preview(page).locator("html");
+    await expect(root).toHaveAttribute("data-nb-theme", "light");
+    await page.getByLabel("Theme", { exact: true }).selectOption("dark");
+    await expect(root).toHaveAttribute("data-nb-theme", "dark");
+    await page.getByLabel("Style", { exact: true }).selectOption("cyber");
+    await expect(root).toHaveAttribute("data-nb-style", "cyber");
+    await page.getByRole("button", { name: "Right to left" }).click();
+    await expect(root).toHaveAttribute("dir", "rtl");
+  });
+
+  test("never runs scripts from the markup", async ({ page }) => {
+    await open(page);
+    await page
+      .locator("#pg-editor")
+      .fill('<script>window.parent.__ran = 1; document.title = "ran"</script><p id="ok">ok</p>');
+    await expect(preview(page).locator("#ok")).toBeVisible();
+    expect(
+      await page.evaluate(() => (window as unknown as { __ran?: number }).__ran),
+    ).toBeUndefined();
+    expect(
+      await preview(page)
+        .locator("html")
+        .evaluate((el) => el.ownerDocument.title),
+    ).not.toBe("ran");
+  });
 });

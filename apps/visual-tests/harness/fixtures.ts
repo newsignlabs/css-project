@@ -43,11 +43,14 @@ export async function renderFixture(page: Page, opts: FixtureOptions): Promise<v
   );
 }
 
-/** axe-core with WCAG 2.2 AA rules enabled (incl. target-size) — constitution §IV. */
-export async function expectNoAxeViolations(page: Page): Promise<void> {
-  const results = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
-    .analyze();
+/**
+ * axe-core with WCAG 2.2 AA rules enabled (incl. target-size) — constitution §IV. `exclude` skips selectors, e.g. a
+ * sandboxed iframe without scripts, which axe cannot enter.
+ */
+export async function expectNoAxeViolations(page: Page, exclude: string[] = []): Promise<void> {
+  let builder = new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]);
+  for (const selector of exclude) builder = builder.exclude(selector);
+  const results = await builder.analyze();
   const summary = results.violations.map(
     (v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`,
   );

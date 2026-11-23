@@ -1,10 +1,12 @@
 ---
 import { Code } from "@astrojs/starlight/components";
-import { manifest } from "../lib/manifest.ts";
+import { url } from "../lib/manifest.ts";
+import { encode } from "../playground/share.ts";
+import PreviewControls from "./PreviewControls.astro";
 
-// specs/001 T082 — a live example: a toolbar (theme, design style, direction, width, copy), the markup rendered
-// with newBrush (outside Starlight's prose styles), then its code. The toolbar needs JavaScript and stays hidden
-// without it; the preview and code work either way.
+// specs/001 T082 — a live example: a toolbar (theme, design style, direction, width, copy), the markup rendered with
+// newBrush (outside Starlight's prose styles), then its code. The toolbar needs JavaScript and stays hidden without it;
+// the preview, the code and the "Open in playground" link (T083) work either way.
 interface Props {
   /** Unique on the page: prefixes the toolbar's control ids. */
   id: string;
@@ -12,44 +14,18 @@ interface Props {
   html: string;
 }
 const { id, title, html } = Astro.props;
-const styles = manifest.styles.map((s) => ({ name: s.name, title: s.title }));
+// Works without JavaScript: the markup travels in the link (see src/playground/share.ts).
+const playground = `${url("/playground/")}#code=${await encode(html)}`;
 ---
 
 <figure class="nb-docs-example">
-  <figcaption><strong>{title}</strong></figcaption>
+  <figcaption class="nb-docs-caption">
+    <strong>{title}</strong>
+    <a href={playground}>Open in playground</a>
+  </figcaption>
   <nb-example class="not-content" data-html={html}>
     <div class="nb-docs-toolbar nb-cluster" role="group" aria-label={`${title}: preview options`} hidden>
-      <label class="nb-docs-control" for={`${id}-theme`}>
-        Theme
-        <span class="nb-select">
-          <select id={`${id}-theme`} data-control="theme">
-            <option value="">Page</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="contrast">Contrast</option>
-          </select>
-        </span>
-      </label>
-      <label class="nb-docs-control" for={`${id}-style`}>
-        Style
-        <span class="nb-select">
-          <select id={`${id}-style`} data-control="style">
-            <option value="">Default</option>
-            {styles.map((s) => <option value={s.name}>{s.title}</option>)}
-          </select>
-        </span>
-      </label>
-      <label class="nb-docs-control" for={`${id}-width`}>
-        Width
-        <span class="nb-select">
-          <select id={`${id}-width`} data-control="width">
-            <option value="">Full</option>
-            <option value="768">768 px</option>
-            <option value="360">360 px</option>
-          </select>
-        </span>
-      </label>
-      <button class="nb-btn nb-btn--sm" type="button" data-control="dir" aria-pressed="false">Right to left</button>
+      <PreviewControls id={id} />
       <button class="nb-btn nb-btn--sm nb-btn--primary" type="button" data-control="copy">Copy HTML</button>
       <span class="nb-docs-status" role="status" aria-live="polite"></span>
     </div>

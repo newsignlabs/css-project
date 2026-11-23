@@ -1,0 +1,43 @@
+---
+import { manifest } from "../lib/manifest.ts";
+
+// Theme, design style and width selects plus a right-to-left toggle, shared by live examples (Example.astro) and the
+// playground. Scripts find them by `data-control`; `id` prefixes the control ids so labels stay unique on a page.
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+const styles = manifest.styles.map((s) => ({ name: s.name, title: s.title }));
+---
+
+<div class="nb-docs-control">
+  <label for={`${id}-theme`}>Theme</label>
+  <span class="nb-select">
+    <select id={`${id}-theme`} data-control="theme">
+      <option value="">Page</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+      <option value="contrast">Contrast</option>
+    </select>
+  </span>
+</div>
+<div class="nb-docs-control">
+  <label for={`${id}-style`}>Style</label>
+  <span class="nb-select">
+    <select id={`${id}-style`} data-control="style">
+      <option value="">Default</option>
+      {styles.map((s) => <option value={s.name}>{s.title}</option>)}
+    </select>
+  </span>
+</div>
+<div class="nb-docs-control">
+  <label for={`${id}-width`}>Width</label>
+  <span class="nb-select">
+    <select id={`${id}-width`} data-control="width">
+      <option value="">Full</option>
+      <option value="768">768 px</option>
+      <option value="360">360 px</option>
+    </select>
+  </span>
+</div>
+<button class="nb-btn nb-btn--sm" type="button" data-control="dir" aria-pressed="false">Right to left</button>

@@ -42,6 +42,14 @@
 
 /* A live example (Example.astro): toolbar, then the markup rendered with newBrush only (not-content opts out of
    Starlight's prose styles). The preview is a size container so container-query components react to the width. */
+.nb-docs-caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nb-space-3);
+  justify-content: space-between;
+  align-items: baseline;
+}
+
 .nb-docs-example nb-example {
   display: block;
 }
@@ -110,4 +118,92 @@
 
 .nb-docs-nowrap {
   white-space: nowrap;
+}
+
+/* The playground (src/pages/playground.astro). */
+.nb-pg__panes {
+  display: grid;
+  gap: var(--nb-space-6);
+  margin-block-start: var(--nb-space-4);
+}
+
+@media (width >= 64rem) {
+  .nb-pg__panes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.nb-pg__pane {
+  display: grid;
+  gap: var(--nb-space-2);
+  align-content: start;
+  min-inline-size: 0;
+}
+
+.nb-pg__label {
+  font-weight: 600;
+}
+
+.nb-pg__editor {
+  inline-size: 100%;
+  min-block-size: 28rem;
+  padding: var(--nb-space-4);
+  border: 1px solid var(--nb-color-border-strong);
+  border-radius: var(--nb-radius-md);
+  background: var(--nb-color-surface-raised);
+  color: var(--nb-color-text);
+  font: var(--sl-text-sm) / 1.6 var(--nb-font-family-mono);
+  tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+  resize: vertical;
+}
+
+.nb-pg__editor:focus-visible {
+  outline: 2px solid var(--nb-color-focus-ring);
+  outline-offset: 2px;
+}
+
+.nb-pg__hint {
+  margin: 0;
+  color: var(--nb-color-text-muted);
+  font-size: var(--sl-text-sm);
+}
+
+.nb-pg__frame {
+  margin-inline: auto;
+  inline-size: 100%;
+}
+
+.nb-pg__preview {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 28rem;
+  border: 1px solid var(--nb-color-border);
+  border-radius: var(--nb-radius-md);
+  background: var(--nb-color-surface);
+  resize: vertical;
+}
+
+.nb-pg__output {
+  margin-block-start: var(--nb-space-6);
+}
+
+.nb-pg__output summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.nb-pg__output summary span {
+  font-weight: 400;
+  color: var(--nb-color-text-muted);
+}
+
+.nb-pg__css {
+  max-block-size: 24rem;
+  overflow: auto;
+  padding: var(--nb-space-4);
+  border-radius: var(--nb-radius-md);
+  background: var(--nb-color-surface-subtle);
+  font: var(--sl-text-sm) / 1.5 var(--nb-font-family-mono);
 }
