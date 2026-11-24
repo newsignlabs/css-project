@@ -1,0 +1,82 @@
+---
+title: Custom styles
+description: Create your own design style from a built-in one, with token overrides and recipes, compiled and contrast-checked like the built-ins.
+---
+
+A custom style works exactly like a built-in one: one class re-skins every component, it composes with every theme,
+and it can be an island on part of a page.
+
+## Create one
+
+Start from the built-in style closest to what you want:
+
+```bash
+npx nb style create brand --from neon
+```
+
+This writes `styles/brand/`:
+
+```text
+styles/brand/
+├── style.json    name, title, description and token overrides (DTCG format)
+├── recipes.css   optional extra rules, for example a glow on cards
+└── preview.html  optional gallery snippet
+```
+
+Then add the folder to your config:
+
+```ts
+// newbrush.config.ts
+import { defineConfig } from "newbrush/config";
+
+export default defineConfig({
+  content: ["./src/**/*.html"],
+  customStyles: ["./styles/brand"],
+});
+```
+
+`nb build`, the PostCSS plugin and the Vite plugin now compile it, and `<body class="brand">` works.
+
+## Tokens first
+
+Most of a style is token overrides in `style.json`. You can override any value for both schemes, or for light or dark
+only:
+
+```json
+{
+  "name": "brand",
+  "title": "Brand",
+  "description": "Rounded, soft and warm.",
+  "tokens": {
+    "radius": { "md": { "$value": "1rem" } }
+  },
+  "schemes": {
+    "dark": { "color": { "surface": { "default": { "$value": "oklch(18% 0.02 30)" } } } }
+  },
+  "since": "1.0.0"
+}
+```
+
+## Recipes
+
+`recipes.css` adds what tokens can't express. Write rules inside `@layer nb.styles` and use `:--style` for the style's
+own selector:
+
+```css
+@layer nb.styles {
+  :--style .nb-card {
+    box-shadow: 0 0 0 1px var(--nb-color-accent), var(--nb-elevation-3);
+  }
+}
+```
+
+Recipes should only use tokens, so themes and brand colours keep working.
+
+## Checks you get for free
+
+- Every colour that resolves at build time is contrast-checked against the semantic pairs. Set
+  `contrast: { onFail: "error" }` to fail the build on a miss.
+- The high-contrast theme, `prefers-contrast: more` and forced colors restore every colour your style changes.
+- `npx nb style list` shows the built-in and custom styles in your build.
+- `npx nb doctor` warns about several styles on one element, unknown `data-nb-style` values, and style names that
+  clash with utilities.

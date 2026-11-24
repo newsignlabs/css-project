@@ -33,7 +33,18 @@ utility classes generated from your markup.
 | `newbrush-core.css` | Reset, tokens, themes and base styles only |
 | `newbrush-full.css` | `newbrush.css` plus the curated utility preset |
 
-## 2. Use components
+## 2. Choose your style
+
+One class on `<body>` sets the look of every component: the default style, or one of six built-in design styles.
+
+```html
+<body class="neon">
+```
+
+Compare them in the [styles overview](../../styles/index.html), or try them on this site with the style picker in the
+header. You can change your mind later: the markup stays the same.
+
+## 3. Use components
 
 ```html
 <!doctype html>
@@ -55,7 +66,7 @@ utility classes generated from your markup.
 Dark mode follows the operating system. To force a theme on the page or on any part of it, set
 `data-nb-theme="light"`, `"dark"` or `"contrast"`. See [themes and variants](../../reference/themes/).
 
-## 3. Generate utilities (optional)
+## 4. Generate utilities (optional)
 
 Install the CLI and a bundler plugin. Then only the utility classes you use end up in your CSS.
 
@@ -106,7 +117,7 @@ Install the CLI and a bundler plugin. Then only the utility classes you use end 
 </section>
 ```
 
-## 4. Brand it
+## 5. Brand it
 
 ```ts
 // newbrush.config.ts
@@ -128,4 +139,3 @@ export default defineConfig({
   [theming](../theming/index.html), or [coming from another CSS framework](../from-other-frameworks/index.html).
 - Browse the [components](../../components/).
 - Look up [utilities](../../reference/utilities/) and [design tokens](../../reference/tokens/).
-- Try a [design style](../../reference/styles/): `<body class="neon">`.

@@ -1,0 +1,43 @@
+---
+import Select from "@astrojs/starlight/components/Select.astro";
+import Default from "@astrojs/starlight/components/ThemeSelect.astro";
+import { manifest } from "../lib/manifest.ts";
+
+// specs/004 T034 — Starlight's theme picker, plus a design-style picker that re-skins the whole docs site
+// (data-nb-style on <html>; live examples and the playground follow it). The choice is kept in localStorage under
+// "nb-style", the key @newbrush/js uses, and restored before first paint by src/theme-sync.js.
+const options = [
+  { label: "Default", value: "", selected: true },
+  ...manifest.styles.map((s) => ({ label: s.title, value: s.name, selected: false })),
+];
+---
+
+<nb-style-select>
+  <Select label="Design style" icon="star" options={options} width="7.5em" />
+</nb-style-select>
+<Default />
+
+<script>
+  const KEY = "nb-style";
+  class NbStyleSelect extends HTMLElement {
+    connectedCallback() {
+      const select = this.querySelector("select");
+      if (!select) return;
+      select.value = document.documentElement.dataset.nbStyle ?? "";
+      select.addEventListener("change", () => {
+        const style = select.value;
+        if (style) document.documentElement.setAttribute("data-nb-style", style);
+        else document.documentElement.removeAttribute("data-nb-style");
+        try {
+          if (style) localStorage.setItem(KEY, style);
+          else localStorage.removeItem(KEY);
+        } catch {
+          // Storage can be blocked; the choice then lasts for this page only.
+        }
+        for (const other of document.querySelectorAll<HTMLSelectElement>("nb-style-select select"))
+          other.value = style;
+      });
+    }
+  }
+  if (!customElements.get("nb-style-select")) customElements.define("nb-style-select", NbStyleSelect);
+</script>

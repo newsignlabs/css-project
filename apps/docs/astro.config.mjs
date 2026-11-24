@@ -41,6 +41,8 @@ export default defineConfig({
         "A platform-native CSS framework: token-driven themes, accessible components, on-demand utilities and design styles.",
       social: [{ icon: "github", label: "GitHub", href: repo }],
       editLink: { baseUrl: `${repo}/edit/main/apps/docs/` },
+      // The header gets a design-style picker next to the theme picker (specs/004 T034).
+      components: { ThemeSelect: "./src/components/ThemeSelect.astro" },
       lastUpdated: false,
       // Wrap long lines: a horizontally scrolling code block is not keyboard reachable (axe scrollable-region-focusable).
       expressiveCode: { defaultProps: { wrap: true } },
@@ -51,10 +53,14 @@ export default defineConfig({
         "./src/styles/theme.css",
       ],
       head: [
-        // Starlight's theme picker sets data-theme; newBrush themes follow data-nb-theme.
+        // Starlight's theme picker sets data-theme; newBrush themes follow data-nb-theme. Also restores the design
+        // style picked in the header (specs/004 T034) before first paint.
         {
           tag: "script",
-          content: readFileSync(new URL("./src/theme-sync.js", import.meta.url), "utf8"),
+          content: readFileSync(new URL("./src/theme-sync.js", import.meta.url), "utf8").replace(
+            "/*STYLES*/ []",
+            JSON.stringify(manifest.styles.map((/** @type {{name: string}} */ s) => s.name)),
+          ),
         },
       ],
       sidebar: [
@@ -66,6 +72,17 @@ export default defineConfig({
             { label: "Bundlers & frameworks", link: "/guides/bundlers/" },
             { label: "Theming", link: "/guides/theming/" },
             { label: "Coming from another framework", link: "/guides/from-other-frameworks/" },
+          ],
+        },
+        {
+          label: "Styles",
+          items: [
+            { label: "Overview", link: "/styles/" },
+            ...manifest.styles.map((/** @type {{name: string, title: string}} */ s) => ({
+              label: s.title,
+              link: `/styles/${s.name}/`,
+            })),
+            { label: "Custom styles", link: "/styles/custom/" },
           ],
         },
         {
@@ -82,7 +99,6 @@ export default defineConfig({
             { label: "Design tokens", link: `/reference/tokens/` },
             { label: "Utilities", link: `/reference/utilities/` },
             { label: "Themes & variants", link: `/reference/themes/` },
-            { label: "Design styles", link: `/reference/styles/` },
           ],
         },
       ],

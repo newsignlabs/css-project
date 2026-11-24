@@ -53,7 +53,9 @@ export function startPlayground(root: HTMLElement): void {
     const attrs = [
       // "Page" follows the site's theme picker (the iframe is a separate document, so pass it on).
       ` data-nb-theme="${escapeAttr(theme.value || document.documentElement.dataset.nbTheme || "light")}"`,
-      style.value && ` data-nb-style="${escapeAttr(style.value)}"`,
+      // Likewise for the design style picked in the site header (specs/004 T034).
+      (style.value || document.documentElement.dataset.nbStyle) &&
+        ` data-nb-style="${escapeAttr(style.value || document.documentElement.dataset.nbStyle || "")}"`,
       dir.getAttribute("aria-pressed") === "true" && ' dir="rtl"',
     ]
       .filter(Boolean)
@@ -127,9 +129,9 @@ export function startPlayground(root: HTMLElement): void {
     escaped = false;
   });
   theme.addEventListener("change", render);
-  new MutationObserver(() => theme.value || render()).observe(document.documentElement, {
+  new MutationObserver(() => render()).observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ["data-nb-theme"],
+    attributeFilter: ["data-nb-theme", "data-nb-style"],
   });
   style.addEventListener("change", render);
   width.addEventListener("change", () => {

@@ -2,7 +2,8 @@
 import { manifest } from "../lib/manifest.ts";
 
 // Theme, design style and width selects plus a right-to-left toggle, shared by live examples (Example.astro) and the
-// playground. Scripts find them by `data-control`; `id` prefixes the control ids so labels stay unique on a page.
+// playground. "Page" follows the site header's theme and style pickers; the style "Default" forces the default style
+// (data-nb-style="default"). Scripts find controls by `data-control`; `id` keeps their ids unique on a page.
 interface Props {
   id: string;
 }
@@ -25,7 +26,8 @@ const styles = manifest.styles.map((s) => ({ name: s.name, title: s.title }));
   <label for={`${id}-style`}>Style</label>
   <span class="nb-select">
     <select id={`${id}-style`} data-control="style">
-      <option value="">Default</option>
+      <option value="">Page</option>
+      <option value="default">Default</option>
       {styles.map((s) => <option value={s.name}>{s.title}</option>)}
     </select>
   </span>

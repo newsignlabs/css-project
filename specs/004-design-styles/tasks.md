@@ -60,10 +60,10 @@ Format: `[ID] [P?] [Story] Description` — tests precede implementation (consti
 
 ## Phase 5: Docs grouped by style & MCP (S4)
 
-- [ ] T033 [US5] Docs IA (research R-08): "Choose your style" in getting started; Styles section with comparison grid
-- [ ] T034 [US5] Header style switcher re-skinning the docs site (persisted), live examples follow it
-- [ ] T035 [P] [US5] Style page template generated from manifest: personality, snippet, full-page demo, component gallery, tokens changed, recipes, a11y notes, pairs-well-with
-- [ ] T036 [P] [US5] Component pages: style tab strip previewing all styles with identical markup
+- [x] T033 [US5] Docs IA (research R-08): "Choose your style" in getting started; Styles section with comparison grid
+- [x] T034 [US5] Header style switcher re-skinning the docs site (persisted), live examples follow it
+- [x] T035 [P] [US5] Style page template generated from manifest: personality, snippet, full-page demo, component gallery, tokens changed, recipes, a11y notes, pairs-well-with
+- [x] T036 [P] [US5] Component pages: style tab strip previewing all styles with identical markup
 - [ ] T037 [P] [US6] MCP: `list_styles`, `style` arg on `build_page`/`compose_component`/`generate_css`, resource `newbrush://styles/{name}`, `restyle` prompt, keyword search ("cyberpunk" → cyber)
 - [ ] T038 [US6] MCP eval: 50 style-intent prompts → correct style on first `build_page` ≥ 90 % (SC-005)
 

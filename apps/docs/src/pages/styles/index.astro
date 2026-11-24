@@ -1,0 +1,76 @@
+---
+import { Code } from "@astrojs/starlight/components";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { manifest, slug, url } from "../../lib/manifest.ts";
+
+// specs/004 T033/T035 — the Styles overview: what a style is, how to use one, and every style side by side.
+const sample = `<div class="nb-stack">
+  <div class="nb-cluster">
+    <button class="nb-btn nb-btn--primary" type="button">Primary</button>
+    <button class="nb-btn" type="button">Secondary</button>
+    <span class="nb-badge">New</span>
+  </div>
+  <article class="nb-card"><div class="nb-card__body">Same markup, different style.</div></article>
+</div>`;
+const styles = [
+  {
+    name: "default",
+    title: "Default",
+    description: "Clean, neutral and dense enough for apps. What you get without a style class.",
+    href: "",
+  },
+  ...manifest.styles.map((s) => ({
+    name: s.name,
+    title: s.title,
+    description: s.description,
+    href: url(`/styles/${s.name}/`),
+  })),
+];
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Design styles",
+    description: "One class re-skins every component. Compare the built-in newBrush design styles side by side.",
+    editUrl: false,
+  }}
+  headings={[
+    { depth: 2, slug: "use-a-style", text: "Use a style" },
+    { depth: 2, slug: "compare", text: "Compare" },
+  ]}
+>
+  <p>
+    A design style changes the whole look of newBrush (shape, depth, type and motion) without touching your markup.
+    Styles work with every theme (light, dark, high contrast) and every brand colour. Try one on this site with the
+    style picker in the header.
+  </p>
+
+  <h2 id="use-a-style">Use a style</h2>
+  <p>Put the style's class on <code>&lt;body&gt;</code>, or on any element to style just that part of the page:</p>
+  <Code
+    lang="html"
+    code={`<body class="neon">                 <!-- whole page -->
+<section class="g-morph">…</section>  <!-- an island -->
+<div class="style-default">…</div>    <!-- default again -->`}
+  />
+  <p>
+    <code>nb-neon</code> and <code>data-nb-style="neon"</code> work too. Need your own look?{" "}
+    See <a href={url("/styles/custom/")}>custom styles</a>.
+  </p>
+
+  <h2 id="compare">Compare</h2>
+  <div class="nb-docs-style-grid not-content">
+    {
+      styles.map((s) => (
+        <section class="nb-docs-style-card" data-style={s.name} aria-labelledby={`style-${slug(s.name)}`}>
+          <h3 id={`style-${slug(s.name)}`}>{s.href ? <a href={s.href}>{s.title}</a> : s.title}</h3>
+          <p>{s.description}</p>
+          <div class="nb-docs-preview" data-nb-style={s.name} set:html={sample} />
+          <p>
+            <code>{s.name === "default" ? "<body>" : `<body class="${s.name}">`}</code>
+          </p>
+        </section>
+      ))
+    }
+  </div>
+</StarlightPage>

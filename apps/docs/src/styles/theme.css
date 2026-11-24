@@ -207,3 +207,40 @@
   background: var(--nb-color-surface-subtle);
   font: var(--sl-text-sm) / 1.5 var(--nb-font-family-mono);
 }
+
+/* Styles overview grid and per-style component gallery (specs/004 T035). */
+.nb-docs-style-grid,
+.nb-docs-gallery {
+  display: grid;
+  gap: var(--nb-space-6);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  margin-block-start: var(--nb-space-4);
+}
+
+.nb-docs-style-card,
+.nb-docs-gallery > section {
+  display: grid;
+  gap: var(--nb-space-3);
+  align-content: start;
+  min-inline-size: 0;
+}
+
+.nb-docs-style-card h3,
+.nb-docs-gallery h3 {
+  margin: 0;
+  font-size: var(--sl-text-lg);
+}
+
+.nb-docs-style-card p {
+  margin: 0;
+}
+
+/* A preview that sets its own style also paints its own surface, so dark-first styles read as themselves. */
+.nb-docs-preview[data-nb-style] {
+  background: var(--nb-color-surface);
+}
+
+/* Style names in tab strips stay on one line (the strip scrolls instead). */
+starlight-tabs [role="tab"] {
+  white-space: nowrap;
+}
