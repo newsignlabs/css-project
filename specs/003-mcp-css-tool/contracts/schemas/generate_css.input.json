@@ -1,0 +1,67 @@
+{
+  "$id": "https://newbrush.dev/mcp/generate_css.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "classes": {
+      "description": "Class names to generate CSS for (up to 5000). Give this or html.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "html": {
+      "description": "HTML to scan for class attributes (up to 256 KB). Give this or classes.",
+      "type": "string"
+    },
+    "theme": {
+      "description": "Brand seed colours; adds the derived token CSS",
+      "type": "object",
+      "properties": {
+        "seeds": {
+          "type": "object",
+          "properties": {
+            "brand": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb"
+            },
+            "accent": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb"
+            },
+            "neutral": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "seeds"
+      ],
+      "additionalProperties": false
+    },
+    "include": {
+      "type": "object",
+      "properties": {
+        "preflight": {
+          "description": "Prepend newBrush core: reset, tokens, themes, base, layout",
+          "type": "boolean"
+        },
+        "components": {
+          "description": "Prepend the full newBrush stylesheet: core, components and design styles",
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

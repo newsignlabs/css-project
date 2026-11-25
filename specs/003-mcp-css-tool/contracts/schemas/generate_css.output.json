@@ -1,0 +1,107 @@
+{
+  "$id": "https://newbrush.dev/mcp/generate_css.output.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "css": {
+      "type": "string"
+    },
+    "used": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Utility classes that produced CSS"
+    },
+    "rejected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Stable error code, e.g. NB_ARBITRARY_REJECTED"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Classes that look like utilities but are invalid"
+    },
+    "unknown": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "class": {
+            "type": "string"
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "class",
+          "suggestions"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Classes newBrush does not know (component and style classes are not listed)"
+    },
+    "stats": {
+      "type": "object",
+      "properties": {
+        "bytes": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "rules": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "bytes",
+        "rules"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "css",
+    "used",
+    "rejected",
+    "unknown",
+    "stats"
+  ],
+  "additionalProperties": false
+}

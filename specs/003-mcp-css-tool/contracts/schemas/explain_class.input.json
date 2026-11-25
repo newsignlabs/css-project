@@ -1,0 +1,19 @@
+{
+  "$id": "https://newbrush.dev/mcp/explain_class.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "classes": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Utility classes to explain (up to 50)"
+    }
+  },
+  "required": [
+    "classes"
+  ],
+  "additionalProperties": false
+}

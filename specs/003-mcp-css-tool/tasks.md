@@ -4,18 +4,18 @@
 
 ## Phase 1: Setup (P0)
 
-- [ ] T001 Scaffold `packages/mcp` (tsup, bin `newbrush-mcp`, exports `.`, `./lib`, `./http`), deps: @modelcontextprotocol/sdk, zod, parse5, minisearch, hono
-- [ ] T002 [P] zod schemas for all tool inputs/outputs in `src/schemas/` + script exporting JSON Schema to `contracts/` (drift check in CI)
-- [ ] T003 [P] Escaping tagged-template `html\`\`` helper, URL allow-list, inline-tag sanitizer in `src/html/` with unit + fuzz tests (fast-check, 10k cases)
-- [ ] T004 Manifest loader (bundled JSON from `newbrush` package; version reported in server info)
+- [x] T001 Scaffold `packages/mcp` (tsup, bin `newbrush-mcp`, exports `.`, `./lib`, `./http`), deps: @modelcontextprotocol/sdk, zod, parse5, minisearch, hono
+- [x] T002 [P] zod schemas for all tool inputs/outputs in `src/schemas/` + script exporting JSON Schema to `contracts/` (drift check in CI)
+- [x] T003 [P] Escaping tagged-template `html\`\`` helper, URL allow-list, inline-tag sanitizer in `src/html/` with unit + fuzz tests (fast-check, 10k cases)
+- [x] T004 Manifest loader (bundled JSON from `newbrush` package; version reported in server info)
 
 ## Phase 2: User Story 1 – generate_css (P1) 🎯
 
-- [ ] T005 [P] [US1] Golden tests: html/classes → CSS; determinism; suggestions via Levenshtein over known classes; limits → `NB_INPUT_TOO_LARGE`
-- [ ] T006 [US1] `lib/generate-css.ts` (extractCandidates → engine.generate → diagnostics)
-- [ ] T007 [US1] `lib/explain-class.ts`
-- [ ] T008 [US1] `server.ts` registering tools with annotations + `structuredContent`; `transports/stdio.ts`; `index.ts` CLI flags
-- [ ] T009 [US1] Scripted e2e with MCP Inspector CLI / SDK client over stdio (`test/e2e/stdio.test.ts`)
+- [x] T005 [P] [US1] Golden tests: html/classes → CSS; determinism; suggestions via Levenshtein over known classes; limits → `NB_INPUT_TOO_LARGE`
+- [x] T006 [US1] `lib/generate-css.ts` (extractCandidates → engine.generate → diagnostics)
+- [x] T007 [US1] `lib/explain-class.ts`
+- [x] T008 [US1] `server.ts` registering tools with annotations + `structuredContent`; `transports/stdio.ts`; `index.ts` CLI flags
+- [x] T009 [US1] Scripted e2e with MCP Inspector CLI / SDK client over stdio (`test/e2e/stdio.test.ts`)
 
 ## Phase 3: User Story 2 – Discovery (P1)
 
