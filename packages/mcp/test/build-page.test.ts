@@ -153,6 +153,59 @@ describe("build_page", () => {
     });
   });
 
+  it("builds a dashboard: app header, sidebar with stats, and an accessible data table", () => {
+    const r = buildPage({
+      title: "Admin",
+      sections: ["dashboard-shell", "sidebar-layout", "table-view"].map((t) => section(t)),
+    });
+    expect(r.diagnostics).toEqual([]);
+    expect(r.html).toContain('<nav class="nb-navbar__nav" aria-label="App">');
+    expect(r.html).toContain('<nav aria-label="Sections">');
+    expect(r.html).toContain('<caption id="table-view-caption">The last five orders</caption>');
+    expect(r.html).toContain('<th scope="col" class="nb-table__num">Total</th>');
+    expect(r.html).toContain(
+      '<section class="nb-table-wrap" tabindex="0" aria-labelledby="table-view-caption">',
+    );
+    expect(r.css).toContain(".nb-table");
+  });
+
+  it("builds forms with labels, autocomplete and required fields", () => {
+    const contact = buildPage({ title: "Contact", sections: [section("contact-form")] }).html;
+    expect(contact).toContain('<form class="nb-stack" action="/contact" method="post">');
+    expect(contact).toContain('<label class="nb-field__label" for="contact-form-email">');
+    expect(contact).toContain(
+      'autocomplete="email" required aria-describedby="contact-form-email-hint"',
+    );
+    const signUp = buildPage({
+      title: "Join",
+      sections: [{ type: "auth-form", variant: "sign-up", props: example("auth-form") }],
+    }).html;
+    expect(signUp).toContain('autocomplete="new-password"');
+    expect(signUp).toContain('name="name"');
+    const signIn = buildPage({ title: "Sign in", sections: [section("auth-form")] }).html;
+    expect(signIn).toContain('autocomplete="current-password"');
+    expect(signIn).toContain("Forgot your password?");
+  });
+
+  it("refuses an unsafe form action", () => {
+    const r = buildPage({
+      title: "x",
+      sections: [section("contact-form", { action: "javascript:steal()" })],
+    });
+    expect(r.html).toContain('action="#"');
+    expect(r.diagnostics[0]).toMatchObject({
+      code: "NB_UNSAFE_URL",
+      path: "sections[0].props.action",
+    });
+  });
+
+  it("builds a 404 page with defaults", () => {
+    const r = buildPage({ title: "Not found", sections: [{ type: "not-found" }] });
+    expect(r.html).toContain('<h1 id="not-found-title"');
+    expect(r.html).toContain("Page not found");
+    expect(r.html).toContain('href="/">Go to the home page</a>');
+  });
+
   it("is deterministic", () => {
     const spec = {
       title: "x",

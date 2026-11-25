@@ -2,6 +2,7 @@
 // Transport-free: connect it to stdio (transports/stdio.ts) or any other MCP transport.
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { BLUEPRINT_NAMES } from "./blueprints/index.ts";
 import { buildPage } from "./lib/build-page.ts";
 import { composeComponent } from "./lib/compose-component.ts";
 import { ToolError } from "./lib/errors.ts";
@@ -203,8 +204,7 @@ export function createServer(): McpServer {
     "build_page",
     {
       title: "Build a newBrush page",
-      description:
-        "Build a complete, accessible HTML page from sections (navbar, hero, feature-grid, pricing, testimonial, faq, cta, footer), with an optional brand theme, colour scheme and design style. Returns the document (or fragments) and the minimal CSS. Text is escaped; rich text allows <strong> <em> <code> <a> <br>.",
+      description: `Build a complete, accessible HTML page from sections (${BLUEPRINT_NAMES.join(", ")}), with an optional brand theme, colour scheme and design style. Read newbrush://sections/{name} for each section's variants and props. Returns the document (or fragments) and the minimal CSS. Text is escaped; rich text allows <strong> <em> <code> <a> <br>.`,
       inputSchema: buildPageInput,
       outputSchema: buildPageOutput,
       annotations: { title: "Build a newBrush page", ...ANNOTATIONS },
