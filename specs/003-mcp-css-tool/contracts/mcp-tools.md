@@ -14,6 +14,11 @@ type ThemeRef  = { themeId: string } | { seeds: { brand?: string; accent?: strin
 ## Tools
 
 ### `generate_css`
+
+> **Implemented (v0.x)**: `classes`, `html`, `theme: { seeds }`, `include`. Pending, additive: `theme` as `{ name }`
+> or `{ themeId }` (with `create_theme`), `mode: "inline"`, `minify`. Schemas: `contracts/schemas/generate_css.*.json`.
+> Tool errors carry the diagnostic in the text and in `_meta["newbrush/error"]` (clients validate `structuredContent`
+> against the success schema).
 ```ts
 in:  { classes?: string[]; html?: string; theme?: ThemeRef; include?: { preflight?: boolean; components?: boolean }; mode?: "css" | "inline"; minify?: boolean }
      // one of classes|html required; html ≤ 256 KB; classes ≤ 5000
@@ -71,6 +76,8 @@ out: { valid: boolean; diagnostics: Diagnostic[]; summary: { errors: number; war
 ```
 
 ### `explain_class`
+
+> **Implemented (v0.x)** as below. Schemas: `contracts/schemas/explain_class.*.json`.
 ```ts
 in:  { classes: string[] /* ≤ 50 */ }
 out: { results: ({ class: string; parsed: ParsedClass; family: string; css: string; docs: string } | Diagnostic)[] }

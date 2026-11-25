@@ -1,0 +1,121 @@
+{
+  "$id": "https://newbrush.dev/mcp/explain_class.output.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "class": {
+                "type": "string"
+              },
+              "parsed": {
+                "type": "object",
+                "properties": {
+                  "raw": {
+                    "type": "string"
+                  },
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "negative": {
+                    "type": "boolean"
+                  },
+                  "utility": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "arbitrary": {
+                    "type": "string"
+                  },
+                  "modifier": {
+                    "type": "string"
+                  },
+                  "important": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "raw",
+                  "variants",
+                  "negative",
+                  "utility",
+                  "important"
+                ],
+                "additionalProperties": false,
+                "description": "The class split into variants, utility, value and modifiers"
+              },
+              "family": {
+                "type": "string",
+                "description": "The utility family, e.g. padding"
+              },
+              "css": {
+                "type": "string"
+              },
+              "docs": {
+                "type": "string",
+                "description": "Documentation URL"
+              }
+            },
+            "required": [
+              "class",
+              "parsed",
+              "family",
+              "css",
+              "docs"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Stable error code, e.g. NB_ARBITRARY_REJECTED"
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "error",
+                  "warning",
+                  "info"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "class": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "suggestion": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "severity",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "additionalProperties": false
+}
