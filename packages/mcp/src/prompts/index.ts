@@ -1,11 +1,45 @@
 // specs/003 T014 — prompts. Each prompt is registered with the release that brings the tools it relies on:
-// restyle_with_brand (generate_css) and design_landing_page (build_page) now; build_dashboard with the dashboard
-// blueprints; convert_from_tailwind with convert_markup and validate_markup.
+// restyle_with_brand (generate_css), design_landing_page and build_dashboard (build_page) now; convert_from_tailwind
+// with convert_markup and validate_markup.
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { BLUEPRINTS } from "../blueprints/index.ts";
 
 export function registerPrompts(server: McpServer): void {
+  server.registerPrompt(
+    "build_dashboard",
+    {
+      title: "Build a dashboard",
+      description:
+        "Plan an admin or analytics dashboard for some records and metrics, and build it with build_page.",
+      argsSchema: {
+        entities: z.string().describe('What the dashboard manages, e.g. "orders, customers"'),
+        metrics: z.string().describe('The numbers to show, e.g. "orders today, revenue, churn"'),
+      },
+    },
+    ({ entities, metrics }) => ({
+      messages: [
+        {
+          role: "user",
+          content: {
+            type: "text",
+            text: [
+              `Build a dashboard for ${entities}, showing ${metrics}.`,
+              "",
+              "1. Use these sections (read newbrush://sections/{name} for their props):",
+              "   - dashboard-shell: app name, one link per area, the signed-in user and sign out;",
+              "   - sidebar-layout or stats: the key metrics as label + value pairs (realistic sample values);",
+              "   - table-view: one table per entity with a caption, clear column labels and numeric columns marked numeric;",
+              "   - empty-state where an area has no data yet.",
+              "2. Call build_page with a title and those sections. Fix any schema error at the path it names and call again.",
+              "3. Reply with the HTML document and a one-line note on what each section shows.",
+            ].join("\n"),
+          },
+        },
+      ],
+    }),
+  );
+
   server.registerPrompt(
     "design_landing_page",
     {

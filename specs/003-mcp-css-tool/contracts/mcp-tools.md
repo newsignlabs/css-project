@@ -64,9 +64,9 @@ out: { html: string; css?: string; diagnostics: Diagnostic[] }
 
 ### `build_page`
 
-> **Implemented (v0.x)**: blueprints navbar, hero (centered, split, minimal), feature-grid (cards, plain), pricing,
-> testimonial (single, grid), faq, cta (default, banded), footer (simple, columns); `theme: { seeds?, colorScheme? }`,
-> `style` (specs/004), `lang`, `dir`, `output`. Pending, additive: the other blueprints and hero variants, `minify`.
+> **Implemented (v0.x)**: every `BlueprintName` below (hero: centered, split, image-bg, product, minimal; table-view
+> adds a striped variant); `theme: { seeds?, colorScheme? }`, `style` (specs/004), `lang`, `dir`, `output`. Pending,
+> additive: `minify`.
 > Schema errors name the field (`sections[2].props.tiers`); `props` and `slots` are merged.
 ```ts
 in:  {

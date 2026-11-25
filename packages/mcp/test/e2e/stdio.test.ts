@@ -112,6 +112,7 @@ describe("newbrush-mcp over stdio", () => {
   it("offers the restyle_with_brand prompt", async () => {
     const { prompts } = await client.listPrompts();
     expect(prompts.map((p) => p.name).sort()).toEqual([
+      "build_dashboard",
       "design_landing_page",
       "restyle_with_brand",
     ]);
@@ -127,7 +128,7 @@ describe("newbrush-mcp over stdio", () => {
   it("build_page returns a document; sections are documented as resources", async () => {
     const hero = await client.readResource({ uri: "newbrush://sections/hero" });
     const meta = JSON.parse(textOf(hero));
-    expect(meta.variants).toEqual(["centered", "split", "minimal"]);
+    expect(meta.variants).toEqual(["centered", "split", "image-bg", "product", "minimal"]);
     expect(meta.props.type).toBe("object");
     const r = await client.callTool({
       name: "build_page",

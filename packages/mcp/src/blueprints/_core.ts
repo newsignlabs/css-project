@@ -77,6 +77,12 @@ export function heading(ctx: RenderContext, text: string, classes = "", sub = fa
   return html`${raw(`<${tag}${id}${cls}>`)}${text}${raw(`</${tag}>`)}`;
 }
 
+/** A heading one level below the section's, holding markup (e.g. a link), for items inside a section. */
+export function subheading(ctx: RenderContext, content: SafeHtml, classes: string): SafeHtml {
+  const tag = `h${ctx.level + 1}`;
+  return html`${raw(`<${tag} class="${escapeHtml(classes)}">`)}${content}${raw(`</${tag}>`)}`;
+}
+
 export function cta(
   ctx: RenderContext,
   c: z.infer<typeof Cta>,

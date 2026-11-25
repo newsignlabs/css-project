@@ -73,6 +73,11 @@ const heroProps = z
     primary: Cta.optional(),
     secondary: Cta.optional(),
     image: Image.optional(),
+    benefits: z
+      .array(Text(120))
+      .max(8)
+      .optional()
+      .describe("Bullet points for the product variant"),
   })
   .strict();
 
@@ -80,8 +85,8 @@ export const hero = defineBlueprint({
   name: "hero",
   title: "Hero",
   description:
-    "The opening section: headline, supporting text and calls to action, centered, split with an image, or minimal.",
-  variants: ["centered", "split", "minimal"],
+    "The opening section: headline, supporting text and calls to action; centered, split with an image, text over a background image, a product pitch with benefits, or minimal.",
+  variants: ["centered", "split", "image-bg", "product", "minimal"],
   region: "main",
   titled: () => true,
   props: heroProps,
@@ -95,6 +100,7 @@ export const hero = defineBlueprint({
       src: "https://images.example.com/beans.jpg",
       alt: "Freshly roasted coffee beans in a paper bag",
     },
+    benefits: ["Roasted within 48 hours", "Free shipping", "Skip or pause any month"],
   },
   render: (p, variant, ctx) => {
     const actions = when(
@@ -108,6 +114,27 @@ export const hero = defineBlueprint({
       ${heading(ctx, p.title, variant === "minimal" ? "text-3xl font-bold" : "text-4xl font-bold")}
       ${when(p.subtitle, () => html`<p class="text-lg text-muted">${rich(p.subtitle)}</p>`)}
       ${actions}`;
+    if (variant === "image-bg" && p.image)
+      return html`<section id="${ctx.id}" class="relative isolate py-16" aria-labelledby="${ctx.id}-title">
+  ${image(ctx, p.image, "image", "absolute inset-0 -z-10 w-full h-full object-cover")}
+  <div class="nb-container">
+    <div class="nb-card nb-card--elevated max-w-md">
+      <div class="nb-card__body nb-stack">
+        ${text}
+      </div>
+    </div>
+  </div>
+</section>`;
+    if (variant === "product")
+      return html`<section id="${ctx.id}" class="py-16" aria-labelledby="${ctx.id}-title">
+  <div class="nb-container grid gap-8 items-center md:grid-cols-2">
+    <div class="nb-stack">
+      ${text}
+      ${when(p.benefits?.length, () => html`<ul class="nb-stack list-disc ps-6">${(p.benefits ?? []).map((b) => html`<li>${b}</li>`)}</ul>`)}
+    </div>
+    ${when(p.image, () => image(ctx, p.image as z.infer<typeof Image>, "image", "rounded-xl w-full"))}
+  </div>
+</section>`;
     if (variant === "split" && p.image)
       return html`<section id="${ctx.id}" class="py-16" aria-labelledby="${ctx.id}-title">
   <div class="nb-container grid gap-8 items-center md:grid-cols-2">

@@ -34,6 +34,25 @@ const ALLOWED_TAGS = new Set([
   "ul",
   "b",
   "i",
+  // Forms, data and dashboards (sections-more.ts).
+  "h4",
+  "aside",
+  "form",
+  "label",
+  "input",
+  "textarea",
+  "button",
+  "dl",
+  "dt",
+  "dd",
+  "time",
+  "table",
+  "caption",
+  "thead",
+  "tbody",
+  "tr",
+  "th",
+  "td",
 ]);
 
 const nasty = fc.constantFrom(
@@ -82,7 +101,7 @@ function assertSafe(html: string): void {
     expect(attrs.replace(/\s([^\s=/>"']+)(?:="[^"]*")?/g, "").trim(), `<${name}${attrs}>`).toBe("");
     for (const [attr, value] of attributesOf(attrs)) {
       expect(attr.toLowerCase().startsWith("on"), `event handler ${attr} on <${name}>`).toBe(false);
-      if (attr === "href" || attr === "src")
+      if (attr === "href" || attr === "src" || attr === "action")
         expect(value.replace(/&#?\w+;/g, "").replace(/\s/g, "")).not.toMatch(
           /^(javascript|data|vbscript):/i,
         );
