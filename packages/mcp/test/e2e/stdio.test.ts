@@ -5,6 +5,12 @@ import { ExplainClassOutput, GenerateCssOutput } from "../../src/schemas/index.t
 
 // specs/003 T009 — the built server over stdio, driven by the MCP SDK client (turbo builds before testing).
 
+/** The text of a resource read (newBrush resources are always text). */
+const textOf = (r: { contents: ({ text: string } | { blob: string })[] }) => {
+  const first = r.contents[0];
+  return first && "text" in first ? first.text : "";
+};
+
 const bin = new URL("../../dist/index.js", import.meta.url).pathname;
 let client: Client;
 
@@ -18,7 +24,13 @@ describe("newbrush-mcp over stdio", () => {
   it("identifies itself and lists both tools with schemas and annotations", async () => {
     expect(client.getServerVersion()?.name).toBe("newbrush");
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(["explain_class", "generate_css"]);
+    expect(tools.map((t) => t.name).sort()).toEqual([
+      "explain_class",
+      "generate_css",
+      "get_component",
+      "get_tokens",
+      "search",
+    ]);
     for (const tool of tools) {
       expect(tool.inputSchema.type).toBe("object");
       expect(tool.outputSchema?.type).toBe("object");
@@ -51,6 +63,59 @@ describe("newbrush-mcp over stdio", () => {
     const out = ExplainClassOutput.parse(r.structuredContent);
     expect(out.results).toHaveLength(2);
     expect(out.results[1]).toMatchObject({ code: "NB_ARBITRARY_REJECTED" });
+  });
+
+  it("search and get_component work over the wire", async () => {
+    const found = await client.callTool({
+      name: "search",
+      arguments: { query: "dialog", limit: 3 },
+    });
+    expect(JSON.stringify(found.structuredContent)).toContain("newbrush://components/modal");
+    const c = await client.callTool({ name: "get_component", arguments: { name: "modal" } });
+    expect(c.structuredContent).toMatchObject({ name: "modal", className: "nb-modal" });
+    const missing = await client.callTool({ name: "get_component", arguments: { name: "modl" } });
+    expect(missing.isError).toBe(true);
+    expect(missing._meta).toMatchObject({
+      "newbrush/error": { code: "NB_UNKNOWN_COMPONENT", suggestion: "modal" },
+    });
+  });
+
+  it("serves newbrush:// resources with completion", async () => {
+    const { resources } = await client.listResources();
+    expect(resources.map((r) => r.uri)).toContain("newbrush://manifest");
+    expect(resources.map((r) => r.uri)).toContain("newbrush://components/button");
+    const { resourceTemplates } = await client.listResourceTemplates();
+    expect(resourceTemplates.map((t) => t.uriTemplate).sort()).toEqual([
+      "newbrush://components/{name}",
+      "newbrush://styles/{name}",
+      "newbrush://themes/{name}",
+      "newbrush://tokens/{name}",
+      "newbrush://utilities/{name}",
+    ]);
+    const button = await client.readResource({ uri: "newbrush://components/button" });
+    expect(JSON.parse(textOf(button)).className).toBe("nb-btn");
+    const dark = await client.readResource({ uri: "newbrush://themes/dark" });
+    expect(dark.contents[0]).toMatchObject({ mimeType: "text/css" });
+    expect(textOf(dark)).toContain('[data-nb-theme="dark"]');
+    const neon = await client.readResource({ uri: "newbrush://styles/neon" });
+    expect(JSON.parse(textOf(neon)).preferredScheme).toBe("dark");
+    const done = await client.complete({
+      ref: { type: "ref/resource", uri: "newbrush://components/{name}" },
+      argument: { name: "name", value: "bu" },
+    });
+    expect(done.completion.values).toEqual(["button", "button-group"]);
+  });
+
+  it("offers the restyle_with_brand prompt", async () => {
+    const { prompts } = await client.listPrompts();
+    expect(prompts.map((p) => p.name)).toEqual(["restyle_with_brand"]);
+    const prompt = await client.getPrompt({
+      name: "restyle_with_brand",
+      arguments: { html: "<button>Hi</button>", brandColor: "#e11d48" },
+    });
+    const text = JSON.stringify(prompt.messages);
+    expect(text).toContain("generate_css");
+    expect(text).toContain("#e11d48");
   });
 
   it("returns structured errors for oversized input", async () => {

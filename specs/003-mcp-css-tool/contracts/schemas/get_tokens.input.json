@@ -1,0 +1,24 @@
+{
+  "$id": "https://newbrush.dev/mcp/get_tokens.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "group": {
+      "description": "Token group, e.g. \"color.text\", \"color.surface\", \"space\", \"radius\"",
+      "type": "string"
+    },
+    "theme": {
+      "description": "Values for this theme: \"light\" (default), \"dark\" or \"contrast\"",
+      "type": "string"
+    },
+    "format": {
+      "description": "\"css\" also returns a CSS block declaring the tokens",
+      "type": "string",
+      "enum": [
+        "json",
+        "css"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

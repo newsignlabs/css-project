@@ -26,18 +26,27 @@ out: { css: string; used: string[]; rejected: Diagnostic[]; unknown: { class: st
 ```
 
 ### `search`
+
+> **Implemented (v0.x)**: kinds `component`, `utility`, `token`, `style` (design styles, specs/004). `section` and
+> `doc` are accepted and return nothing until blueprints (Phase 4) and docs resources exist.
 ```ts
 in:  { query: string; kinds?: ("component" | "utility" | "token" | "section" | "doc")[]; limit?: number /* ≤ 25 */ }
 out: { results: { kind: string; name: string; title: string; description: string; uri: string; score: number; example?: string }[] }
 ```
 
 ### `get_component`
+
+> **Implemented (v0.x)**. Accepts `nb-` names and any case; unknown names give `NB_UNKNOWN_COMPONENT` with a
+> `suggestion`.
 ```ts
 in:  { name: string }
 out: Component   // data-model.md (001) incl. anatomy, modifiers, states, a11y, examples
 ```
 
 ### `get_tokens`
+
+> **Implemented (v0.x)**. `group` uses the docs' token groups (`color.text`, `space`…); unknown groups or themes give
+> `NB_SCHEMA_INVALID` listing the valid ones.
 ```ts
 in:  { group?: string; theme?: string; format?: "json" | "css" }
 out: { tokens: { path: string; cssVar: string; type: string; value: string; description?: string }[]; css?: string }
@@ -103,10 +112,13 @@ out: { html: string; mapped: number; unmapped: { class: string; reason: string }
 | `newbrush://utilities/{family}` | application/json | UtilityFamily |
 | `newbrush://tokens/{group}` | application/json | Resolved tokens |
 | `newbrush://themes/{name}` | text/css | Theme CSS |
+| `newbrush://styles/{name}` | application/json | Design style (specs/004) |
 | `newbrush://sections/{name}` | application/json | Blueprint: props, slots, variants, example PageSpec fragment |
 | `newbrush://docs/{slug}` | text/markdown | Docs page |
 
 Resource templates are listed via `resources/templates/list`; `{name}` completions supported.
+**Implemented (v0.x)**: manifest, components, utilities, tokens, themes, styles. `sections` arrives with blueprints
+(Phase 4), `docs` with bundled docs pages.
 
 ## Prompts
 
@@ -116,6 +128,9 @@ Resource templates are listed via `resources/templates/list`; `{name}` completio
 | `restyle_with_brand` | `html`, `brandColor` | create_theme → generate_css with theme |
 | `convert_from_tailwind` | `html` | convert_markup → validate_markup |
 | `build_dashboard` | `entities`, `metrics` | dashboard-shell + stats + table-view PageSpec |
+
+Each prompt ships with the tools it uses: `restyle_with_brand` now (with `generate_css` until `create_theme`),
+`design_landing_page` and `build_dashboard` with `build_page`, `convert_from_tailwind` with `convert_markup`.
 
 ## Transports & endpoints
 

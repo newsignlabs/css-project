@@ -45,6 +45,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",
     "@newbrush/engine": "workspace:*",
+    "minisearch": "^7.2.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {

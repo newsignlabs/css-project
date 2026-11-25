@@ -5,12 +5,23 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { ToolError } from "./lib/errors.ts";
 import { explainClass } from "./lib/explain-class.ts";
 import { generateCss } from "./lib/generate-css.ts";
+import { getComponent } from "./lib/get-component.ts";
+import { getTokens } from "./lib/get-tokens.ts";
+import { search } from "./lib/search.ts";
 import { manifest, SERVER_NAME, SERVER_VERSION } from "./manifest.ts";
+import { registerPrompts } from "./prompts/index.ts";
+import { registerResources } from "./resources/index.ts";
 import {
   explainClassInput,
   explainClassOutput,
   generateCssInput,
   generateCssOutput,
+  getComponentInput,
+  getComponentOutput,
+  getTokensInput,
+  getTokensOutput,
+  searchInput,
+  searchOutput,
 } from "./schemas/index.ts";
 
 /** Every newBrush tool only reads the bundled manifest and computes: no side effects, no network, same in → same out. */
@@ -48,7 +59,9 @@ export function createServer(): McpServer {
       instructions: [
         `newBrush ${manifest.version} is a CSS framework: components are plain classes (nb-btn, nb-card),`,
         "utilities are generated on demand (p-4, md:grid-cols-2), and one class (neon, g-morph…) switches design style.",
-        "Use generate_css for the CSS of some markup and explain_class to see how a class is read.",
+        'Find things with search (by meaning: "pricing table", "dropdown", "cyberpunk"), read one with get_component',
+        "or get_tokens, or browse newbrush:// resources. Use generate_css for the CSS of some markup and explain_class to",
+        "see how a class is read. Prefer components over long utility lists; keep markup accessible.",
       ].join(" "),
     },
   );
@@ -108,5 +121,73 @@ export function createServer(): McpServer {
       ),
   );
 
+  server.registerTool(
+    "search",
+    {
+      title: "Search newBrush",
+      description:
+        'Search newBrush components, utilities, design tokens and design styles by meaning, e.g. "pricing table", "dropdown", "spacing", "cyberpunk". Synonyms are understood. Each result links its newbrush:// resource.',
+      inputSchema: searchInput,
+      outputSchema: searchOutput,
+      annotations: { title: "Search newBrush", ...ANNOTATIONS },
+    },
+    (args) =>
+      run(
+        () => search(args),
+        (r) =>
+          r.results.length
+            ? r.results.map((x) => `${x.kind} ${x.name}: ${x.description} (${x.uri})`).join("\n")
+            : "No results.",
+      ),
+  );
+
+  server.registerTool(
+    "get_component",
+    {
+      title: "Get a newBrush component",
+      description:
+        "Get one newBrush component: classes for each part, modifiers, sizes, states, accessibility requirements, keyboard behaviour, tokens and example HTML.",
+      inputSchema: getComponentInput,
+      outputSchema: getComponentOutput,
+      annotations: { title: "Get a newBrush component", ...ANNOTATIONS },
+    },
+    (args) =>
+      run(
+        () => getComponent(args),
+        (c) =>
+          [
+            `${c.title} (.${c.className}): ${c.description}`,
+            `Modifiers: ${c.modifiers.map((m) => m.className).join(", ") || "none"}`,
+            `Accessibility: ${c.a11y.requirements.join(" ")}`,
+            "```html",
+            c.examples[0]?.html ?? "",
+            "```",
+          ].join("\n"),
+      ),
+  );
+
+  server.registerTool(
+    "get_tokens",
+    {
+      title: "Get newBrush design tokens",
+      description:
+        'Get newBrush design tokens (CSS custom properties), optionally one group ("color.text", "space", "radius"…) and one theme\'s values (light, dark, contrast); format "css" also returns a CSS block.',
+      inputSchema: getTokensInput,
+      outputSchema: getTokensOutput,
+      annotations: { title: "Get newBrush design tokens", ...ANNOTATIONS },
+    },
+    (args) =>
+      run(
+        () => getTokens(args),
+        (r) =>
+          r.css ??
+          r.tokens
+            .map((t) => `${t.cssVar}: ${t.value}${t.description ? ` (${t.description})` : ""}`)
+            .join("\n"),
+      ),
+  );
+
+  registerResources(server);
+  registerPrompts(server);
   return server;
 }
