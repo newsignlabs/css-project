@@ -1,0 +1,35 @@
+---
+import { Code, TabItem, Tabs } from "@astrojs/starlight/components";
+import { manifest, scopeIds } from "../lib/manifest.ts";
+
+// specs/004 T036 — one example in every design style: identical markup, only the style class changes. The tabs share
+// a sync key, so picking "Neon" on one component page picks it on the next too.
+interface Props {
+  html: string;
+}
+const { html } = Astro.props;
+const indented = html
+  .split("\n")
+  .map((line) => `  ${line}`)
+  .join("\n");
+const styles = [
+  { name: "default", title: "Default", className: "" },
+  ...manifest.styles.map((s) => ({ name: s.name, title: s.title, className: s.name })),
+];
+---
+
+<Tabs syncKey="nb-style">
+  {
+    styles.map((s) => (
+      <TabItem label={s.title}>
+        <div class="nb-docs-preview not-content" data-nb-style={s.name} data-style-tab={s.name}>
+          <Fragment set:html={scopeIds(html, `${s.name}-tab`)} />
+        </div>
+        <Code
+          code={s.className ? `<body class="${s.className}">\n${indented}\n</body>` : `<body>\n${indented}\n</body>`}
+          lang="html"
+        />
+      </TabItem>
+    ))
+  }
+</Tabs>

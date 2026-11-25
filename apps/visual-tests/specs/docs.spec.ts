@@ -46,7 +46,9 @@ const pages = [
   "/reference/tokens/",
   "/reference/utilities/",
   "/reference/themes/",
-  "/reference/styles/",
+  "/styles/",
+  ...manifest.styles.map((s) => `/styles/${s.name}/`),
+  "/styles/custom/",
 ];
 
 for (const scheme of ["light", "dark"] as const) {
@@ -250,4 +252,82 @@ test.describe("playground (T083)", () => {
         .evaluate((el) => el.ownerDocument.title),
     ).not.toBe("ran");
   });
+});
+
+test.describe("design styles in the docs (specs/004 T034, T036)", () => {
+  test("the header picker re-skins the site, persists across pages, and examples and the playground follow it", async ({
+    page,
+  }) => {
+    await serveDocs(page);
+    await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+    await page.goto(`${origin}${base}/components/button/index.html`);
+    const picker = page.getByRole("banner").getByLabel("Design style");
+    await picker.selectOption("cyber");
+    await expect(page.locator("html")).toHaveAttribute("data-nb-style", "cyber");
+    const exampleStyle = () =>
+      page
+        .locator("nb-example .nb-docs-preview .nb-btn")
+        .first()
+        .evaluate((el) => getComputedStyle(el).getPropertyValue("--nb-style").trim());
+    expect(await exampleStyle()).toBe("cyber");
+
+    // Persisted: the next page starts in cyber, before any script on the page runs its picker.
+    await page.goto(`${origin}${base}/components/card/index.html`);
+    await expect(page.locator("html")).toHaveAttribute("data-nb-style", "cyber");
+    await expect(page.getByRole("banner").getByLabel("Design style")).toHaveValue("cyber");
+
+    await page.goto(`${origin}${base}/playground/index.html`);
+    await expect(page.frameLocator("[data-pg=preview]").locator("html")).toHaveAttribute(
+      "data-nb-style",
+      "cyber",
+    );
+
+    // Back to the default style, also persisted.
+    await page.getByRole("banner").getByLabel("Design style").selectOption("");
+    await expect(page.locator("html")).not.toHaveAttribute("data-nb-style", /.*/);
+    await page.goto(`${origin}${base}/index.html`);
+    await expect(page.locator("html")).not.toHaveAttribute("data-nb-style", /.*/);
+  });
+
+  test("an example's Default style overrides the site style", async ({ page }) => {
+    await serveDocs(page);
+    await page.addInitScript(() => localStorage.setItem("nb-style", "neon"));
+    await page.goto(`${origin}${base}/components/button/index.html`);
+    const example = page.locator("nb-example").first();
+    await example.getByLabel("Style", { exact: true }).selectOption("default");
+    expect(
+      await example
+        .locator(".nb-docs-preview .nb-btn")
+        .first()
+        .evaluate((el) => getComputedStyle(el).getPropertyValue("--nb-style").trim()),
+    ).toBe("default");
+  });
+
+  test("component pages preview the example in every style", async ({ page }) => {
+    await serveDocs(page);
+    await page.goto(`${origin}${base}/components/button/index.html`);
+    for (const style of manifest.styles) {
+      await page.getByRole("tab", { name: style.title }).first().click();
+      const panel = page.locator(`[data-style-tab="${style.name}"]`);
+      await expect(panel).toBeVisible();
+      expect(
+        await panel
+          .locator(".nb-btn")
+          .first()
+          .evaluate((el) => getComputedStyle(el).getPropertyValue("--nb-style").trim()),
+      ).toBe(style.name);
+    }
+  });
+
+  // The whole docs chrome (Starlight mapped to newBrush tokens) must stay accessible in every style.
+  for (const style of manifest.styles)
+    for (const scheme of ["light", "dark"] as const)
+      test(`site in ${style.name} (${scheme}) has no axe violations`, async ({ page }) => {
+        await serveDocs(page);
+        await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" });
+        await page.addInitScript((name) => localStorage.setItem("nb-style", name), style.name);
+        await page.goto(`${origin}${base}/components/button/index.html`);
+        await expect(page.locator("html")).toHaveAttribute("data-nb-style", style.name);
+        await expectNoAxeViolations(page);
+      });
 });

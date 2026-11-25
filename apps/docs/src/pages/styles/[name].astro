@@ -1,0 +1,160 @@
+---
+import { Code } from "@astrojs/starlight/components";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import type { Style } from "@newbrush/schema";
+import TableWrap from "../../components/TableWrap.astro";
+import { manifest, scopeIds, slug, styleDemo, url } from "../../lib/manifest.ts";
+
+// specs/004 T035 — one page per design style, generated from the manifest: personality, how to use it, a full-page
+// demo, every component in the style, the tokens it changes, its recipes, accessibility notes and what it pairs with.
+export function getStaticPaths() {
+  return manifest.styles.map((style) => ({ params: { name: style.name }, props: { style } }));
+}
+interface Props {
+  style: Style;
+}
+const { style: s } = Astro.props;
+const schemeNote: Record<string, string> = {
+  dark: "Designed dark-first: without a theme attribute it renders dark, even when the system is light. Set data-nb-theme=\"light\" for its light variant.",
+  light: "Designed for light surfaces; the dark theme is supported too.",
+  auto: "Follows the system theme, light or dark, like the default style.",
+};
+const densityNote: Record<string, string> = {
+  compact: "Compact spacing: more on screen, good for dashboards and tools.",
+  default: "Default spacing.",
+  airy: "Airy spacing: generous whitespace for reading and marketing pages.",
+  "grid-4": "Spacing snapped to a 4px grid, for crisp pixel edges.",
+};
+/** Dark-first and light-first styles show their demo in that scheme; "auto" styles follow the site theme. */
+const preferred = s.preferredScheme === "auto" ? undefined : s.preferredScheme;
+const headings = [
+  "Use it",
+  "Full-page demo",
+  "Every component",
+  "Tokens it changes",
+  s.recipes.length ? "Recipes" : "",
+  "Accessibility",
+  "Pairs well with",
+]
+  .filter(Boolean)
+  .map((text) => ({ depth: 2, slug: slug(text), text }));
+---
+
+<StarlightPage
+  frontmatter={{ title: s.title, description: s.description, editUrl: false }}
+  headings={headings}
+>
+  <p>{s.description}</p>
+  <p>
+    <strong>Personality:</strong>{" "}{s.keywords.join(", ")}.{" "}
+    <strong>Effects:</strong>{" "}{s.effects.map((e) => e.replace(/-/g, " ")).join(", ")}.
+  </p>
+
+  <h2 id={slug("Use it")}>Use it</h2>
+  <Code
+    lang="html"
+    code={[`<body class="${s.name}">`, ...s.aliases.map((a) => `<body class="${a}">       <!-- alias -->`), `<body class="nb-${s.name}">`, `<body data-nb-style="${s.name}">`].join("\n")}
+  />
+  <p>
+    Each line above does the same thing. Put it on any element instead of <code>&lt;body&gt;</code> to style just
+    that part of the page. With a build step, <code>{s.name}:</code> utilities apply only inside this style, for
+    example <code>{s.name}:p-8</code>.
+  </p>
+
+  <h2 id={slug("Full-page demo")}>Full-page demo</h2>
+  {
+    preferred && (
+      <p>
+        Shown in its preferred {preferred} scheme. The component gallery below follows the theme you picked for this
+        site.
+      </p>
+    )
+  }
+  <div
+    class="nb-docs-preview not-content"
+    data-nb-style={s.name}
+    data-nb-theme={preferred}
+    set:html={scopeIds(styleDemo(), `${s.name}-demo`)}
+  />
+
+  <h2 id={slug("Every component")}>Every component</h2>
+  <div class="nb-docs-gallery not-content">
+    {
+      manifest.components.map((c) => (
+        <section aria-labelledby={`gallery-${c.name}`}>
+          <h3 id={`gallery-${c.name}`}>
+            <a href={url(`/components/${c.name}/`)}>{c.title}</a>
+          </h3>
+          <div class="nb-docs-preview" data-nb-style={s.name} set:html={scopeIds(c.examples[0]?.html ?? "", `${s.name}-gallery`)} />
+        </section>
+      ))
+    }
+  </div>
+
+  <h2 id={slug("Tokens it changes")}>Tokens it changes</h2>
+  <p>
+    The style sets these <a href={url("/reference/tokens/")}>tokens</a> on its element. Override any of them in your
+    own CSS to adjust the style.
+  </p>
+  <TableWrap label={`${s.title} token overrides`}>
+    <table>
+      <thead>
+        <tr><th scope="col">Token</th><th scope="col">Scheme</th><th scope="col">Value</th></tr>
+      </thead>
+      <tbody>
+        {
+          s.tokens.map((t) => (
+            <tr>
+              <td class="nb-docs-nowrap"><code>{t.cssVar}</code></td>
+              <td>{t.scheme ?? "both"}</td>
+              <td><code>{t.value}</code></td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </TableWrap>
+
+  {
+    s.recipes.length > 0 && (
+      <>
+        <h2 id={slug("Recipes")}>Recipes</h2>
+        <p>Beyond tokens, the style adds these touches (all written with tokens, inside the <code>nb.styles</code> layer):</p>
+        <ul>
+          {s.recipes.map((r) => (
+            <li>
+              <code>{r.target}</code>: {r.description}
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  <h2 id={slug("Accessibility")}>Accessibility</h2>
+  <ul>
+    {s.a11y.map((note) => <li>{note}</li>)}
+    <li>
+      The high-contrast theme, <code>prefers-contrast: more</code> and forced colors restore every colour the style
+      changes, so contrast never depends on the style.
+    </li>
+  </ul>
+
+  <h2 id={slug("Pairs well with")}>Pairs well with</h2>
+  <ul>
+    <li>{schemeNote[s.preferredScheme]}</li>
+    <li>{densityNote[s.density]}</li>
+    {
+      s.fonts.length > 0 && (
+        <li>
+          Optional font: {s.fonts.join(", ")}. Load <code>@newbrush/fonts/{s.fonts[0]}.css</code>; without it the
+          style falls back to a system font.
+        </li>
+      )
+    }
+    <li>
+      Your brand colours: the style is built on the same tokens, so brand, accent and neutral seeds (see
+      <a href={url("/guides/theming/")}>theming</a>) carry through.
+    </li>
+  </ul>
+</StarlightPage>

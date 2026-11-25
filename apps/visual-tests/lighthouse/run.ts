@@ -21,7 +21,8 @@ const PAGES = [
   "/components/modal/index.html",
   "/reference/tokens/index.html",
   "/reference/utilities/index.html",
-  "/reference/styles/index.html",
+  "/styles/index.html",
+  "/styles/neon/index.html",
   "/playground/index.html",
 ];
 const CATEGORIES = ["accessibility", "best-practices"] as const;

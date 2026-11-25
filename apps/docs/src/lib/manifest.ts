@@ -59,6 +59,7 @@ export function utilityValues(u: UtilityFamily): string {
 export const componentHeadings = (c: Component) =>
   [
     "Examples",
+    "In every style",
     "Anatomy",
     c.modifiers.length ? "Modifiers" : "",
     c.sizes.length || c.states.length ? "Sizes and states" : "",
@@ -67,3 +68,36 @@ export const componentHeadings = (c: Component) =>
   ]
     .filter(Boolean)
     .map((text) => ({ depth: 2, slug: slug(text), text }));
+
+/**
+ * Makes an example's element ids unique when the same markup appears several times on a page (style tabs, galleries):
+ * ids get `-suffix`, and so do the attributes that point at them (`for`, `aria-*` id references, `#id` links).
+ */
+export function scopeIds(html: string, suffix: string): string {
+  const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
+  if (ids.size === 0) return html;
+  const map = (value: string) => (ids.has(value) ? `${value}-${suffix}` : value);
+  return html
+    .replace(
+      /\s(id|for|aria-labelledby|aria-describedby|aria-controls|aria-owns|aria-activedescendant)="([^"]*)"/g,
+      (_, attr: string, value: string) => ` ${attr}="${value.split(/\s+/).map(map).join(" ")}"`,
+    )
+    .replace(/\shref="#([^"]+)"/g, (_, value: string) => ` href="#${map(value)}"`);
+}
+
+const example = (name: string) =>
+  manifest.components.find((c) => c.name === name)?.examples[0]?.html ?? "";
+
+/** A small page built from real component examples, used to show a whole design style at once (specs/004 T035). */
+export const styleDemo = (): string =>
+  [
+    example("navbar"),
+    '<div class="nb-stack" style="padding-block: 1.5rem">',
+    "<h2>Ship faster with one class</h2>",
+    "<p>Every component on this page changes with the style; the markup stays the same.</p>",
+    example("button"),
+    example("card"),
+    example("field"),
+    example("alert"),
+    "</div>",
+  ].join("\n");

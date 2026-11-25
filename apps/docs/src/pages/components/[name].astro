@@ -2,6 +2,7 @@
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import type { Component } from "@newbrush/schema";
 import Example from "../../components/Example.astro";
+import StyleTabs from "../../components/StyleTabs.astro";
 import TableWrap from "../../components/TableWrap.astro";
 import { componentHeadings, manifest, slug, titleCase, url } from "../../lib/manifest.ts";
 
@@ -29,6 +30,13 @@ const attrs = Object.entries(c.html.attributes ?? {})
 
   <h2 id={slug("Examples")}>Examples</h2>
   {c.examples.map((e, i) => <Example id={`ex-${i + 1}`} title={e.title} html={e.html} />)}
+
+  <h2 id={slug("In every style")}>In every style</h2>
+  <p>
+    The same markup in each <a href={url("/styles/")}>design style</a>. Only the class on <code>&lt;body&gt;</code>
+    (or any ancestor) changes.
+  </p>
+  <StyleTabs html={c.examples[0]?.html ?? ""} />
 
   <h2 id={slug("Anatomy")}>Anatomy</h2>
   <TableWrap label={`${c.title} anatomy`}>
