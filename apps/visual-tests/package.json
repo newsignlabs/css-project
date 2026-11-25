@@ -15,6 +15,7 @@
     "@newbrush/engine": "workspace:*",
     "@newbrush/fonts": "workspace:*",
     "@newbrush/js": "workspace:*",
+    "@newbrush/mcp": "workspace:*",
     "@newbrush/schema": "workspace:*",
     "@newbrush/tokens": "workspace:*",
     "@playwright/test": "1.56.1",

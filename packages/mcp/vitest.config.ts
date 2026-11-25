@@ -5,13 +5,9 @@ import { defineConfig } from "vitest/config";
 // Load the newBrush stylesheets as text, as the tsup build does. The virtual id must not end in .css, or Vite's CSS
 // pipeline would still claim the module.
 const require = createRequire(import.meta.url);
-const TEXT = new Set([
-  "newbrush/css",
-  "newbrush/core.css",
-  "newbrush/themes/light.css",
-  "newbrush/themes/dark.css",
-  "newbrush/themes/contrast.css",
-]);
+/** Every newBrush stylesheet import (newbrush/css, newbrush/core.css, newbrush/components/x.css…). */
+const isText = (id: string) =>
+  id === "newbrush/css" || (id.startsWith("newbrush/") && id.endsWith(".css"));
 const PREFIX = "\0nb-text:";
 
 export default defineConfig({
@@ -19,7 +15,7 @@ export default defineConfig({
     {
       name: "newbrush-css-text",
       enforce: "pre",
-      resolveId: (id) => (TEXT.has(id) ? `${PREFIX}${require.resolve(id)}.txt` : null),
+      resolveId: (id) => (isText(id) ? `${PREFIX}${require.resolve(id)}.txt` : null),
       load: (id) =>
         id.startsWith(PREFIX)
           ? `export default ${JSON.stringify(readFileSync(id.slice(PREFIX.length, -".txt".length), "utf8"))};`

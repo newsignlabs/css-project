@@ -25,6 +25,8 @@ describe("newbrush-mcp over stdio", () => {
     expect(client.getServerVersion()?.name).toBe("newbrush");
     const { tools } = await client.listTools();
     expect(tools.map((t) => t.name).sort()).toEqual([
+      "build_page",
+      "compose_component",
       "explain_class",
       "generate_css",
       "get_component",
@@ -87,6 +89,7 @@ describe("newbrush-mcp over stdio", () => {
     const { resourceTemplates } = await client.listResourceTemplates();
     expect(resourceTemplates.map((t) => t.uriTemplate).sort()).toEqual([
       "newbrush://components/{name}",
+      "newbrush://sections/{name}",
       "newbrush://styles/{name}",
       "newbrush://themes/{name}",
       "newbrush://tokens/{name}",
@@ -108,7 +111,10 @@ describe("newbrush-mcp over stdio", () => {
 
   it("offers the restyle_with_brand prompt", async () => {
     const { prompts } = await client.listPrompts();
-    expect(prompts.map((p) => p.name)).toEqual(["restyle_with_brand"]);
+    expect(prompts.map((p) => p.name).sort()).toEqual([
+      "design_landing_page",
+      "restyle_with_brand",
+    ]);
     const prompt = await client.getPrompt({
       name: "restyle_with_brand",
       arguments: { html: "<button>Hi</button>", brandColor: "#e11d48" },
@@ -116,6 +122,30 @@ describe("newbrush-mcp over stdio", () => {
     const text = JSON.stringify(prompt.messages);
     expect(text).toContain("generate_css");
     expect(text).toContain("#e11d48");
+  });
+
+  it("build_page returns a document; sections are documented as resources", async () => {
+    const hero = await client.readResource({ uri: "newbrush://sections/hero" });
+    const meta = JSON.parse(textOf(hero));
+    expect(meta.variants).toEqual(["centered", "split", "minimal"]);
+    expect(meta.props.type).toBe("object");
+    const r = await client.callTool({
+      name: "build_page",
+      arguments: {
+        title: "Demo",
+        sections: [meta.example, { type: "footer", props: { legal: "© 2026" } }],
+      },
+    });
+    expect(r.isError).toBeFalsy();
+    expect(r.structuredContent).toMatchObject({ sections: [{ type: "hero" }, { type: "footer" }] });
+    expect(String((r.structuredContent as { html: string }).html)).toContain("<!DOCTYPE html>");
+    const c = await client.callTool({
+      name: "compose_component",
+      arguments: { name: "badge", slots: { content: "New" } },
+    });
+    expect(c.structuredContent).toMatchObject({
+      html: expect.stringContaining('class="nb-badge"'),
+    });
   });
 
   it("returns structured errors for oversized input", async () => {

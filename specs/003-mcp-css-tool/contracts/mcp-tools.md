@@ -53,12 +53,21 @@ out: { tokens: { path: string; cssVar: string; type: string; value: string; desc
 ```
 
 ### `compose_component`
+
+> **Implemented (v0.x)**. Slots are keyed by anatomy part (`content` fills the root); parts nested in another part
+> are written inside it. Unknown modifiers, sizes, parts and disallowed attributes are dropped with
+> `NB_ANATOMY_INVALID` diagnostics.
 ```ts
 in:  { name: string; modifiers?: string[]; size?: string; slots?: Record<string, string | { href: string; text: string } | { src: string; alt: string }>; attrs?: Record<string,string>; theme?: ThemeRef; withCss?: boolean }
 out: { html: string; css?: string; diagnostics: Diagnostic[] }
 ```
 
 ### `build_page`
+
+> **Implemented (v0.x)**: blueprints navbar, hero (centered, split, minimal), feature-grid (cards, plain), pricing,
+> testimonial (single, grid), faq, cta (default, banded), footer (simple, columns); `theme: { seeds?, colorScheme? }`,
+> `style` (specs/004), `lang`, `dir`, `output`. Pending, additive: the other blueprints and hero variants, `minify`.
+> Schema errors name the field (`sections[2].props.tiers`); `props` and `slots` are merged.
 ```ts
 in:  {
   title: string; lang?: string /* "en" */; dir?: "ltr" | "rtl"; description?: string;

@@ -23,24 +23,24 @@
 - [x] T011 [US2] `search/` MiniSearch index + synonyms; `lib/search.ts`
 - [x] T012 [P] [US2] `lib/get-component.ts`, `lib/get-tokens.ts`
 - [x] T013 [US2] Resources + templates + completions (`resources/`)
-- [ ] T014 [P] [US2] Prompts `design_landing_page`, `restyle_with_brand`, `convert_from_tailwind`, `build_dashboard` — `restyle_with_brand` done; the others ship with `build_page` (Phase 4) and `convert_markup` (Phase 5)
+- [ ] T014 [P] [US2] Prompts `design_landing_page`, `restyle_with_brand`, `convert_from_tailwind`, `build_dashboard` — `restyle_with_brand` and `design_landing_page` done; `build_dashboard` ships with the dashboard blueprints, `convert_from_tailwind` with `convert_markup` (Phase 5)
 
 ## Phase 4: User Story 3 – Compose & build pages (P1)
 
 ### Tests first
-- [ ] T015 [P] [US3] Blueprint test matrix: every blueprint × variant × theme(light/dark) rendered in Playwright → axe zero violations + html-validate clean
-- [ ] T016 [P] [US3] XSS fuzz on all slot types; snapshot tests for `build_page` documents
-- [ ] T017 [P] [US3] CSS budget test (6-section page ≤ 15 KB brotli)
+- [x] T015 [P] [US3] Blueprint test matrix: every blueprint × variant × theme(light/dark) rendered in Playwright → axe zero violations + html-validate clean
+- [x] T016 [P] [US3] XSS fuzz on all slot types; snapshot tests for `build_page` documents
+- [x] T017 [P] [US3] CSS budget test (6-section page ≤ 15 KB brotli)
 
 ### Implementation
-- [ ] T018 [US3] Blueprint framework `blueprints/_core` (typed slots: text, inline, url, image, list, cta)
-- [ ] T019 [P] [US3] Blueprints: navbar, hero (centered, split, image-bg, minimal, product), logo-cloud
-- [ ] T020 [P] [US3] Blueprints: feature-grid, feature-split, stats, pricing, testimonial, faq, cta
-- [ ] T021 [P] [US3] Blueprints: blog-list, contact-form, footer, auth-form, empty-state, not-found
+- [x] T018 [US3] Blueprint framework `blueprints/_core` (typed slots: text, inline, url, image, list, cta)
+- [ ] T019 [P] [US3] Blueprints: navbar, hero (centered, split, image-bg, minimal, product), logo-cloud — done: navbar, hero (centered, split, minimal)
+- [ ] T020 [P] [US3] Blueprints: feature-grid, feature-split, stats, pricing, testimonial, faq, cta — done: feature-grid, pricing, testimonial, faq, cta
+- [ ] T021 [P] [US3] Blueprints: blog-list, contact-form, footer, auth-form, empty-state, not-found — done: footer (simple, columns)
 - [ ] T022 [P] [US3] Blueprints: dashboard-shell, sidebar-layout, table-view
-- [ ] T023 [US3] `lib/compose-component.ts` (from component meta anatomy)
-- [ ] T024 [US3] `lib/build-page.ts` pipeline (plan.md) + document shell (meta viewport, color-scheme, lang/dir)
-- [ ] T025 [US3] Section blueprint resources `newbrush://sections/{name}` with example PageSpec fragments
+- [x] T023 [US3] `lib/compose-component.ts` (from component meta anatomy)
+- [x] T024 [US3] `lib/build-page.ts` pipeline (plan.md) + document shell (meta viewport, color-scheme, lang/dir)
+- [x] T025 [US3] Section blueprint resources `newbrush://sections/{name}` with example PageSpec fragments
 
 ## Phase 5: User Stories 4 & 5 – Theming, validation, conversion (P2)
 

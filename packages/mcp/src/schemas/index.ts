@@ -16,12 +16,17 @@ export type Diagnostic = z.infer<typeof Diagnostic>;
 
 const color = z.string().min(1).max(100).describe("Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb");
 
-/** A brand palette from seed colours. (Named themes and themeId arrive with create_theme, specs/003 Phase 5.) */
+/**
+ * A brand palette from seed colours, and the colour scheme for build_page ("both", the default, follows the visitor's
+ * system). Named themes and themeId arrive with create_theme (specs/003 Phase 5).
+ */
 export const ThemeRef = z
   .object({
     seeds: z
       .object({ brand: color.optional(), accent: color.optional(), neutral: color.optional() })
-      .strict(),
+      .strict()
+      .optional(),
+    colorScheme: z.enum(["light", "dark", "both"]).optional(),
   })
   .strict();
 
@@ -176,6 +181,72 @@ export const getTokensOutput = {
 export const GetTokensOutput = z.object(getTokensOutput);
 export type GetTokensOutput = z.infer<typeof GetTokensOutput>;
 
+export const STYLE_NAMES = ["cyber", "g-morph", "minimal", "n-morph", "neon", "pixelate"] as const;
+
+export const buildPageInput = {
+  title: z.string().min(1).max(120).describe("The page title (<title>)"),
+  lang: z
+    .string()
+    .regex(/^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$/)
+    .optional()
+    .describe('Language tag, default "en"'),
+  dir: z.enum(["ltr", "rtl"]).optional(),
+  description: z.string().max(300).optional().describe("Meta description"),
+  theme: ThemeRef.optional(),
+  style: z.enum(STYLE_NAMES).optional().describe("Design style for the whole page (specs/004)"),
+  sections: z
+    .array(
+      z
+        .object({
+          type: z.string().describe("Blueprint name: see the newbrush://sections resources or search kinds [section]"),
+          variant: z.string().optional(),
+          props: z.record(z.string(), z.unknown()).optional(),
+          slots: z.record(z.string(), z.unknown()).optional().describe("Merged over props"),
+        })
+        .strict(),
+    )
+    .min(1)
+    .max(30),
+  output: z.enum(["document", "fragments"]).optional().describe('"fragments" returns body HTML and CSS separately'),
+};
+export const BuildPageInput = z.object(buildPageInput).strict();
+export type BuildPageInput = z.infer<typeof BuildPageInput>;
+export const buildPageOutput = {
+  html: z.string(),
+  css: z.string(),
+  sections: z.array(z.object({ type: z.string(), id: z.string() })),
+  stats: z.object({ cssBytes: z.number().int(), htmlBytes: z.number().int() }),
+  diagnostics: z.array(Diagnostic),
+};
+export const BuildPageOutput = z.object(buildPageOutput);
+export type BuildPageOutput = z.infer<typeof BuildPageOutput>;
+
+const SlotValue = z.union([
+  z.string().max(5000),
+  z.object({ href: z.string().max(2048), text: z.string().max(200) }).strict(),
+  z.object({ src: z.string().max(2048), alt: z.string().max(300) }).strict(),
+]);
+export const composeComponentInput = {
+  name: z.string().min(1).describe("Component name, e.g. card, button, alert"),
+  modifiers: z.array(z.string()).max(10).optional().describe('Modifier names or classes, e.g. "elevated"'),
+  size: z.string().optional().describe("sm, md or lg where the component has sizes"),
+  slots: z
+    .record(z.string(), SlotValue)
+    .optional()
+    .describe('Content by part name (get_component lists parts); "content" fills the root. Text may use inline tags.'),
+  attrs: z.record(z.string(), z.string().max(500)).optional().describe("Extra attributes on the root (aria-*, data-*, id…)"),
+  withCss: z.boolean().optional().describe("Also return the CSS (core + this component)"),
+};
+export const ComposeComponentInput = z.object(composeComponentInput).strict();
+export type ComposeComponentInput = z.infer<typeof ComposeComponentInput>;
+export const composeComponentOutput = {
+  html: z.string(),
+  css: z.string().optional(),
+  diagnostics: z.array(Diagnostic),
+};
+export const ComposeComponentOutput = z.object(composeComponentOutput);
+export type ComposeComponentOutput = z.infer<typeof ComposeComponentOutput>;
+
 /** Every tool's schemas, for the JSON Schema export and the drift test. */
 export const TOOL_SCHEMAS = {
   generate_css: { input: GenerateCssInput, output: GenerateCssOutput },
@@ -183,4 +254,6 @@ export const TOOL_SCHEMAS = {
   search: { input: SearchInput, output: SearchOutput },
   get_component: { input: GetComponentInput, output: GetComponentOutput },
   get_tokens: { input: GetTokensInput, output: GetTokensOutput },
+  build_page: { input: BuildPageInput, output: BuildPageOutput },
+  compose_component: { input: ComposeComponentInput, output: ComposeComponentOutput },
 } as const;
