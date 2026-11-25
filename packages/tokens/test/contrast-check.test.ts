@@ -56,7 +56,9 @@ describe("checkContrast", () => {
       ),
       { numRuns: 40 },
     );
-  });
+    // 40 full palette + contrast checks: about 2–3 s alone, more when CI runs other packages' tests alongside, so
+    // the 5 s default is too tight. A fixed amount of work, not a wait.
+  }, 30_000);
 
   it("holds the high-contrast theme to AAA (7:1 text) as shipped (T064)", () => {
     const contrast = checkContrast({ level: "AAA" }).failures.filter((p) => p.theme === "contrast");
