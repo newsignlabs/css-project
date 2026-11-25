@@ -19,11 +19,11 @@
 
 ## Phase 3: User Story 2 – Discovery (P1)
 
-- [ ] T010 [P] [US2] Tests: search ranking fixtures ("pricing table", "dropdown" ↔ menu, "modal" ↔ dialog)
-- [ ] T011 [US2] `search/` MiniSearch index + synonyms; `lib/search.ts`
-- [ ] T012 [P] [US2] `lib/get-component.ts`, `lib/get-tokens.ts`
-- [ ] T013 [US2] Resources + templates + completions (`resources/`)
-- [ ] T014 [P] [US2] Prompts `design_landing_page`, `restyle_with_brand`, `convert_from_tailwind`, `build_dashboard`
+- [x] T010 [P] [US2] Tests: search ranking fixtures ("pricing table", "dropdown" ↔ menu, "modal" ↔ dialog)
+- [x] T011 [US2] `search/` MiniSearch index + synonyms; `lib/search.ts`
+- [x] T012 [P] [US2] `lib/get-component.ts`, `lib/get-tokens.ts`
+- [x] T013 [US2] Resources + templates + completions (`resources/`)
+- [ ] T014 [P] [US2] Prompts `design_landing_page`, `restyle_with_brand`, `convert_from_tailwind`, `build_dashboard` — `restyle_with_brand` done; the others ship with `build_page` (Phase 4) and `convert_markup` (Phase 5)
 
 ## Phase 4: User Story 3 – Compose & build pages (P1)
 

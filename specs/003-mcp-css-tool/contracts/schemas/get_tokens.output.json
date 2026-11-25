@@ -1,0 +1,44 @@
+{
+  "$id": "https://newbrush.dev/mcp/get_tokens.output.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "cssVar": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "cssVar",
+          "type",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "css": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "tokens"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,58 @@
+{
+  "$id": "https://newbrush.dev/mcp/search.output.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "component",
+              "utility",
+              "token",
+              "style",
+              "section",
+              "doc"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string",
+            "description": "newbrush:// resource with the full entry"
+          },
+          "score": {
+            "type": "number"
+          },
+          "example": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "title",
+          "description",
+          "uri",
+          "score"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "results"
+  ],
+  "additionalProperties": false
+}

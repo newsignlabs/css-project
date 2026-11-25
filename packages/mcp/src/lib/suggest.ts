@@ -43,16 +43,21 @@ function distance(a: string, b: string, max: number): number {
   return prev[b.length] ?? max + 1;
 }
 
+/** Up to `limit` candidates closest to `word` by edit distance (ties sorted alphabetically). */
+export function nearest(word: string, candidates: readonly string[], limit = 3): string[] {
+  const max = Math.max(1, Math.min(3, Math.floor(word.length / 3)));
+  return candidates
+    .map((k) => ({ k, d: distance(word, k, max) }))
+    .filter((x) => x.d <= max)
+    .sort((x, y) => x.d - y.d || x.k.localeCompare(y.k))
+    .slice(0, limit)
+    .map((x) => x.k);
+}
+
 /** Up to three known classes closest to `cls` (ties sorted alphabetically), keeping its variant prefix. */
 export function suggest(cls: string, limit = 3): string[] {
   const at = cls.lastIndexOf(":");
   const prefix = at === -1 ? "" : cls.slice(0, at + 1);
   const base = cls.slice(at + 1);
-  const max = Math.max(1, Math.min(3, Math.floor(base.length / 3)));
-  return knownClasses()
-    .map((k) => ({ k, d: distance(base, k, max) }))
-    .filter((x) => x.d <= max)
-    .sort((x, y) => x.d - y.d || x.k.localeCompare(y.k))
-    .slice(0, limit)
-    .map((x) => prefix + x.k);
+  return nearest(base, knownClasses(), limit).map((k) => prefix + k);
 }

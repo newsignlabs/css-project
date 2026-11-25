@@ -1,0 +1,38 @@
+{
+  "$id": "https://newbrush.dev/mcp/search.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "What you are looking for, e.g. \"pricing table\", \"dark mode\", \"cyberpunk\""
+    },
+    "kinds": {
+      "description": "Only these kinds (sections and docs arrive with later releases)",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "component",
+          "utility",
+          "token",
+          "style",
+          "section",
+          "doc"
+        ]
+      }
+    },
+    "limit": {
+      "description": "Default 10, at most 25",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 25
+    }
+  },
+  "required": [
+    "query"
+  ],
+  "additionalProperties": false
+}

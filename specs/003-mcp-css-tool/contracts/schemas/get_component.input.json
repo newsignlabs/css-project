@@ -1,0 +1,16 @@
+{
+  "$id": "https://newbrush.dev/mcp/get_component.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Component name, e.g. button, card, modal"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "additionalProperties": false
+}
