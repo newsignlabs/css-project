@@ -1,0 +1,94 @@
+{
+  "$id": "https://newbrush.dev/mcp/compose_component.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Component name, e.g. card, button, alert"
+    },
+    "modifiers": {
+      "description": "Modifier names or classes, e.g. \"elevated\"",
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "size": {
+      "description": "sm, md or lg where the component has sizes",
+      "type": "string"
+    },
+    "slots": {
+      "description": "Content by part name (get_component lists parts); \"content\" fills the root. Text may use inline tags.",
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string",
+            "maxLength": 5000
+          },
+          {
+            "type": "object",
+            "properties": {
+              "href": {
+                "type": "string",
+                "maxLength": 2048
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "href",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "maxLength": 2048
+              },
+              "alt": {
+                "type": "string",
+                "maxLength": 300
+              }
+            },
+            "required": [
+              "src",
+              "alt"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "attrs": {
+      "description": "Extra attributes on the root (aria-*, data-*, id…)",
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 500
+      }
+    },
+    "withCss": {
+      "description": "Also return the CSS (core + this component)",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "additionalProperties": false
+}

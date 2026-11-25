@@ -1,0 +1,129 @@
+{
+  "$id": "https://newbrush.dev/mcp/build_page.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "The page title (<title>)"
+    },
+    "lang": {
+      "description": "Language tag, default \"en\"",
+      "type": "string",
+      "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$"
+    },
+    "dir": {
+      "type": "string",
+      "enum": [
+        "ltr",
+        "rtl"
+      ]
+    },
+    "description": {
+      "description": "Meta description",
+      "type": "string",
+      "maxLength": 300
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "seeds": {
+          "type": "object",
+          "properties": {
+            "brand": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb"
+            },
+            "accent": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb"
+            },
+            "neutral": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb"
+            }
+          },
+          "additionalProperties": false
+        },
+        "colorScheme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark",
+            "both"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "style": {
+      "description": "Design style for the whole page (specs/004)",
+      "type": "string",
+      "enum": [
+        "cyber",
+        "g-morph",
+        "minimal",
+        "n-morph",
+        "neon",
+        "pixelate"
+      ]
+    },
+    "sections": {
+      "minItems": 1,
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Blueprint name: see the newbrush://sections resources or search kinds [section]"
+          },
+          "variant": {
+            "type": "string"
+          },
+          "props": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          },
+          "slots": {
+            "description": "Merged over props",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "description": "\"fragments\" returns body HTML and CSS separately",
+      "type": "string",
+      "enum": [
+        "document",
+        "fragments"
+      ]
+    }
+  },
+  "required": [
+    "title",
+    "sections"
+  ],
+  "additionalProperties": false
+}

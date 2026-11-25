@@ -51,6 +51,7 @@
   "devDependencies": {
     "@newbrush/schema": "workspace:*",
     "fast-check": "^4.10.2",
+    "html-validate": "^11.22.1",
     "newbrush": "workspace:*",
     "tsup": "^8.5.1",
     "tsx": "^4.23.15",

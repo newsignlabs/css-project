@@ -25,19 +25,24 @@ function knownClasses(): string[] {
   return known;
 }
 
+/** Edit distance where swapping two neighbouring letters counts as one edit ("titel" → "title"), capped at max + 1. */
 function distance(a: string, b: string, max: number): number {
   if (Math.abs(a.length - b.length) > max) return max + 1;
+  let before: number[] = [];
   let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
   for (let i = 1; i <= a.length; i++) {
     const row = [i];
     let best = i;
     for (let j = 1; j <= b.length; j++) {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      const value = Math.min((prev[j] ?? 0) + 1, (row[j - 1] ?? 0) + 1, (prev[j - 1] ?? 0) + cost);
+      let value = Math.min((prev[j] ?? 0) + 1, (row[j - 1] ?? 0) + 1, (prev[j - 1] ?? 0) + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1])
+        value = Math.min(value, (before[j - 2] ?? 0) + 1);
       row.push(value);
       best = Math.min(best, value);
     }
     if (best > max) return max + 1;
+    before = prev;
     prev = row;
   }
   return prev[b.length] ?? max + 1;

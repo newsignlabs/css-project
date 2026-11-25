@@ -3,6 +3,8 @@ import { type McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/serv
 import contrast from "newbrush/themes/contrast.css";
 import dark from "newbrush/themes/dark.css";
 import light from "newbrush/themes/light.css";
+import { z } from "zod";
+import { BLUEPRINT_NAMES, BLUEPRINTS } from "../blueprints/index.ts";
 import { manifest } from "../manifest.ts";
 import { TOKEN_GROUPS, tokenGroup } from "../tokens.ts";
 
@@ -84,6 +86,29 @@ const collections: Collection[] = [
         uri,
         manifest.styles.find((s) => s.name === name),
       ),
+  },
+  {
+    key: "sections",
+    title: "Section blueprint",
+    description:
+      "A build_page section: variants, props as JSON Schema, and an example section to copy",
+    mimeType: "application/json",
+    names: BLUEPRINT_NAMES,
+    read: (name, uri) => {
+      const b = BLUEPRINTS.get(name);
+      return json(
+        uri,
+        b && {
+          name: b.name,
+          title: b.title,
+          description: b.description,
+          variants: b.variants,
+          region: b.region,
+          props: z.toJSONSchema(b.props, { io: "input" }),
+          example: { type: b.name, variant: b.variants[0], props: b.example },
+        },
+      );
+    },
   },
 ];
 

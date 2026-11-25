@@ -41,11 +41,16 @@
             }
           },
           "additionalProperties": false
+        },
+        "colorScheme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark",
+            "both"
+          ]
         }
       },
-      "required": [
-        "seeds"
-      ],
       "additionalProperties": false
     },
     "include": {

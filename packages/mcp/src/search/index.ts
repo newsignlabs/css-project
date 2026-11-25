@@ -1,9 +1,10 @@
 // specs/003 T011 — one MiniSearch index over the bundled manifest: components, utilities, tokens and design styles.
 import MiniSearch from "minisearch";
+import { BLUEPRINTS } from "../blueprints/index.ts";
 import { manifest } from "../manifest.ts";
 import { tokenGroup } from "../tokens.ts";
 
-export type SearchKind = "component" | "utility" | "token" | "style";
+export type SearchKind = "component" | "utility" | "token" | "style" | "section";
 
 export interface SearchDoc {
   id: string;
@@ -68,6 +69,17 @@ function documents(): SearchDoc[] {
       uri: `newbrush://styles/${s.name}`,
       example: `<body class="${s.name}">`,
       terms: [...s.aliases, ...s.keywords, ...s.effects.map(words)].join(" "),
+    });
+  for (const b of BLUEPRINTS.values())
+    docs.push({
+      id: `section:${b.name}`,
+      kind: "section",
+      name: b.name,
+      title: b.title,
+      description: b.description,
+      uri: `newbrush://sections/${b.name}`,
+      example: JSON.stringify({ type: b.name, variant: b.variants[0] }),
+      terms: ["section", "blueprint", "page", ...b.variants].join(" "),
     });
   return docs;
 }

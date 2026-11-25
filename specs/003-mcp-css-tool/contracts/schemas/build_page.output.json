@@ -1,0 +1,98 @@
+{
+  "$id": "https://newbrush.dev/mcp/build_page.output.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "html": {
+      "type": "string"
+    },
+    "css": {
+      "type": "string"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "stats": {
+      "type": "object",
+      "properties": {
+        "cssBytes": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "htmlBytes": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "cssBytes",
+        "htmlBytes"
+      ],
+      "additionalProperties": false
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Stable error code, e.g. NB_ARBITRARY_REJECTED"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "html",
+    "css",
+    "sections",
+    "stats",
+    "diagnostics"
+  ],
+  "additionalProperties": false
+}

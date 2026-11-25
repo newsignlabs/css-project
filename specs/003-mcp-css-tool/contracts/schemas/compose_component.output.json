@@ -1,0 +1,56 @@
+{
+  "$id": "https://newbrush.dev/mcp/compose_component.output.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "html": {
+      "type": "string"
+    },
+    "css": {
+      "type": "string"
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Stable error code, e.g. NB_ARBITRARY_REJECTED"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "html",
+    "diagnostics"
+  ],
+  "additionalProperties": false
+}

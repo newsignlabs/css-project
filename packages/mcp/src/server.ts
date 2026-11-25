@@ -2,6 +2,8 @@
 // Transport-free: connect it to stdio (transports/stdio.ts) or any other MCP transport.
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { buildPage } from "./lib/build-page.ts";
+import { composeComponent } from "./lib/compose-component.ts";
 import { ToolError } from "./lib/errors.ts";
 import { explainClass } from "./lib/explain-class.ts";
 import { generateCss } from "./lib/generate-css.ts";
@@ -12,6 +14,10 @@ import { manifest, SERVER_NAME, SERVER_VERSION } from "./manifest.ts";
 import { registerPrompts } from "./prompts/index.ts";
 import { registerResources } from "./resources/index.ts";
 import {
+  buildPageInput,
+  buildPageOutput,
+  composeComponentInput,
+  composeComponentOutput,
   explainClassInput,
   explainClassOutput,
   generateCssInput,
@@ -61,7 +67,8 @@ export function createServer(): McpServer {
         "utilities are generated on demand (p-4, md:grid-cols-2), and one class (neon, g-morph…) switches design style.",
         'Find things with search (by meaning: "pricing table", "dropdown", "cyberpunk"), read one with get_component',
         "or get_tokens, or browse newbrush:// resources. Use generate_css for the CSS of some markup and explain_class to",
-        "see how a class is read. Prefer components over long utility lists; keep markup accessible.",
+        "see how a class is read. To make whole pages, call build_page with sections (newbrush://sections/{name} documents",
+        "each blueprint's props); for one component, compose_component. Prefer components over long utility lists.",
       ].join(" "),
     },
   );
@@ -184,6 +191,46 @@ export function createServer(): McpServer {
           r.tokens
             .map((t) => `${t.cssVar}: ${t.value}${t.description ? ` (${t.description})` : ""}`)
             .join("\n"),
+      ),
+  );
+
+  const summary = (d: { severity: string; code: string; message: string; path?: string }[]) =>
+    d.length
+      ? `\nDiagnostics:\n${d.map((x) => `- ${x.severity} ${x.code}${x.path ? ` (${x.path})` : ""}: ${x.message}`).join("\n")}`
+      : "";
+
+  server.registerTool(
+    "build_page",
+    {
+      title: "Build a newBrush page",
+      description:
+        "Build a complete, accessible HTML page from sections (navbar, hero, feature-grid, pricing, testimonial, faq, cta, footer), with an optional brand theme, colour scheme and design style. Returns the document (or fragments) and the minimal CSS. Text is escaped; rich text allows <strong> <em> <code> <a> <br>.",
+      inputSchema: buildPageInput,
+      outputSchema: buildPageOutput,
+      annotations: { title: "Build a newBrush page", ...ANNOTATIONS },
+    },
+    (args) =>
+      run(
+        () => buildPage(args),
+        (r) =>
+          `Built ${r.sections.map((s) => s.type).join(", ")}: ${r.stats.htmlBytes} bytes of HTML, ${r.stats.cssBytes} bytes of CSS.${summary(r.diagnostics)}\n\n${r.html}`,
+      ),
+  );
+
+  server.registerTool(
+    "compose_component",
+    {
+      title: "Compose a newBrush component",
+      description:
+        'Write one newBrush component\'s HTML from its parts: modifiers, size, slot content per part (get_component lists them; "content" fills the root) and safe attributes. Optionally returns its CSS.',
+      inputSchema: composeComponentInput,
+      outputSchema: composeComponentOutput,
+      annotations: { title: "Compose a newBrush component", ...ANNOTATIONS },
+    },
+    (args) =>
+      run(
+        () => composeComponent(args),
+        (r) => `${r.html}${summary(r.diagnostics)}`,
       ),
   );
 
