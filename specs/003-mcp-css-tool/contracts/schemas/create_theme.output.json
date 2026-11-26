@@ -1,0 +1,66 @@
+{
+  "$id": "https://newbrush.dev/mcp/create_theme.output.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "themeId": {
+      "type": "string",
+      "description": "Pass as theme: { themeId } to generate_css or build_page in this session"
+    },
+    "css": {
+      "type": "string",
+      "description": "Token CSS (nb.tokens layer) to load after newBrush"
+    },
+    "tokens": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Custom properties the CSS sets, with their light values"
+    },
+    "contrast": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pair": {
+            "type": "string",
+            "description": "\"theme: foreground on background\""
+          },
+          "ratio": {
+            "type": "number",
+            "description": "WCAG 2 contrast ratio"
+          },
+          "apca": {
+            "type": "number",
+            "description": "APCA Lc (informative)"
+          },
+          "pass": {
+            "type": "boolean"
+          },
+          "adjusted": {
+            "description": "A colour of this pair was changed to pass",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "pair",
+          "ratio",
+          "apca",
+          "pass"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "themeId",
+    "css",
+    "tokens",
+    "contrast"
+  ],
+  "additionalProperties": false
+}

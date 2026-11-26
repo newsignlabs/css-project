@@ -17,11 +17,16 @@ export type Diagnostic = z.infer<typeof Diagnostic>;
 const color = z.string().min(1).max(100).describe("Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb");
 
 /**
- * A brand palette from seed colours, and the colour scheme for build_page ("both", the default, follows the visitor's
- * system). Named themes and themeId arrive with create_theme (specs/003 Phase 5).
+ * A brand palette from seed colours, or a theme made earlier in this session with create_theme (`themeId`), and the
+ * colour scheme for build_page ("both", the default, follows the visitor's system).
  */
 export const ThemeRef = z
   .object({
+    themeId: z
+      .string()
+      .regex(/^nbt_[a-z0-9-]+_[0-9a-f]{16}$/)
+      .optional()
+      .describe("A themeId from create_theme in this session; replaces seeds"),
     seeds: z
       .object({ brand: color.optional(), accent: color.optional(), neutral: color.optional() })
       .strict()
@@ -39,7 +44,7 @@ export const generateCssInput = {
     .string()
     .optional()
     .describe(`HTML to scan for class attributes (up to ${LIMITS.htmlBytes / 1024} KB). Give this or classes.`),
-  theme: ThemeRef.optional().describe("Brand seed colours; adds the derived token CSS"),
+  theme: ThemeRef.optional().describe("A create_theme themeId or brand seed colours; adds the theme's token CSS"),
   include: z
     .object({
       preflight: z.boolean().optional().describe("Prepend newBrush core: reset, tokens, themes, base, layout"),
@@ -247,6 +252,64 @@ export const composeComponentOutput = {
 export const ComposeComponentOutput = z.object(composeComponentOutput);
 export type ComposeComponentOutput = z.infer<typeof ComposeComponentOutput>;
 
+export const createThemeInput = {
+  name: z.string().min(1).max(40).describe('Theme name: lowercase letters, digits and hyphens, e.g. "acme"'),
+  seeds: z
+    .object({ brand: color, accent: color.optional(), neutral: color.optional() })
+    .strict()
+    .describe("Seed colours; every palette step and semantic token is derived from them"),
+  colorScheme: z
+    .enum(["light", "dark", "both"])
+    .optional()
+    .describe('Schemes the theme must serve; contrast is checked for these ("both", the default, adds the high-contrast theme)'),
+  radius: z.enum(["sharp", "default", "round"]).optional().describe("Corner rounding"),
+  density: z.enum(["compact", "default", "comfortable"]).optional().describe("Control heights and padding"),
+  font: z
+    .enum(["system", "humanist", "geometric", "serif", "mono"])
+    .optional()
+    .describe("Body font stack (system fonts, nothing is downloaded)"),
+  level: z
+    .enum(["AA", "AAA"])
+    .optional()
+    .describe("WCAG level every text and UI colour pair must meet, default AA (seed palettes always meet AA)"),
+  strict: z
+    .boolean()
+    .optional()
+    .describe("Fail with NB_CONTRAST_FAIL instead of adjusting colours that miss the level"),
+};
+export const CreateThemeInput = z.object(createThemeInput).strict();
+export type CreateThemeInput = z.infer<typeof CreateThemeInput>;
+export const createThemeOutput = {
+  themeId: z.string().describe("Pass as theme: { themeId } to generate_css or build_page in this session"),
+  css: z.string().describe("Token CSS (nb.tokens layer) to load after newBrush"),
+  tokens: z.record(z.string(), z.string()).describe("Custom properties the CSS sets, with their light values"),
+  contrast: z.array(
+    z.object({
+      pair: z.string().describe('"theme: foreground on background"'),
+      ratio: z.number().describe("WCAG 2 contrast ratio"),
+      apca: z.number().describe("APCA Lc (informative)"),
+      pass: z.boolean(),
+      adjusted: z.boolean().optional().describe("A colour of this pair was changed to pass"),
+    }),
+  ),
+};
+export const CreateThemeOutput = z.object(createThemeOutput);
+export type CreateThemeOutput = z.infer<typeof CreateThemeOutput>;
+
+export const validateMarkupInput = {
+  html: z.string().describe(`HTML to check (up to ${LIMITS.htmlBytes / 1024} KB): a document or a fragment`),
+  level: z.enum(["AA", "AAA"]).optional().describe("WCAG contrast level, default AA"),
+};
+export const ValidateMarkupInput = z.object(validateMarkupInput).strict();
+export type ValidateMarkupInput = z.infer<typeof ValidateMarkupInput>;
+export const validateMarkupOutput = {
+  valid: z.boolean().describe("No errors (warnings and info allowed)"),
+  diagnostics: z.array(Diagnostic).describe('In document order; path is "L<line>:C<column> <tag>"'),
+  summary: z.object({ errors: z.number().int(), warnings: z.number().int() }),
+};
+export const ValidateMarkupOutput = z.object(validateMarkupOutput);
+export type ValidateMarkupOutput = z.infer<typeof ValidateMarkupOutput>;
+
 /** Every tool's schemas, for the JSON Schema export and the drift test. */
 export const TOOL_SCHEMAS = {
   generate_css: { input: GenerateCssInput, output: GenerateCssOutput },
@@ -256,4 +319,6 @@ export const TOOL_SCHEMAS = {
   get_tokens: { input: GetTokensInput, output: GetTokensOutput },
   build_page: { input: BuildPageInput, output: BuildPageOutput },
   compose_component: { input: ComposeComponentInput, output: ComposeComponentOutput },
+  create_theme: { input: CreateThemeInput, output: CreateThemeOutput },
+  validate_markup: { input: ValidateMarkupInput, output: ValidateMarkupOutput },
 } as const;

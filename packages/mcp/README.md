@@ -17,17 +17,20 @@ claude mcp add newbrush -- npx -y @newbrush/mcp     # Claude Code
 
 ## Tools
 
-Every tool is read-only, idempotent and closed-world, with JSON Schemas for input and output (published in
+Every tool is idempotent and closed-world, and all but `create_theme` (which remembers its theme for the session) are
+read-only, with JSON Schemas for input and output (published in
 `specs/003-mcp-css-tool/contracts/schemas/`). Results come as a text summary plus `structuredContent`.
 
 | Tool | Input | Output |
 | ---- | ----- | ------ |
-| `generate_css` | `classes` or `html` (≤ 256 KB, ≤ 5000 classes); optional `theme.seeds` (brand, accent, neutral); `include.preflight` (newBrush core) or `include.components` (full stylesheet) | `css`, `used`, `rejected` diagnostics, `unknown` classes with suggestions, `stats` |
+| `generate_css` | `classes` or `html` (≤ 256 KB, ≤ 5000 classes); optional `theme` (`themeId` from `create_theme`, or `seeds`: brand, accent, neutral); `include.preflight` (newBrush core) or `include.components` (full stylesheet) | `css`, `used`, `rejected` diagnostics, `unknown` classes with suggestions, `stats` |
 | `explain_class` | `classes` (≤ 50) | per class: parsed variants and value, family, CSS and a docs link, or a diagnostic |
 | `search` | `query` (meaning, synonyms understood: "dropdown", "pricing table", "cyberpunk"); optional `kinds`, `limit` (≤ 25) | ranked components, utilities, tokens and design styles, each with its `newbrush://` resource |
 | `get_component` | `name` | the component: part classes, modifiers, sizes, states, accessibility, keyboard, tokens, examples |
-| `build_page` | `title`, `sections` (1–30, each with `type`, `variant` and `props`; 19 section types, below), optional `theme` (`seeds`, `colorScheme`), `style`, `lang`, `dir`, `output` ("document" or "fragments") | an accessible HTML document (or fragments) with the minimal CSS, section ids, sizes and diagnostics |
+| `build_page` | `title`, `sections` (1–30, each with `type`, `variant` and `props`; 19 section types, below), optional `theme` (`themeId` or `seeds`, `colorScheme`), `style`, `lang`, `dir`, `output` ("document" or "fragments") | an accessible HTML document (or fragments) with the minimal CSS, section ids, sizes and diagnostics |
 | `compose_component` | `name`, optional `modifiers`, `size`, `slots` (content per part), `attrs`, `withCss` | one component's HTML from its anatomy, with diagnostics |
+| `create_theme` | `name`, `seeds` (`brand`, optional `accent`, `neutral`); optional `colorScheme`, `radius` (sharp, default, round), `density` (compact, default, comfortable), `font` (system, humanist, geometric, serif, mono), `level` (AA, AAA), `strict` | `themeId` for `generate_css` and `build_page` in this session, token `css` for light, dark and high-contrast, `tokens`, and a WCAG/APCA `contrast` report; failing colours are adjusted unless `strict` |
+| `validate_markup` | `html` (≤ 256 KB, a document or a fragment); optional `level` (AA, AAA) | `valid`, `diagnostics` with line and column (unknown or invalid classes, component anatomy, alt text, accessible names, form labels, duplicate ids, unsafe URLs, language, heading order, colour-utility contrast), `summary` |
 | `get_tokens` | optional `group`, `theme` (light, dark, contrast), `format` ("css" adds a CSS block) | tokens with their values for that theme |
 
 ## Resources and prompts
@@ -44,7 +47,7 @@ Every tool is read-only, idempotent and closed-world, with JSON Schemas for inpu
 
 Every template completes `{name}`. Prompts: `design_landing_page` (`product`, `audience`, `brandColor`, `tone`) plans
 sections and calls `build_page`; `build_dashboard` (`entities`, `metrics`) assembles a dashboard; `restyle_with_brand` (`html`, `brandColor`) replaces ad-hoc classes with newBrush
-components and generates the CSS in the brand colour.
+components, makes a brand theme with `create_theme`, checks the result with `validate_markup` and generates the CSS.
 
 ## Sections
 

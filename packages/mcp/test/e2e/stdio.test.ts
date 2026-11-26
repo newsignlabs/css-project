@@ -21,23 +21,26 @@ beforeAll(async () => {
 afterAll(() => client.close());
 
 describe("newbrush-mcp over stdio", () => {
-  it("identifies itself and lists both tools with schemas and annotations", async () => {
+  it("identifies itself and lists every tool with schemas and annotations", async () => {
     expect(client.getServerVersion()?.name).toBe("newbrush");
     const { tools } = await client.listTools();
     expect(tools.map((t) => t.name).sort()).toEqual([
       "build_page",
       "compose_component",
+      "create_theme",
       "explain_class",
       "generate_css",
       "get_component",
       "get_tokens",
       "search",
+      "validate_markup",
     ]);
     for (const tool of tools) {
       expect(tool.inputSchema.type).toBe("object");
       expect(tool.outputSchema?.type).toBe("object");
       expect(tool.annotations).toMatchObject({
-        readOnlyHint: true,
+        // create_theme remembers its theme for the session; every other tool only reads.
+        readOnlyHint: tool.name !== "create_theme",
         idempotentHint: true,
         destructiveHint: false,
         openWorldHint: false,
@@ -55,6 +58,35 @@ describe("newbrush-mcp over stdio", () => {
     expect(out.used).toEqual(["p-4"]);
     expect(out.unknown[0]?.class).toBe("pd-2");
     expect(JSON.stringify(r.content)).toContain(".p-4");
+  });
+
+  it("create_theme's themeId works in build_page in the same session; validate_markup checks markup", async () => {
+    const theme = await client.callTool({
+      name: "create_theme",
+      arguments: { name: "acme", seeds: { brand: "#7c4a2d" }, radius: "round" },
+    });
+    expect(theme.isError).toBeFalsy();
+    const { themeId } = theme.structuredContent as { themeId: string };
+    expect(themeId).toMatch(/^nbt_acme_/);
+    const page = await client.callTool({
+      name: "build_page",
+      arguments: {
+        title: "Acme",
+        theme: { themeId },
+        sections: [{ type: "hero", props: { title: "Hi" } }],
+      },
+    });
+    expect(page.isError).toBeFalsy();
+    const { html } = page.structuredContent as { html: string };
+    expect(html).toContain("--nb-radius-md: 0.75rem");
+    const checked = await client.callTool({ name: "validate_markup", arguments: { html } });
+    expect(checked.structuredContent).toMatchObject({ valid: true, diagnostics: [] });
+    const bad = await client.callTool({
+      name: "validate_markup",
+      arguments: { html: '<img src="x.png">' },
+    });
+    expect(bad.structuredContent).toMatchObject({ valid: false, summary: { errors: 1 } });
+    expect(JSON.stringify(bad.content)).toContain("NB_MISSING_ALT (L1:C1 <img>)");
   });
 
   it("explain_class returns explanations and diagnostics", async () => {
@@ -121,6 +153,8 @@ describe("newbrush-mcp over stdio", () => {
       arguments: { html: "<button>Hi</button>", brandColor: "#e11d48" },
     });
     const text = JSON.stringify(prompt.messages);
+    expect(text).toContain("create_theme");
+    expect(text).toContain("validate_markup");
     expect(text).toContain("generate_css");
     expect(text).toContain("#e11d48");
   });
