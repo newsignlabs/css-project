@@ -1,0 +1,96 @@
+{
+  "$id": "https://newbrush.dev/mcp/create_theme.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40,
+      "description": "Theme name: lowercase letters, digits and hyphens, e.g. \"acme\""
+    },
+    "seeds": {
+      "type": "object",
+      "properties": {
+        "brand": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb"
+        },
+        "accent": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb"
+        },
+        "neutral": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Any CSS colour, e.g. oklch(62% 0.19 255) or #2563eb"
+        }
+      },
+      "required": [
+        "brand"
+      ],
+      "additionalProperties": false,
+      "description": "Seed colours; every palette step and semantic token is derived from them"
+    },
+    "colorScheme": {
+      "description": "Schemes the theme must serve; contrast is checked for these (\"both\", the default, adds the high-contrast theme)",
+      "type": "string",
+      "enum": [
+        "light",
+        "dark",
+        "both"
+      ]
+    },
+    "radius": {
+      "description": "Corner rounding",
+      "type": "string",
+      "enum": [
+        "sharp",
+        "default",
+        "round"
+      ]
+    },
+    "density": {
+      "description": "Control heights and padding",
+      "type": "string",
+      "enum": [
+        "compact",
+        "default",
+        "comfortable"
+      ]
+    },
+    "font": {
+      "description": "Body font stack (system fonts, nothing is downloaded)",
+      "type": "string",
+      "enum": [
+        "system",
+        "humanist",
+        "geometric",
+        "serif",
+        "mono"
+      ]
+    },
+    "level": {
+      "description": "WCAG level every text and UI colour pair must meet, default AA (seed palettes always meet AA)",
+      "type": "string",
+      "enum": [
+        "AA",
+        "AAA"
+      ]
+    },
+    "strict": {
+      "description": "Fail with NB_CONTRAST_FAIL instead of adjusting colours that miss the level",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "name",
+    "seeds"
+  ],
+  "additionalProperties": false
+}

@@ -44,10 +44,10 @@
 
 ## Phase 5: User Stories 4 & 5 – Theming, validation, conversion (P2)
 
-- [ ] T026 [P] [US4] Tests: theme determinism (content-hash `themeId`), contrast auto-fix report, `strict` mode errors
-- [ ] T027 [US4] `lib/create-theme.ts` (reuses 001 seed generator + contrast checker); session LRU cache
-- [ ] T028 [P] [US5] Tests: anatomy rule violations, a11y quick checks, Tailwind/Bootstrap conversion fixtures
-- [ ] T029 [US5] `lib/validate-markup.ts` (parse5 walk + rules from component meta)
+- [x] T026 [P] [US4] Tests: theme determinism (content-hash `themeId`), contrast auto-fix report, `strict` mode errors
+- [x] T027 [US4] `lib/create-theme.ts` (reuses 001 seed generator + contrast checker); session LRU cache
+- [ ] T028 [P] [US5] Tests: anatomy rule violations, a11y quick checks, Tailwind/Bootstrap conversion fixtures — validation tests done (`test/validate-markup.test.ts`); conversion fixtures ship with T030
+- [x] T029 [US5] `lib/validate-markup.ts` (parse5 walk + rules from component meta)
 - [ ] T030 [US5] `convert/tailwind.ts`, `convert/bootstrap.ts` + `lib/convert-markup.ts`
 
 ## Phase 6: User Story 6 – Hosted & embeddable (P1)

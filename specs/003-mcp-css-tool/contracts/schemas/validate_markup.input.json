@@ -1,0 +1,23 @@
+{
+  "$id": "https://newbrush.dev/mcp/validate_markup.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "html": {
+      "type": "string",
+      "description": "HTML to check (up to 256 KB): a document or a fragment"
+    },
+    "level": {
+      "description": "WCAG contrast level, default AA",
+      "type": "string",
+      "enum": [
+        "AA",
+        "AAA"
+      ]
+    }
+  },
+  "required": [
+    "html"
+  ],
+  "additionalProperties": false
+}

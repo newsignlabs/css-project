@@ -25,7 +25,7 @@ export interface CssBundle {
 
 export function cssFor(
   markup: string,
-  options: { seeds?: { brand?: string; accent?: string; neutral?: string }; style?: string } = {},
+  options: { seeds?: Record<string, string>; themeCss?: string; style?: string } = {},
 ): CssBundle {
   const classes = classesInHtml(markup);
   const components = [
@@ -48,7 +48,7 @@ export function cssFor(
   ];
   const css = [
     CORE_CSS,
-    engine.themeCss,
+    options.themeCss ?? engine.themeCss,
     ...[...new Set(components.map((c) => COMPONENT_CSS[c]).filter(Boolean))],
     options.style ? (STYLE_CSS[options.style] ?? "") : "",
     generated.css,

@@ -15,9 +15,14 @@
       "type": "string"
     },
     "theme": {
-      "description": "Brand seed colours; adds the derived token CSS",
+      "description": "A create_theme themeId or brand seed colours; adds the theme's token CSS",
       "type": "object",
       "properties": {
+        "themeId": {
+          "description": "A themeId from create_theme in this session; replaces seeds",
+          "type": "string",
+          "pattern": "^nbt_[a-z0-9-]+_[0-9a-f]{16}$"
+        },
         "seeds": {
           "type": "object",
           "properties": {

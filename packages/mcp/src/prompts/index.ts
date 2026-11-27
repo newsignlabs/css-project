@@ -1,6 +1,6 @@
 // specs/003 T014 — prompts. Each prompt is registered with the release that brings the tools it relies on:
-// restyle_with_brand (generate_css), design_landing_page and build_dashboard (build_page) now; convert_from_tailwind
-// with convert_markup and validate_markup.
+// restyle_with_brand (create_theme, validate_markup, generate_css), design_landing_page and build_dashboard
+// (build_page) now; convert_from_tailwind with convert_markup.
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { BLUEPRINTS } from "../blueprints/index.ts";
@@ -98,8 +98,10 @@ export function registerPrompts(server: McpServer): void {
               "",
               "1. Use `search` and `get_component` to find newBrush components for each part (buttons → nb-btn, cards → nb-card, forms → nb-field and nb-input…), and replace ad-hoc classes with them. Keep the content and structure; keep it accessible.",
               "2. Use utilities (p-4, gap-6, md:grid-cols-2…) only for layout and spacing the components don't cover; `explain_class` shows what a class does.",
-              `3. Call \`generate_css\` with the new HTML, theme: { seeds: { brand: "${brandColor}" } } and include: { components: true }. Fix every rejected or unknown class it reports, then call it again.`,
-              "4. Reply with the final HTML and the CSS.",
+              `3. Call \`create_theme\` with a short name and seeds: { brand: "${brandColor}" }; note its themeId and any failing contrast pairs.`,
+              "4. Call `validate_markup` on the new HTML and fix every error (and the warnings you can).",
+              "5. Call `generate_css` with the new HTML, theme: { themeId } and include: { components: true }. Fix every rejected or unknown class it reports, then call it again.",
+              "6. Reply with the final HTML and the CSS.",
               "",
               "HTML:",
               "```html",

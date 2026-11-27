@@ -1,0 +1,76 @@
+{
+  "$id": "https://newbrush.dev/mcp/validate_markup.output.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "valid": {
+      "type": "boolean",
+      "description": "No errors (warnings and info allowed)"
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Stable error code, e.g. NB_ARBITRARY_REJECTED"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "description": "In document order; path is \"L<line>:C<column> <tag>\""
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "errors",
+        "warnings"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "valid",
+    "diagnostics",
+    "summary"
+  ],
+  "additionalProperties": false
+}

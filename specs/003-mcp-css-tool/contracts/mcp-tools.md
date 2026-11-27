@@ -81,13 +81,24 @@ out: { html: string; css: string; sections: { type: string; id: string }[]; stat
 blog-list | contact-form | footer | dashboard-shell | sidebar-layout | auth-form | table-view | empty-state | not-found.
 
 ### `create_theme`
+
+> **Implemented (v0.x)**, plus `level` (seed palettes always meet AA, so adjustments show at AAA). `themeId` is
+> `nbt_<name>_<64-bit FNV-1a of the spec>`; the stdio server keeps the last 100 themes for its session (HTTP sessions
+> with Phase 6), and `{ themeId, seeds }` falls back to the seeds when the id is unknown. `strict` failures give
+> `NB_CONTRAST_FAIL`. Not read-only (it stores the theme), but idempotent.
 ```ts
-in:  { name: string; seeds: { brand: string; accent?: string; neutral?: string }; colorScheme?: "light" | "dark" | "both"; radius?: "sharp" | "default" | "round"; density?: "compact" | "default" | "comfortable"; font?: "system" | "humanist" | "geometric" | "serif" | "mono"; strict?: boolean }
+in:  { name: string; seeds: { brand: string; accent?: string; neutral?: string }; colorScheme?: "light" | "dark" | "both"; radius?: "sharp" | "default" | "round"; density?: "compact" | "default" | "comfortable"; font?: "system" | "humanist" | "geometric" | "serif" | "mono"; level?: "AA" | "AAA"; strict?: boolean }
 out: { themeId: string; css: string; tokens: Record<string,string>; contrast: { pair: string; ratio: number; apca: number; pass: boolean; adjusted?: boolean }[] }
 ```
 `themeId` is a content hash (deterministic) and is resolvable in the same HTTP session or by re-sending the spec.
 
 ### `validate_markup`
+
+> **Implemented (v0.x)**. Parses with parse5; each diagnostic's `path` is `L<line>:C<column> <tag>`. Errors: invalid
+> utilities, parts outside their component and modifiers without their root (`NB_ANATOMY_INVALID`), `NB_MISSING_ALT`,
+> `NB_MISSING_NAME`, `NB_MISSING_LABEL`, `NB_DUPLICATE_ID`, `NB_UNSAFE_URL`. Warnings: unknown classes (with
+> suggestions), `NB_MISSING_LANG`, `NB_HEADING_ORDER`, and `NB_CONTRAST_FAIL` for text/background colour utilities
+> (light and dark values; no guess inside components, which set their own colours). Every `build_page` output passes.
 ```ts
 in:  { html: string; level?: "AA" | "AAA" }
 out: { valid: boolean; diagnostics: Diagnostic[]; summary: { errors: number; warnings: number } }
@@ -110,7 +121,9 @@ out: { html: string; mapped: number; unmapped: { class: string; reason: string }
 ## Error codes
 
 `NB_INPUT_TOO_LARGE`, `NB_SCHEMA_INVALID`, `NB_UNKNOWN_COMPONENT`, `NB_UNKNOWN_SECTION`, `NB_ARBITRARY_REJECTED`,
-`NB_UNSAFE_URL`, `NB_MISSING_ALT`, `NB_CONTRAST_FAIL`, `NB_ANATOMY_INVALID`, `NB_RATE_LIMITED` (HTTP only).
+`NB_UNSAFE_URL`, `NB_MISSING_ALT`, `NB_CONTRAST_FAIL`, `NB_ANATOMY_INVALID`, `NB_RATE_LIMITED` (HTTP only); from
+`validate_markup` also `NB_UNKNOWN_CLASS`, `NB_MISSING_NAME`, `NB_MISSING_LABEL`, `NB_DUPLICATE_ID`, `NB_MISSING_LANG`,
+`NB_HEADING_ORDER`.
 
 ## Resources
 
@@ -138,8 +151,9 @@ Resource templates are listed via `resources/templates/list`; `{name}` completio
 | `convert_from_tailwind` | `html` | convert_markup → validate_markup |
 | `build_dashboard` | `entities`, `metrics` | dashboard-shell + stats + table-view PageSpec |
 
-Each prompt ships with the tools it uses: `restyle_with_brand` now (with `generate_css` until `create_theme`),
-`design_landing_page` and `build_dashboard` with `build_page`, `convert_from_tailwind` with `convert_markup`.
+Each prompt ships with the tools it uses: `restyle_with_brand` (create_theme → validate_markup → generate_css with
+`{ themeId }`), `design_landing_page` and `build_dashboard` with `build_page`, `convert_from_tailwind` with
+`convert_markup`.
 
 ## Transports & endpoints
 

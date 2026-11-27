@@ -5,12 +5,15 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { BLUEPRINT_NAMES } from "./blueprints/index.ts";
 import { buildPage } from "./lib/build-page.ts";
 import { composeComponent } from "./lib/compose-component.ts";
+import { createTheme } from "./lib/create-theme.ts";
 import { ToolError } from "./lib/errors.ts";
 import { explainClass } from "./lib/explain-class.ts";
 import { generateCss } from "./lib/generate-css.ts";
 import { getComponent } from "./lib/get-component.ts";
 import { getTokens } from "./lib/get-tokens.ts";
 import { search } from "./lib/search.ts";
+import { ThemeStore } from "./lib/theme-store.ts";
+import { validateMarkup } from "./lib/validate-markup.ts";
 import { manifest, SERVER_NAME, SERVER_VERSION } from "./manifest.ts";
 import { registerPrompts } from "./prompts/index.ts";
 import { registerResources } from "./resources/index.ts";
@@ -19,6 +22,8 @@ import {
   buildPageOutput,
   composeComponentInput,
   composeComponentOutput,
+  createThemeInput,
+  createThemeOutput,
   explainClassInput,
   explainClassOutput,
   generateCssInput,
@@ -29,9 +34,14 @@ import {
   getTokensOutput,
   searchInput,
   searchOutput,
+  validateMarkupInput,
+  validateMarkupOutput,
 } from "./schemas/index.ts";
 
-/** Every newBrush tool only reads the bundled manifest and computes: no side effects, no network, same in → same out. */
+/**
+ * newBrush tools only read the bundled manifest and compute: no network, same in → same out. create_theme also
+ * remembers the theme for the session (its themeId), so it is not read-only, but repeating it changes nothing.
+ */
 const ANNOTATIONS = {
   readOnlyHint: true,
   idempotentHint: true,
@@ -60,6 +70,8 @@ function run<T extends Record<string, unknown>>(
 }
 
 export function createServer(): McpServer {
+  /** Themes made with create_theme in this session (one server per session). */
+  const themes = new ThemeStore();
   const server = new McpServer(
     { name: SERVER_NAME, title: "newBrush", version: SERVER_VERSION },
     {
@@ -70,6 +82,8 @@ export function createServer(): McpServer {
         "or get_tokens, or browse newbrush:// resources. Use generate_css for the CSS of some markup and explain_class to",
         "see how a class is read. To make whole pages, call build_page with sections (newbrush://sections/{name} documents",
         "each blueprint's props); for one component, compose_component. Prefer components over long utility lists.",
+        "For a brand, call create_theme and pass its themeId as theme to generate_css or build_page. Check markup with",
+        "validate_markup before you hand it over.",
       ].join(" "),
     },
   );
@@ -86,7 +100,7 @@ export function createServer(): McpServer {
     },
     (args) =>
       run(
-        () => generateCss(args),
+        () => generateCss(args, themes),
         (r) =>
           [
             `${r.used.length} utilities, ${r.stats.bytes} bytes.`,
@@ -211,7 +225,7 @@ export function createServer(): McpServer {
     },
     (args) =>
       run(
-        () => buildPage(args),
+        () => buildPage(args, themes),
         (r) =>
           `Built ${r.sections.map((s) => s.type).join(", ")}: ${r.stats.htmlBytes} bytes of HTML, ${r.stats.cssBytes} bytes of CSS.${summary(r.diagnostics)}\n\n${r.html}`,
       ),
@@ -231,6 +245,52 @@ export function createServer(): McpServer {
       run(
         () => composeComponent(args),
         (r) => `${r.html}${summary(r.diagnostics)}`,
+      ),
+  );
+
+  server.registerTool(
+    "create_theme",
+    {
+      title: "Create a newBrush theme",
+      description:
+        "Create a brand theme from seed colours (plus corner radius, density and a system font stack): token CSS for light, dark and high-contrast, and a WCAG/APCA contrast report. Colours that miss the level are moved to the nearest passing palette step unless strict is set. Pass the returned themeId as theme to generate_css or build_page in this session.",
+      inputSchema: createThemeInput,
+      outputSchema: createThemeOutput,
+      annotations: { title: "Create a newBrush theme", ...ANNOTATIONS, readOnlyHint: false },
+    },
+    (args) =>
+      run(
+        () => createTheme(args, themes),
+        (r) => {
+          const failing = r.contrast.filter((c) => !c.pass);
+          const adjusted = r.contrast.filter((c) => c.adjusted);
+          return [
+            `Theme ${r.themeId}: ${Object.keys(r.tokens).length} tokens, ${r.contrast.length} colour pairs checked, ${adjusted.length} adjusted, ${failing.length} failing.`,
+            ...failing.map((c) => `- fails: ${c.pair} ${c.ratio}:1`),
+            `Use theme: { themeId: "${r.themeId}" } with generate_css or build_page.`,
+            "```css",
+            r.css,
+            "```",
+          ].join("\n");
+        },
+      ),
+  );
+
+  server.registerTool(
+    "validate_markup",
+    {
+      title: "Validate newBrush markup",
+      description:
+        "Check HTML that uses newBrush: unknown or invalid classes (with suggestions), component parts outside their component, modifiers without their root, missing alt text, buttons and links without names, unlabelled form controls, duplicate ids, unsafe URLs, document language, heading order and low contrast between colour utilities. Each finding has its line and column.",
+      inputSchema: validateMarkupInput,
+      outputSchema: validateMarkupOutput,
+      annotations: { title: "Validate newBrush markup", ...ANNOTATIONS },
+    },
+    (args) =>
+      run(
+        () => validateMarkup(args),
+        (r) =>
+          `${r.valid ? "Valid" : "Invalid"}: ${r.summary.errors} errors, ${r.summary.warnings} warnings.${summary(r.diagnostics)}`,
       ),
   );
 

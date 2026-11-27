@@ -8,8 +8,10 @@ import {
   GenerateCssInput as InputSchema,
   LIMITS,
 } from "../schemas/index.ts";
+import { resolveTheme } from "./create-theme.ts";
 import { fail } from "./errors.ts";
 import { componentClasses, suggest } from "./suggest.ts";
+import { defaultThemes, type ThemeStore } from "./theme-store.ts";
 
 // Class attributes only (class and JSX className): scanning text would turn ordinary words into utilities.
 const CLASS_ATTR =
@@ -23,7 +25,10 @@ export function classesInHtml(html: string): string[] {
   return [...out];
 }
 
-export function generateCss(input: GenerateCssInput): GenerateCssOutput {
+export function generateCss(
+  input: GenerateCssInput,
+  themes: ThemeStore = defaultThemes,
+): GenerateCssOutput {
   const parsed = InputSchema.safeParse(input);
   if (!parsed.success)
     fail("NB_SCHEMA_INVALID", parsed.error.issues.map((i) => i.message).join("; "));
@@ -38,13 +43,14 @@ export function generateCss(input: GenerateCssInput): GenerateCssOutput {
     fail("NB_INPUT_TOO_LARGE", `More than ${LIMITS.classes} classes.`, { path: "classes" });
 
   const candidates = [...new Set([...(classes ?? []), ...(html ? classesInHtml(html) : [])])];
+  const resolved = resolveTheme(theme, themes);
   const engine = createEngine({
     content: ["mcp"],
-    ...(theme ? { theme: { seeds: theme.seeds } } : {}),
+    ...(resolved.seeds ? { theme: { seeds: resolved.seeds } } : {}),
   });
   const result = engine.generate(candidates, { reportUnknown: true });
   const prefix = include?.components ? components : include?.preflight ? core : "";
-  const css = [prefix, engine.themeCss, result.css].filter(Boolean).join("\n");
+  const css = [prefix, resolved.css ?? engine.themeCss, result.css].filter(Boolean).join("\n");
   return {
     css,
     used: result.classes.used,

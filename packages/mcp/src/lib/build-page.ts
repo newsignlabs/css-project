@@ -4,15 +4,21 @@ import { escapeHtml, html, raw } from "../blueprints/_core.ts";
 import { BLUEPRINT_NAMES, BLUEPRINTS } from "../blueprints/index.ts";
 import type { SafeHtml } from "../html/index.ts";
 import { BuildPageInput, type BuildPageOutput, type Diagnostic } from "../schemas/index.ts";
+import { resolveTheme } from "./create-theme.ts";
 import { cssFor } from "./css-bundle.ts";
 import { fail } from "./errors.ts";
 import { nearest } from "./suggest.ts";
+import { defaultThemes, type ThemeStore } from "./theme-store.ts";
 import { parseInput } from "./validate.ts";
 
 const bytes = (s: string) => new TextEncoder().encode(s).length;
 
-export function buildPage(input: BuildPageInput): BuildPageOutput {
+export function buildPage(
+  input: BuildPageInput,
+  themes: ThemeStore = defaultThemes,
+): BuildPageOutput {
   const spec = parseInput(BuildPageInput, input);
+  const theme = resolveTheme(spec.theme, themes);
   const diagnostics: Diagnostic[] = [];
   const counts = new Map<string, number>();
   const regions = { header: [] as SafeHtml[], main: [] as SafeHtml[], footer: [] as SafeHtml[] };
@@ -82,7 +88,8 @@ ${regions.footer}`.value
     .replace(/\n{3,}/g, "\n\n")
     .trim();
   const { css, diagnostics: cssDiagnostics } = cssFor(body, {
-    ...(spec.theme?.seeds ? { seeds: spec.theme.seeds } : {}),
+    ...(theme.seeds ? { seeds: theme.seeds } : {}),
+    ...(theme.css ? { themeCss: theme.css } : {}),
     ...(spec.style ? { style: spec.style } : {}),
   });
   diagnostics.push(...cssDiagnostics);
@@ -97,7 +104,7 @@ ${regions.footer}`.value
       diagnostics,
     };
   }
-  const scheme = spec.theme?.colorScheme;
+  const scheme = theme.colorScheme;
   const themeAttr = scheme === "light" || scheme === "dark" ? ` data-nb-theme="${scheme}"` : "";
   const doc = `<!DOCTYPE html>
 <html lang="${escapeHtml(spec.lang ?? "en")}" dir="${spec.dir ?? "ltr"}"${themeAttr}>
