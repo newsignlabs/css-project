@@ -52,8 +52,8 @@
 
 ## Phase 6: User Story 6 – Hosted & embeddable (P1)
 
-- [ ] T031 [P] [US6] Tests: Streamable HTTP session lifecycle, REST mirror parity with MCP results, rate limit, CORS, auth
-- [ ] T032 [US6] `transports/http.ts` (hono): `/mcp`, `/v1/tools/{name}`, `/v1/manifest`, `/healthz`; API-key/OAuth middleware; per-key rate limit; content-free logging
+- [x] T031 [P] [US6] Tests: Streamable HTTP session lifecycle, REST mirror parity with MCP results, rate limit, CORS, auth
+- [x] T032 [US6] `transports/http.ts` (hono): `/mcp`, `/v1/tools/{name}`, `/v1/manifest`, `/healthz`; API-key/OAuth middleware; per-key rate limit; content-free logging — API keys now; OAuth with the hosted deployment (T033)
 - [ ] T033 [US6] Cloudflare Workers entry (`worker/`), Durable Object theme cache, `wrangler.toml`; deploy workflow
 - [ ] T034 [P] [US6] Dockerfile (distroless/alpine, non-root) + GHCR publish in release workflow
 - [ ] T035 [P] [US6] `server.json` + MCP Registry publish step; docs page with Claude Desktop / Claude Code / VS Code / Cursor configs

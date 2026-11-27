@@ -166,6 +166,14 @@ Each prompt ships with the tools it uses: `restyle_with_brand` (create_theme →
 
 ## Transports & endpoints
 
+> **Implemented (v0.x)**: stdio and `--transport http` (`--port`, `--host`; `0` picks a free port). Streamable HTTP
+> answers JSON (SSE GET is supported); a session is created by an initialize POST, carried in `Mcp-Session-Id`, has its
+> own theme store, closes on DELETE or after 30 idle minutes (unknown ids → 404, cap 1000 sessions, least recently
+> used closed first). The REST mirror returns `{ result }` (= `structuredContent`) or `{ error: Diagnostic }` (400;
+> 404 `NB_UNKNOWN_TOOL`), shares one theme store, and is tested for parity with every MCP tool. API keys
+> (`NEWBRUSH_MCP_API_KEYS`), per-key or per-client rate limit (`NB_RATE_LIMITED`, `Retry-After`), CORS and a 1 MB body
+> limit; logs are content-free. `GET /v1/tools` lists the tools.
+
 ```text
 stdio:  npx -y @newbrush/mcp                          (default)
 http:   npx -y @newbrush/mcp --transport http --port 3333

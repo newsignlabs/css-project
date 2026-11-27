@@ -303,6 +303,9 @@ importers:
 
   packages/mcp:
     dependencies:
+      '@hono/node-server':
+        specifier: ^2.1.11
+        version: 2.1.11(hono@4.13.22)
       '@modelcontextprotocol/sdk':
         specifier: ^1.32.2
         version: 1.32.2(zod@4.6.7)
@@ -315,6 +318,9 @@ importers:
       culori:
         specifier: ^4.0.2
         version: 4.0.2
+      hono:
+        specifier: ^4.13.22
+        version: 4.13.22
       minisearch:
         specifier: ^7.2.0
         version: 7.2.0
