@@ -310,6 +310,22 @@ export const validateMarkupOutput = {
 export const ValidateMarkupOutput = z.object(validateMarkupOutput);
 export type ValidateMarkupOutput = z.infer<typeof ValidateMarkupOutput>;
 
+export const convertMarkupInput = {
+  html: z.string().describe(`Tailwind or Bootstrap HTML (up to ${LIMITS.htmlBytes / 1024} KB): a document or a fragment`),
+  from: z.enum(["tailwind", "bootstrap"]).describe("The framework the markup was written for"),
+};
+export const ConvertMarkupInput = z.object(convertMarkupInput).strict();
+export type ConvertMarkupInput = z.infer<typeof ConvertMarkupInput>;
+export const convertMarkupOutput = {
+  html: z.string().describe("The same markup with newBrush classes; only class attributes change"),
+  mapped: z.number().int().describe("Source classes converted"),
+  unmapped: z
+    .array(z.object({ class: z.string(), reason: z.string() }))
+    .describe("Classes left out, once each, with what to do instead"),
+};
+export const ConvertMarkupOutput = z.object(convertMarkupOutput);
+export type ConvertMarkupOutput = z.infer<typeof ConvertMarkupOutput>;
+
 /** Every tool's schemas, for the JSON Schema export and the drift test. */
 export const TOOL_SCHEMAS = {
   generate_css: { input: GenerateCssInput, output: GenerateCssOutput },
@@ -321,4 +337,5 @@ export const TOOL_SCHEMAS = {
   compose_component: { input: ComposeComponentInput, output: ComposeComponentOutput },
   create_theme: { input: CreateThemeInput, output: CreateThemeOutput },
   validate_markup: { input: ValidateMarkupInput, output: ValidateMarkupOutput },
+  convert_markup: { input: ConvertMarkupInput, output: ConvertMarkupOutput },
 } as const;

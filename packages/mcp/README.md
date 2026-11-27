@@ -31,6 +31,7 @@ read-only, with JSON Schemas for input and output (published in
 | `compose_component` | `name`, optional `modifiers`, `size`, `slots` (content per part), `attrs`, `withCss` | one component's HTML from its anatomy, with diagnostics |
 | `create_theme` | `name`, `seeds` (`brand`, optional `accent`, `neutral`); optional `colorScheme`, `radius` (sharp, default, round), `density` (compact, default, comfortable), `font` (system, humanist, geometric, serif, mono), `level` (AA, AAA), `strict` | `themeId` for `generate_css` and `build_page` in this session, token `css` for light, dark and high-contrast, `tokens`, and a WCAG/APCA `contrast` report; failing colours are adjusted unless `strict` |
 | `validate_markup` | `html` (≤ 256 KB, a document or a fragment); optional `level` (AA, AAA) | `valid`, `diagnostics` with line and column (unknown or invalid classes, component anatomy, alt text, accessible names, form labels, duplicate ids, unsafe URLs, language, heading order, colour-utility contrast), `summary` |
+| `convert_markup` | `html` (≤ 256 KB), `from` ("tailwind" or "bootstrap") | the same markup with newBrush classes (only class attributes change), `mapped` count, and `unmapped` classes with what to do instead |
 | `get_tokens` | optional `group`, `theme` (light, dark, contrast), `format` ("css" adds a CSS block) | tokens with their values for that theme |
 
 ## Resources and prompts
@@ -47,7 +48,8 @@ read-only, with JSON Schemas for input and output (published in
 
 Every template completes `{name}`. Prompts: `design_landing_page` (`product`, `audience`, `brandColor`, `tone`) plans
 sections and calls `build_page`; `build_dashboard` (`entities`, `metrics`) assembles a dashboard; `restyle_with_brand` (`html`, `brandColor`) replaces ad-hoc classes with newBrush
-components, makes a brand theme with `create_theme`, checks the result with `validate_markup` and generates the CSS.
+components, makes a brand theme with `create_theme`, checks the result with `validate_markup` and generates the CSS; `convert_from_tailwind` (`html`) runs `convert_markup`,
+resolves what it left out, validates and generates the CSS.
 
 ## Sections
 

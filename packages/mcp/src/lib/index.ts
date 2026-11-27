@@ -5,6 +5,7 @@ export { escapeHtml, html, SafeHtml, safeUrl, sanitizeInline } from "../html/ind
 export * from "../schemas/index.ts";
 export { buildPage } from "./build-page.ts";
 export { composeComponent } from "./compose-component.ts";
+export { convertMarkup } from "./convert-markup.ts";
 export { createTheme } from "./create-theme.ts";
 export { ToolError } from "./errors.ts";
 export { explainClass } from "./explain-class.ts";

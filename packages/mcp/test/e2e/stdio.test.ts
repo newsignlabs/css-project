@@ -27,6 +27,7 @@ describe("newbrush-mcp over stdio", () => {
     expect(tools.map((t) => t.name).sort()).toEqual([
       "build_page",
       "compose_component",
+      "convert_markup",
       "create_theme",
       "explain_class",
       "generate_css",
@@ -89,6 +90,27 @@ describe("newbrush-mcp over stdio", () => {
     expect(JSON.stringify(bad.content)).toContain("NB_MISSING_ALT (L1:C1 <img>)");
   });
 
+  it("convert_markup converts Tailwind; the convert_from_tailwind prompt chains it with validate_markup", async () => {
+    const r = await client.callTool({
+      name: "convert_markup",
+      arguments: { html: '<p class="text-gray-600 float-left">x</p>', from: "tailwind" },
+    });
+    expect(r.structuredContent).toEqual({
+      html: '<p class="text-neutral-600">x</p>',
+      mapped: 1,
+      unmapped: [
+        { class: "float-left", reason: "floats have no newBrush utility; use flex or grid" },
+      ],
+    });
+    const prompt = await client.getPrompt({
+      name: "convert_from_tailwind",
+      arguments: { html: '<div class="p-4">x</div>' },
+    });
+    const text = JSON.stringify(prompt.messages);
+    for (const tool of ["convert_markup", "validate_markup", "generate_css"])
+      expect(text).toContain(tool);
+  });
+
   it("explain_class returns explanations and diagnostics", async () => {
     const r = await client.callTool({
       name: "explain_class",
@@ -145,6 +167,7 @@ describe("newbrush-mcp over stdio", () => {
     const { prompts } = await client.listPrompts();
     expect(prompts.map((p) => p.name).sort()).toEqual([
       "build_dashboard",
+      "convert_from_tailwind",
       "design_landing_page",
       "restyle_with_brand",
     ]);

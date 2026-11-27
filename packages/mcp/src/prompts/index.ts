@@ -1,6 +1,6 @@
 // specs/003 T014 — prompts. Each prompt is registered with the release that brings the tools it relies on:
 // restyle_with_brand (create_theme, validate_markup, generate_css), design_landing_page and build_dashboard
-// (build_page) now; convert_from_tailwind with convert_markup.
+// (build_page), convert_from_tailwind (convert_markup, validate_markup, generate_css).
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { BLUEPRINTS } from "../blueprints/index.ts";
@@ -102,6 +102,40 @@ export function registerPrompts(server: McpServer): void {
               "4. Call `validate_markup` on the new HTML and fix every error (and the warnings you can).",
               "5. Call `generate_css` with the new HTML, theme: { themeId } and include: { components: true }. Fix every rejected or unknown class it reports, then call it again.",
               "6. Reply with the final HTML and the CSS.",
+              "",
+              "HTML:",
+              "```html",
+              html,
+              "```",
+            ].join("\n"),
+          },
+        },
+      ],
+    }),
+  );
+
+  server.registerPrompt(
+    "convert_from_tailwind",
+    {
+      title: "Convert from Tailwind",
+      description:
+        "Convert Tailwind CSS markup to newBrush components and utilities, checked and with its CSS.",
+      argsSchema: { html: z.string().describe("The Tailwind HTML to convert") },
+    },
+    ({ html }) => ({
+      messages: [
+        {
+          role: "user",
+          content: {
+            type: "text",
+            text: [
+              "Convert this Tailwind HTML to newBrush.",
+              "",
+              '1. Call `convert_markup` with the HTML and from: "tailwind".',
+              "2. For each class it left out, follow its reason: find a component with `search` and `get_component` (cards → nb-card, alerts → nb-alert, navigation → nb-navbar…) or a newBrush utility (`explain_class` checks one). Prefer components over long utility lists.",
+              "3. Call `validate_markup` on the result and fix every error (and the warnings you can).",
+              "4. Call `generate_css` with the final HTML and include: { components: true }.",
+              "5. Reply with the final HTML, the CSS, and a short list of what changed.",
               "",
               "HTML:",
               "```html",

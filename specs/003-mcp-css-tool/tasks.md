@@ -23,7 +23,7 @@
 - [x] T011 [US2] `search/` MiniSearch index + synonyms; `lib/search.ts`
 - [x] T012 [P] [US2] `lib/get-component.ts`, `lib/get-tokens.ts`
 - [x] T013 [US2] Resources + templates + completions (`resources/`)
-- [ ] T014 [P] [US2] Prompts `design_landing_page`, `restyle_with_brand`, `convert_from_tailwind`, `build_dashboard` — `restyle_with_brand`, `design_landing_page` and `build_dashboard` done; `convert_from_tailwind` ships with `convert_markup` (Phase 5)
+- [x] T014 [P] [US2] Prompts `design_landing_page`, `restyle_with_brand`, `convert_from_tailwind`, `build_dashboard`
 
 ## Phase 4: User Story 3 – Compose & build pages (P1)
 
@@ -46,9 +46,9 @@
 
 - [x] T026 [P] [US4] Tests: theme determinism (content-hash `themeId`), contrast auto-fix report, `strict` mode errors
 - [x] T027 [US4] `lib/create-theme.ts` (reuses 001 seed generator + contrast checker); session LRU cache
-- [ ] T028 [P] [US5] Tests: anatomy rule violations, a11y quick checks, Tailwind/Bootstrap conversion fixtures — validation tests done (`test/validate-markup.test.ts`); conversion fixtures ship with T030
+- [x] T028 [P] [US5] Tests: anatomy rule violations, a11y quick checks, Tailwind/Bootstrap conversion fixtures (`test/validate-markup.test.ts`, `test/convert-markup.test.ts`)
 - [x] T029 [US5] `lib/validate-markup.ts` (parse5 walk + rules from component meta)
-- [ ] T030 [US5] `convert/tailwind.ts`, `convert/bootstrap.ts` + `lib/convert-markup.ts`
+- [x] T030 [US5] `convert/tailwind.ts`, `convert/bootstrap.ts` + `lib/convert-markup.ts`
 
 ## Phase 6: User Story 6 – Hosted & embeddable (P1)
 

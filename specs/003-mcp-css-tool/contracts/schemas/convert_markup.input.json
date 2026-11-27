@@ -1,0 +1,24 @@
+{
+  "$id": "https://newbrush.dev/mcp/convert_markup.input.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "html": {
+      "type": "string",
+      "description": "Tailwind or Bootstrap HTML (up to 256 KB): a document or a fragment"
+    },
+    "from": {
+      "type": "string",
+      "enum": [
+        "tailwind",
+        "bootstrap"
+      ],
+      "description": "The framework the markup was written for"
+    }
+  },
+  "required": [
+    "html",
+    "from"
+  ],
+  "additionalProperties": false
+}
