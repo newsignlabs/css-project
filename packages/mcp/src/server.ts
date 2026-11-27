@@ -5,6 +5,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { BLUEPRINT_NAMES } from "./blueprints/index.ts";
 import { buildPage } from "./lib/build-page.ts";
 import { composeComponent } from "./lib/compose-component.ts";
+import { convertMarkup } from "./lib/convert-markup.ts";
 import { createTheme } from "./lib/create-theme.ts";
 import { ToolError } from "./lib/errors.ts";
 import { explainClass } from "./lib/explain-class.ts";
@@ -22,6 +23,8 @@ import {
   buildPageOutput,
   composeComponentInput,
   composeComponentOutput,
+  convertMarkupInput,
+  convertMarkupOutput,
   createThemeInput,
   createThemeOutput,
   explainClassInput,
@@ -83,7 +86,7 @@ export function createServer(): McpServer {
         "see how a class is read. To make whole pages, call build_page with sections (newbrush://sections/{name} documents",
         "each blueprint's props); for one component, compose_component. Prefer components over long utility lists.",
         "For a brand, call create_theme and pass its themeId as theme to generate_css or build_page. Check markup with",
-        "validate_markup before you hand it over.",
+        "validate_markup before you hand it over; convert_markup turns Tailwind or Bootstrap markup into newBrush.",
       ].join(" "),
     },
   );
@@ -291,6 +294,30 @@ export function createServer(): McpServer {
         () => validateMarkup(args),
         (r) =>
           `${r.valid ? "Valid" : "Invalid"}: ${r.summary.errors} errors, ${r.summary.warnings} warnings.${summary(r.diagnostics)}`,
+      ),
+  );
+
+  server.registerTool(
+    "convert_markup",
+    {
+      title: "Convert markup to newBrush",
+      description:
+        "Convert Tailwind or Bootstrap HTML to newBrush: utilities map to newBrush utilities and palettes, Bootstrap components (and Tailwind buttons and inputs built from utilities) to newBrush components. Only class attributes change. Classes without an equivalent are left out and listed with what to do instead; check the result with validate_markup.",
+      inputSchema: convertMarkupInput,
+      outputSchema: convertMarkupOutput,
+      annotations: { title: "Convert markup to newBrush", ...ANNOTATIONS },
+    },
+    (args) =>
+      run(
+        () => convertMarkup(args),
+        (r) =>
+          [
+            `Converted ${r.mapped} classes; ${r.unmapped.length} left out.`,
+            ...r.unmapped.map((u) => `- ${u.class}: ${u.reason}`),
+            "```html",
+            r.html,
+            "```",
+          ].join("\n"),
       ),
   );
 

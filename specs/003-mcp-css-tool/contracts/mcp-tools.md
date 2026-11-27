@@ -113,6 +113,15 @@ out: { results: ({ class: string; parsed: ParsedClass; family: string; css: stri
 ```
 
 ### `convert_markup`
+
+> **Implemented (v0.x)**. Only class attributes change (parse5 source offsets), so the rest of the markup is
+> byte-identical; every class written is a newBrush class (checked against the engine and the manifest). Tailwind:
+> classes the engine accepts are kept, colours move to newBrush palettes (blue/indigo/sky → brand, violet/purple/pink
+> → accent, gray/slate/zinc → neutral, red → danger, green → success, amber/yellow → warning, cyan → info), physical
+> sides become logical, leading `!` becomes newBrush's trailing `!`, and utility-built buttons and text inputs become
+> `nb-btn`/`nb-input`. Bootstrap: components → newBrush components, parts and modifiers; spacing on newBrush's scale
+> (3 → 4, 4 → 6, 5 → 12) with breakpoint infixes as variants; the 12-column grid as CSS grid. `unmapped` lists each
+> left-out class once, with what to do instead (JavaScript state classes, structures such as modals and tabs).
 ```ts
 in:  { html: string; from: "tailwind" | "bootstrap" }
 out: { html: string; mapped: number; unmapped: { class: string; reason: string }[] }
@@ -152,8 +161,8 @@ Resource templates are listed via `resources/templates/list`; `{name}` completio
 | `build_dashboard` | `entities`, `metrics` | dashboard-shell + stats + table-view PageSpec |
 
 Each prompt ships with the tools it uses: `restyle_with_brand` (create_theme → validate_markup → generate_css with
-`{ themeId }`), `design_landing_page` and `build_dashboard` with `build_page`, `convert_from_tailwind` with
-`convert_markup`.
+`{ themeId }`), `design_landing_page` and `build_dashboard` with `build_page`, `convert_from_tailwind`
+(convert_markup → validate_markup → generate_css). All four are implemented.
 
 ## Transports & endpoints
 

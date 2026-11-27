@@ -1,0 +1,43 @@
+{
+  "$id": "https://newbrush.dev/mcp/convert_markup.output.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "html": {
+      "type": "string",
+      "description": "The same markup with newBrush classes; only class attributes change"
+    },
+    "mapped": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Source classes converted"
+    },
+    "unmapped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "class": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "class",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Classes left out, once each, with what to do instead"
+    }
+  },
+  "required": [
+    "html",
+    "mapped",
+    "unmapped"
+  ],
+  "additionalProperties": false
+}
