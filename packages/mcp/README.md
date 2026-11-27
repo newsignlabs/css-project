@@ -15,6 +15,33 @@ the same input always gives the same output.
 claude mcp add newbrush -- npx -y @newbrush/mcp     # Claude Code
 ```
 
+## Over HTTP
+
+```bash
+npx -y @newbrush/mcp --transport http --port 3333              # http://127.0.0.1:3333/mcp
+NEWBRUSH_MCP_API_KEYS=key1,key2 npx -y @newbrush/mcp --transport http --host 0.0.0.0
+claude mcp add --transport http newbrush http://127.0.0.1:3333/mcp
+```
+
+| Endpoint | What |
+| -------- | ---- |
+| `POST/GET/DELETE /mcp` | Streamable HTTP MCP. Each session has its own server and themes (`create_theme` ids); idle sessions close after 30 minutes |
+| `POST /v1/tools/{name}` | REST mirror: the tool's arguments as the JSON body → `{ "result": … }` (the MCP `structuredContent`), or `{ "error": Diagnostic }` with 400 |
+| `GET /v1/tools`, `GET /v1/manifest` | Tool names; the newBrush manifest |
+| `GET /healthz` | `{ "ok": true, "version": … }`, never authenticated |
+
+```bash
+curl -s localhost:3333/v1/tools/explain_class -H 'content-type: application/json' -d '{"classes":["md:p-4"]}'
+```
+
+- **Auth**: with `NEWBRUSH_MCP_API_KEYS` set, send `Authorization: Bearer <key>` or `X-API-Key` (else 401).
+- **Rate limit**: `NEWBRUSH_MCP_RATE_LIMIT` requests a minute per key, or per client address without keys (default
+  120, `0` turns it off); over it, 429 `NB_RATE_LIMITED` with `Retry-After`.
+- **CORS**: `NEWBRUSH_MCP_CORS_ORIGINS` (default `*`); `Mcp-Session-Id` is exposed to browsers.
+- Bodies are limited to 1 MB (413 `NB_INPUT_TOO_LARGE`). Logs carry method, route, status and duration only: no
+  bodies, keys or addresses.
+- `@newbrush/mcp/http` exports `createHttpApp(options)`, a fetch handler (`app.fetch`) for any runtime.
+
 ## Tools
 
 Every tool is idempotent and closed-world, and all but `create_theme` (which remembers its theme for the session) are
